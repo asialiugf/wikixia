@@ -1,0 +1,93 @@
+{
+  "name": "@soybeanjs/vue-admin-layout",
+  "version": "1.0.4",
+  "description": "a layout component of admin template, support vue2 and vue3",
+  "private": false,
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "build:vercel": "cross-env VITE_IS_VERCEL=1 vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "release": "standard-version",
+    "pub": "npm publish --access=public",
+    "preview": "vite preview",
+    "lint": "eslint --fix ./ --ext .vue,.js,jsx,.ts,tsx",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{vue,js,jsx,ts,tsx}": "eslint --fix"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honghuangdc/soybean-admin-layout.git"
+  },
+  "keywords": [
+    "admin",
+    "layout",
+    "admin-layout",
+    "vue2",
+    "vue3"
+  ],
+  "author": "Soybean (honghuangdc@gmail.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/honghuangdc/soybean-admin-layout/issues"
+  },
+  "homepage": "https://github.com/honghuangdc/soybean-admin-layout#readme",
+  "dependencies": {
+    "@unocss/reset": "^0.33.2",
+    "colord": "^2.9.2",
+    "css-render": "0.15.9",
+    "vue-demi": "^0.12.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "@vue/composition-api": "^1.4.6",
+    "vue": "^2.0.0 || >=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@vue/composition-api": {
+      "optional": true
+    }
+  },
+  "files": ["dist"],
+  "devDependencies": {
+    "@commitlint/cli": "^16.2.4",
+    "@commitlint/config-conventional": "^16.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "@vitejs/plugin-vue": "^2.3.2",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "@vue/eslint-config-typescript": "^10.0.0",
+    "commitizen": "^4.2.4",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-customizable": "^6.3.0",
+    "eslint": "^8.15.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.7.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^12.4.1",
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.4",
+    "unocss": "^0.33.2",
+    "vite": "2.9.8",
+    "vite-plugin-dts": "^1.1.1",
+    "vue": "^3.2.33",
+    "vue-tsc": "^0.34.12"
+  }
+}
