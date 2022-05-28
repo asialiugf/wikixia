@@ -10,6 +10,8 @@
     "preinstall": "npx only-allow pnpm",
     "xia:dev": "pnpm run -C xia dev",
     "xia:build": "pnpm run -C xia build",
+    "t01:dev": "pnpm run -C packages/test01 dev",
+    "t01:build": "pnpm run -C packages/test0 build",
     "dev": "vite",
     "build": "npm run typecheck && vite build",
     "build:vercel": "cross-env VITE_IS_VERCEL=1 vite build",
