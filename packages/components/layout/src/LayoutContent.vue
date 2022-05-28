@@ -1,11 +1,11 @@
 <template>
-  <main :style="style" class="soybean-admin-layout__main">
+  <main :style="style" class="wikixia-admin-layout__main">
     <slot></slot>
   </main>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue-demi';
+import { computed } from 'vue';
 import { useCssRender } from '../../../hooks';
 interface Props {
   /** 顶部内边距 */
@@ -35,7 +35,7 @@ const style = computed(() => {
   return `padding-top: ${paddingTop}px;padding-bottom: ${paddingBottom}px;padding-left: ${paddingLeft}px;${overflowStyle}transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.soybean-admin-layout__main', {
+cssRender('.wikixia-admin-layout__main', {
   flexGrow: 1,
   boxSizing: 'border-box',
   width: '100%',

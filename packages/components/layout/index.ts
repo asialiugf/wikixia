@@ -1,9 +1,14 @@
 import Layout from "./src/Layout.vue";
+import LayoutMain from "./src/LayoutMain.vue";
 import { withInstall } from "@asialine/utils/with-install";
 
 const XLayout = withInstall(Layout);
 export { XLayout };
 export default XLayout;
+
+const XLay = withInstall(LayoutMain);
+export { XLay };
+
 // 两种导出方式
 //-----------------------------------------------------------------------
 

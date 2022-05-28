@@ -1,5 +1,5 @@
 <template>
-  <footer class="soybean-admin-layout__footer" :style="style">
+  <footer class="wikixia-admin-layout__footer" :style="style">
     <slot></slot>
   </footer>
 </template>
@@ -39,7 +39,7 @@ const style = computed(() => {
   return `position: ${position};z-index: ${zIndex};min-width: ${minWidth}px;height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.soybean-admin-layout__footer', {
+cssRender('.wikixia-admin-layout__footer', {
   left: 0,
   bottom: 0,
   flexShrink: 0,

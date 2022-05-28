@@ -1,11 +1,11 @@
 <template>
-  <div class="soybean-admin-layout__tab" :style="style">
+  <div class="wikixia-admin-layout__tab" :style="style">
     <slot></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue-demi';
+import { computed } from 'vue';
 import { useCssRender } from '../../../hooks';
 interface Props {
   /** 开启fixed布局 */
@@ -42,7 +42,7 @@ const style = computed(() => {
   return `position: ${position};top: ${top}px;z-index: ${zIndex};min-width: ${minWidth}px;height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.soybean-admin-layout__tab', {
+cssRender('.wikixia-admin-layout__tab', {
   left: 0,
   flexShrink: 0,
   boxSizing: 'border-box',

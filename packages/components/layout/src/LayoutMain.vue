@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue-demi';
+import { computed } from 'vue';
 import LayoutHeader from './LayoutHeader.vue';
 import LayoutTab from './LayoutTab.vue';
 import LayoutSider from './LayoutSider.vue';

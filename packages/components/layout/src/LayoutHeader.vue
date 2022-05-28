@@ -1,5 +1,5 @@
 <template>
-  <header class="soybean-admin-layout__header" :style="style">
+  <header class="wikixia-admin-layout__header" :style="style">
     <slot></slot>
   </header>
 </template>
@@ -39,7 +39,7 @@ const style = computed(() => {
   return `position: ${position};z-index: ${zIndex};min-width: ${minWidth}px;height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.soybean-admin-layout__header', {
+cssRender('.wikixia-admin-layout__header', {
   left: 0,
   top: 0,
   flexShrink: 0,

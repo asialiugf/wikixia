@@ -1,18 +1,12 @@
 <template>
-  <admin-layout
+  <x-lay
     :mode="mode"
     :fixed-header-and-tab="fixedHeaderAndTab"
     :fixed-footer="fixedFooter"
     :sider-collapse="siderCollapse"
   >
     <template #header>
-      <div class="flex-center h-full bg-#e6e6e6">
-        我的头部
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
-        </nav>
-      </div>
+      <div class="flex-center h-full bg-#e6e6e6">Header</div>
     </template>
     <template #tab>
       <div class="flex-center h-full bg-#cccccc">Tab</div>
@@ -52,12 +46,12 @@
       <div class="flex-center h-full bg-#e6e6e6">Footer</div>
     </template>
     <div v-for="i in 100" :key="i" class="text-center">{{ i }}</div>
-  </admin-layout>
+  </x-lay>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AdminLayout from '@asialine/xia-ui/layout';
+import { XLay } from '@asialine/xia-ui/layout';
 type Mode = 'vertical' | 'horizontal';
 const mode = ref<Mode>('vertical');
 const modeList: Mode[] = ['vertical', 'horizontal'];

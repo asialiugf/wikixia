@@ -1,5 +1,5 @@
 <template>
-  <aside class="soybean-admin-layout__sider" :style="style">
+  <aside class="wikixia-admin-layout__sider" :style="style">
     <slot></slot>
   </aside>
 </template>
@@ -32,7 +32,7 @@ const style = computed(() => {
   return `z-index: ${zIndex};width: ${width}px;padding-top: ${paddingTop}px;transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.soybean-admin-layout__sider', {
+cssRender('.wikixia-admin-layout__sider', {
   position: 'fixed',
   left: 0,
   top: 0,

@@ -1,5 +1,5 @@
 {
-  "name": "@soybeanjs/vue-admin-layout",
+  "name": "@wikixiajs/vue-admin-layout",
   "version": "1.0.4",
   "description": "a layout component of admin template, support vue2 and vue3",
   "private": false,
@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/asialiugf/soybean-admin-layout.git"
+    "url": "git+https://github.com/asialiugf/wikixia-admin-layout.git"
   },
   "keywords": [
     "admin",
