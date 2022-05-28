@@ -39,7 +39,8 @@ cssRender('.soybean-admin-layout__sider', {
   boxSizing: 'border-box',
   width: '100%',
   height: '100%',
-  transitionProperty: 'all'
+  transitionProperty: 'all',
+    backgroundColor: '#eee',
 });
 </script>
 <style></style>

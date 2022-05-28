@@ -45,7 +45,8 @@ cssRender('.soybean-admin-layout__header', {
   flexShrink: 0,
   boxSizing: 'border-box',
   width: '100%',
-  transitionProperty: 'padding-left'
+  transitionProperty: 'padding-left',
+  backgroundColor: '#ddd',
 });
 </script>
 <style></style>
