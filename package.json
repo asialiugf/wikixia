@@ -44,10 +44,12 @@
   "author": "asialiugf",
   "license": "MIT",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/asialiugf/wikixia/issues"
   },
   "homepage": "",
   "dependencies": {
+    "@asialine/utils": "workspace:^1.0.0",
+    "@asialine/xia-ui": "workspace:^1.0.0",
     "@unocss/reset": "^0.33.5",
     "colord": "^2.9.2",
     "css-render": "0.15.9",
