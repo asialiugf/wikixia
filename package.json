@@ -1,7 +1,7 @@
 {
-  "name": "@wikixiajs/vue-admin-layout",
+  "name": "@asialine/xia",
   "version": "1.0.4",
-  "description": "a layout component of admin template, support vue2 and vue3",
+  "description": "wiki for xia",
   "private": false,
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
@@ -93,7 +93,7 @@
     "lint-staged": "^12.4.2",
     "prettier": "^2.6.2",
     "typescript": "^4.7.2",
-    "unocss": "^0.33.5",
+    "unocss": "^0.34.1",
     "vite": "2.9.8",
     "vite-plugin-dts": "^1.2.0",
     "vue": "^3.2.36",

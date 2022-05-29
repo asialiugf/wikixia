@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed } from 'vue-demi';
 import { useCssRender } from '../../../hooks';
+
 interface Props {
   /** 开启fixed布局 */
   fixed?: boolean;
@@ -45,8 +46,8 @@ cssRender('.wikixia-admin-layout__header', {
   flexShrink: 0,
   boxSizing: 'border-box',
   width: '100%',
-  transitionProperty: 'padding-left',
-  backgroundColor: '#ddd',
+  transitionProperty: 'padding-left'
+  // backgroundColor: '#ddd',
 });
 </script>
 <style></style>

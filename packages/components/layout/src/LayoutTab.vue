@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useCssRender } from '../../../hooks';
+
 interface Props {
   /** 开启fixed布局 */
   fixed?: boolean;
@@ -47,8 +48,8 @@ cssRender('.wikixia-admin-layout__tab', {
   flexShrink: 0,
   boxSizing: 'border-box',
   width: '100%',
-  transitionProperty: 'padding-left',
-    backgroundColor: '#9ee',
+  transitionProperty: 'padding-left'
+  // backgroundColor: '#9ee',
 });
 </script>
 <style></style>

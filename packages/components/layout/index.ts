@@ -1,12 +1,12 @@
-import Layout from "./src/Layout.vue";
-import LayoutMain from "./src/LayoutMain.vue";
+import LayDemo from "./src/LayDemo.vue";
+import LayMain from "./src/LayMain.vue";
 import { withInstall } from "@asialine/utils/with-install";
 
-const XLayout = withInstall(Layout);
+const XLayout = withInstall(LayDemo);
 export { XLayout };
 export default XLayout;
 
-const XLay = withInstall(LayoutMain);
+const XLay = withInstall(LayMain);
 export { XLay };
 
 // 两种导出方式

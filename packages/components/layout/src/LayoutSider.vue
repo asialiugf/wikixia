@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { computed } from 'vue-demi';
 import { useCssRender } from '../../../hooks';
+
 interface Props {
   /** fixed布局的层级 */
   zIndex?: number;
@@ -39,8 +40,7 @@ cssRender('.wikixia-admin-layout__sider', {
   boxSizing: 'border-box',
   width: '100%',
   height: '100%',
-  transitionProperty: 'all',
-    backgroundColor: '#eee',
+  transitionProperty: 'all'
 });
 </script>
 <style></style>

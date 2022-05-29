@@ -6,11 +6,21 @@
     :sider-collapse="siderCollapse"
   >
     <template #header>
-      <div class="flex-center h-full bg-#e6e6e6">
-        我的头部
-        <nav>
-          <RouterLink to="/">Home</RouterLink>
+      <div class="flex-center h-full bg-#1166ee">
+        <nav class="ttt">
+          <div>LOGO</div>
+          <RouterLink
+            to="/"
+            class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700 border-none cursor-pointer"
+            >Home</RouterLink
+          >
           <RouterLink to="/about">About</RouterLink>
+          <div>我的天</div>
+          <button
+            class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700 border-none cursor-pointer"
+          >
+            Click me
+          </button>
         </nav>
       </div>
     </template>
@@ -78,4 +88,9 @@ function setSiderCollapse() {
 }
 </script>
 
-<style></style>
+<style>
+.ttt div {
+  padding: 8px;
+  display: inline-block;
+}
+</style>
