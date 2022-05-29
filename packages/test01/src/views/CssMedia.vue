@@ -1,0 +1,285 @@
+<script setup lang="ts">
+// This starter template is using Vue 3 <script setup> SFCs
+// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+</script>
+
+<template>
+  <div class="gridcontainer">
+    <div class="gridwrapper">
+      <div class="gridbox gridheader">
+        <div class="header">
+          <div>
+            <ul>
+              <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn">Dropdown</a>
+                <div class="dropdown-content">
+                  <a href="#">Link 1</a>
+                  <a href="#">Link 2</a>
+                  <a href="#">Link 3</a>
+                </div>
+              </li>
+              <li class="liho"><a href="#home">Home</a></li>
+              <li class="liho"><a href="#news">News</a></li>
+            </ul>
+          </div>
+          <div class="home1" style="float: left">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#news">News</a></li>
+          </div>
+
+          <h1>The Pulpit Rock</h1>
+        </div>
+      </div>
+      <div class="gridbox gridmenu">
+        <div class="menuitem">The Drive</div>
+        <div class="menuitem">The Walk</div>
+        <div class="menuitem">The Return</div>
+        <div class="menuitem">The End</div>
+      </div>
+      <div class="gridbox gridmain">
+        <div class="main">
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+          <h1>The Walk</h1>
+          <p>
+            The walk to the Pulpit Rock will take you approximately two hours, give or take an hour depending on the
+            weather conditions and your physical shape.
+          </p>
+
+          <img src="pulpitrock.jpg" alt="Pulpit rock" width="" height="" />
+        </div>
+      </div>
+      <div class="gridbox gridright">
+        <div class="right">
+          <h2>What?</h2>
+          <p>The Pulpit Rock is a part of a mountain that looks like a pulpit.</p>
+          <h2>Where?</h2>
+          <p>The Pulpit Rock is in Norway</p>
+          <h2>Price?</h2>
+          <p>The walk is free!</p>
+        </div>
+      </div>
+      <div class="gridbox gridfooter">
+        <div class="footer">
+          <p>
+            This web page is a part of a demonstration of fluid web design made by www.w3schools.com. Resize the browser
+            window to see the content response to the resizing.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Lucida Sans', Verdana, sans-serif;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+.home1 {
+  color: red;
+}
+
+li a,
+.dropbtn {
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover,
+.dropdown:hover .dropbtn {
+  background-color: rgb(62, 42, 244);
+}
+
+li.dropdown {
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.main img {
+  width: 100%;
+}
+
+h1 {
+  font-size: 1.625em;
+}
+
+h2 {
+  font-size: 1.375em;
+}
+
+.header {
+  padding: 1%;
+  background-color: #f1f1f1;
+  border: 1px solid #e9e9e9;
+}
+
+.menuitem {
+  margin: 4%;
+  margin-left: 0;
+  margin-top: 0;
+  padding: 4%;
+  border-bottom: 1px solid #e9e9e9;
+  cursor: pointer;
+}
+
+.main {
+  padding: 2%;
+}
+
+.right {
+  padding: 4%;
+  background-color: #cdf0f6;
+}
+
+.footer {
+  padding: 1%;
+  text-align: center;
+  background-color: #f1f1f1;
+  border: 1px solid #e9e9e9;
+  font-size: 0.625em;
+}
+
+.gridcontainer {
+  width: 100%;
+}
+
+.gridwrapper {
+  overflow: hidden;
+}
+
+.gridbox {
+  margin-bottom: 2%;
+  margin-right: 2%;
+  float: left;
+}
+
+.gridheader {
+  width: 100%;
+}
+
+.gridmenu {
+  width: 23%;
+}
+
+.gridmain {
+  width: 49%;
+}
+
+.gridright {
+  width: 23%;
+  margin-right: 0;
+}
+
+.gridfooter {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+@media only screen and (max-width: 800px) {
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  .home1 {
+    visibility: hidden;
+  }
+  .liho {
+    display: none;
+  }
+  .gridmenu {
+    width: 100%;
+  }
+
+  .menuitem {
+    margin: 1%;
+    padding: 1%;
+  }
+
+  .gridmain {
+    width: 100%;
+  }
+
+  .main {
+    padding: 1%;
+  }
+
+  .gridright {
+    width: 100%;
+  }
+
+  .right {
+    padding: 1%;
+    visibility: hidden;
+  }
+
+  .gridbox {
+    margin-right: 0;
+    float: left;
+  }
+}
+</style>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html, body {
+  margin: 0;
+  /* very important */
+  /* height: 100%; */
+  /* width: 100%; */
+  font-size: 20px;
+}
+
+.container {
+  /* very important */
+  height: 100vh;
+}
+
+.ant-layout * {
+  box-sizing: border-box;
+}
+
+.ant-layout {
+  height: 100%;
+  background-color: #666;
+
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+
+  min-height: 0; /* fix bug in firefox */
+}
+
+.ant-layout.ant-layout-has-sider {
+  flex-direction: row;
+}
+
+.ant-layout-header {
+  flex: none;
+  background-color: #001529;
+  color: white;
+  padding: 10px;
+}
+
+.ant-layout-sider {
+  background-color: #6666ff;
+  padding: 10px;
+
+  flex: none;
+  overflow-y: auto;
+}
+
+.ant-layout-content {
+  flex: auto;
+  overflow: auto;
+
+  min-height: 0; /* fix bug in firefox */
+}
+
+.my-content {
+  margin: 20px;
+  padding: 10px;
+  font-size: 40px;
+  height: 2000px;
+  background-color: #9966ff;
+}
+</style>
+</head>
+<body>
+<div class='container'>
+  <div class='ant-layout'>
+    <div class='ant-layout-header'>
+      Header
+    </div>
+
+    <div class='ant-layout ant-layout-has-sider'>
+      <div class='ant-layout-sider'>
+        <div>Sider Menu</div>
+        <ul>...</ul>
+                  <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+      </div>
+
+      <div class='ant-layout ant-layout-has-sider'>
+        <div class='ant-layout-sider'>
+          <div>Sub Sider Menu</div>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+          <ul>...</ul>
+        </div>
+
+        <div class='ant-layout-content'>
+          <div class='my-content'>
+            Huge Contents
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
+
+// html
+
+
+// css

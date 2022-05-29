@@ -1,7 +1,7 @@
 <template>
-  <header class="wikixia-header" :style="style">
+  <div class="xia-layout-tab" :style="style">
     <slot></slot>
-  </header>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -10,7 +10,9 @@ import { useCssRender } from '../../../hooks';
 
 interface Props {
   /** 开启fixed布局 */
-  fixed?: boolean;
+  position: string;
+  /** fixed布局的top距离 */
+  top?: number;
   /** fixed布局的层级 */
   zIndex?: number;
   /** 最小宽度 */
@@ -26,30 +28,28 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   fixed: true,
-  zIndex: 1001,
+  top: 56,
+  zIndex: 999,
   minWidth: 1200,
-  height: 48,
+  height: 56,
   paddingLeft: 0,
   transitionDuration: 300,
   transitionTimingFunction: 'ease-in-out'
 });
 const { cssRender } = useCssRender();
 const style = computed(() => {
-  const { fixed, zIndex, minWidth, height, paddingLeft, transitionDuration, transitionTimingFunction } = props;
+  const { fixed, top, zIndex, minWidth, height, paddingLeft, transitionDuration, transitionTimingFunction } = props;
   const position = fixed ? 'fixed' : 'static';
-  return `position: ${position};z-index: ${zIndex};min-width: ${minWidth}px;
-	height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;
-	transition-timing-function: ${transitionTimingFunction};`;
+  return `position: ${position};top: ${top}px;z-index: ${zIndex};min-width: ${minWidth}px;height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.wikixia-header', {
+cssRender('.xia-layout-tab', {
   left: 0,
-  top: 0,
   flexShrink: 0,
   boxSizing: 'border-box',
   width: '100%',
   transitionProperty: 'padding-left'
-  // backgroundColor: '#ddd',
+  // backgroundColor: '#9ee',
 });
 </script>
 <style></style>

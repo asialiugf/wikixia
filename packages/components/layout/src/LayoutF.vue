@@ -1,11 +1,11 @@
 <template>
-  <header class="wikixia-header" :style="style">
+  <footer class="wikixia-admin-layout__footer" :style="style">
     <slot></slot>
-  </header>
+  </footer>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from 'vue-demi';
 import { useCssRender } from '../../../hooks';
 
 interface Props {
@@ -26,9 +26,9 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   fixed: true,
-  zIndex: 1001,
+  zIndex: 999,
   minWidth: 1200,
-  height: 48,
+  height: 56,
   paddingLeft: 0,
   transitionDuration: 300,
   transitionTimingFunction: 'ease-in-out'
@@ -37,19 +37,16 @@ const { cssRender } = useCssRender();
 const style = computed(() => {
   const { fixed, zIndex, minWidth, height, paddingLeft, transitionDuration, transitionTimingFunction } = props;
   const position = fixed ? 'fixed' : 'static';
-  return `position: ${position};z-index: ${zIndex};min-width: ${minWidth}px;
-	height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;
-	transition-timing-function: ${transitionTimingFunction};`;
+  return `position: ${position};z-index: ${zIndex};min-width: ${minWidth}px;height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.wikixia-header', {
+cssRender('.wikixia-admin-layout__footer', {
   left: 0,
-  top: 0,
+  bottom: 0,
   flexShrink: 0,
   boxSizing: 'border-box',
   width: '100%',
   transitionProperty: 'padding-left'
-  // backgroundColor: '#ddd',
 });
 </script>
 <style></style>

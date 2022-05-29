@@ -59,13 +59,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue-demi';
+import { computed } from 'vue';
+import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 import LayoutHeader from './LayoutHeader.vue';
 import LayoutTab from './LayoutTab.vue';
 import LayoutSider from './LayoutSider.vue';
 import LayoutContent from './LayoutContent.vue';
 import LayoutFooter from './LayoutFooter.vue';
-import { useCssRender, useFixedTransformStyle } from '../../../hooks';
+
 interface Props {
   /** 布局模式 */
   mode?: 'vertical' | 'horizontal';
@@ -103,7 +104,7 @@ interface Props {
   transitionTimingFunction?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
-  mode: 'vertical',
+  mode: 'horizontal',
   minWidth: 1200,
   headerVisible: true,
   headerHeight: 56,
@@ -136,7 +137,7 @@ const commonProps = computed(() => {
   };
 });
 /** 水平布局 */
-const isVertical = computed(() => props.mode === 'vertical');
+const isVertical = computed(() => props.mode === 'horizontal');
 // fixed布局时的层级
 const headerZIndex = 1001;
 const tabZIndex = 999;

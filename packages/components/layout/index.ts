@@ -1,6 +1,7 @@
-import LayDemo from "./src/LayDemo.vue";
-import LayMain from "./src/LayMain.vue";
-import { withInstall } from "@asialine/utils/with-install";
+import { withInstall } from '@asialine/utils/with-install';
+import LayDemo from './src/LayDemo.vue';
+import LayMain from './src/LayMain.vue';
+import LayOne from './src/LayOne.vue';
 
 const XLayout = withInstall(LayDemo);
 export { XLayout };
@@ -8,6 +9,9 @@ export default XLayout;
 
 const XLay = withInstall(LayMain);
 export { XLay };
+
+const XLayOne = withInstall(LayOne);
+export { XLayOne };
 
 // 两种导出方式
 //-----------------------------------------------------------------------
@@ -48,4 +52,3 @@ export interface LayoutProps {
   /** 动画过渡速度曲线 */
   transitionTimingFunction?: string;
 }
-

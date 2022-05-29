@@ -1,8 +1,6 @@
 <template>
-  <aside class="wikixia-layout-sider" :style="style">
-    <div class="drag"></div>
+  <aside class="wikixia-admin-layout__sider" :style="style">
     <slot></slot>
-    <div class="drag1"></div>
   </aside>
 </template>
 
@@ -11,6 +9,14 @@ import { computed } from 'vue-demi';
 import { useCssRender } from '../../../hooks';
 
 interface Props {
+  /** 盖住Header？ */
+  overHeader?: boolean;
+  /** 盖住Footer？ */
+  overFooter?: boolean;
+  /* 左还是右， true:左 ， false:右 */
+  isLeft?: boolean;
+  /* 是否可拖动 */
+  isDrag?: boolean;
   /** fixed布局的层级 */
   zIndex?: number;
   /** 宽度 */
@@ -24,7 +30,7 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   zIndex: 1002,
-  width: 300,
+  width: 200,
   paddingTop: 0,
   transitionDuration: 300,
   transitionTimingFunction: 'ease-in-out'
@@ -37,7 +43,7 @@ const style = computed(() => {
 	transition-timing-function: ${transitionTimingFunction};`;
 });
 // css
-cssRender('.wikixia-layout-sider', {
+cssRender('.wikixia-admin-layout__sider', {
   position: 'fixed',
   left: 0,
   top: 0,
@@ -47,28 +53,4 @@ cssRender('.wikixia-layout-sider', {
   transitionProperty: 'all'
 });
 </script>
-<style>
-.drag {
-  position: absolute;
-  width: 4px;
-  height: 100%;
-  right: -2px;
-  cursor: w-resize;
-  background-color: #ee22ee;
-}
-.drag1 {
-  position: absolute;
-  /* z-index: 2000; */
-  width: 14px;
-  height: 100%;
-  left: -2px;
-  top: 60px;
-  cursor: w-resize;
-  background-color: #9035ff;
-}
-
-.drag:hover {
-  background-color: #0054c9;
-  transition: all 0.5s;
-}
-</style>
+<style></style>
