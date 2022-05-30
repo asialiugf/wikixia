@@ -51,6 +51,7 @@
     "@asialine/utils": "workspace:^1.0.0",
     "@asialine/xia-ui": "workspace:^1.0.0",
     "@unocss/reset": "^0.33.5",
+    "@vueuse/core": "^8.5.0",
     "colord": "^2.9.2",
     "css-render": "0.15.9",
     "vue-demi": "^0.12.5"

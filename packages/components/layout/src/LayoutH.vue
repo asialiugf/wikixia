@@ -1,5 +1,5 @@
 <template>
-  <header class="wikixia-header" :style="style">
+  <header class="xia-layout-header" :style="style">
     <slot></slot>
   </header>
 </template>
@@ -35,21 +35,20 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const { cssRender } = useCssRender();
 const style = computed(() => {
-  const { fixed, zIndex, minWidth, height, paddingLeft, transitionDuration, transitionTimingFunction } = props;
-  const position = fixed ? 'fixed' : 'static';
-  return `position: ${position};z-index: ${zIndex};min-width: ${minWidth}px;
-	height: ${height}px;padding-left: ${paddingLeft}px;transition-duration: ${transitionDuration}ms;
-	transition-timing-function: ${transitionTimingFunction};`;
+  return `
+	position: absolute;
+	width: 100%;
+	min-width: 500px;
+	height: 56px;
+	`;
 });
 // css
-cssRender('.wikixia-header', {
-  left: 0,
-  top: 0,
-  flexShrink: 0,
-  boxSizing: 'border-box',
-  width: '100%',
-  transitionProperty: 'padding-left'
-  // backgroundColor: '#ddd',
-});
 </script>
-<style></style>
+<style>
+.xia-layout-header {
+  position: absolute;
+  width: 100%;
+  min-width: 500px;
+  height: 56px;
+}
+</style>

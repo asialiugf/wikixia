@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 const CssMedia = () => import('../views/CssMedia.vue');
 const SlotTest = () => import('../views/SlotTest.vue');
+const LayoutDemo = () => import('../views/LayoutDemo.vue');
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/slot',
       name: 'slot',
       component: SlotTest
+    },
+    {
+      path: '/layout',
+      name: 'layout',
+      component: LayoutDemo
     },
     {
       path: '/about',
