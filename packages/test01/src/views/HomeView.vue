@@ -12,6 +12,7 @@ import TheWelcome from '@/components/TheWelcome.vue';
         <RouterLink to="/media">Media</RouterLink>
         <RouterLink to="/slot">Slot</RouterLink>
         <RouterLink to="/layout">LayoutDemo</RouterLink>
+        <RouterLink to="/timepass">TimePass</RouterLink>
       </nav>
     </div>
   </header>

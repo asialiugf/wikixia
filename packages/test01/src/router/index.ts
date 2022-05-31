@@ -3,9 +3,16 @@ import HomeView from '../views/HomeView.vue';
 const CssMedia = () => import('../views/CssMedia.vue');
 const SlotTest = () => import('../views/SlotTest.vue');
 const LayoutDemo = () => import('../views/LayoutDemo.vue');
+// const Timepass = () => import('../views/TimePass.vue');
+const Timepass = () => import('../views/UseIntervalFn.vue');
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/timepass',
+      name: 'timepass',
+      component: Timepass
+    },
     {
       path: '/',
       name: 'home',

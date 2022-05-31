@@ -1,9 +1,12 @@
 <template>
   <admin-layout
-    :mode="mode"
-    :fixed-header-and-tab="fixedHeaderAndTab"
-    :fixed-footer="fixedFooter"
-    :sider-collapse="siderCollapse"
+    :hPosition="position0"
+    :hTop="top0"
+    :tPosition="position1"
+    :tTop="top1"
+    :aLtop="top1"
+    :aLheight="3000"
+    :aLwidth="200"
   >
     <template #header>
       <div class="flex-center h-full bg-#1166ee">
@@ -25,67 +28,39 @@
       </div>
     </template>
     <template #tab>
-      <div class="flex-center h-full bg-#cccccc">Tab</div>
-    </template>
-    <template #sider>
-      <div class="h-full px-12px bg-#d9d9d9 whitespace-nowrap">
-        <div class="flex-center h-56px">Sider</div>
-        <div>
-          <h4>layout mode:</h4>
-          <div v-for="item in modeList" :key="item">
-            <span class="pr-8px">{{ item }}</span>
-            <input
-              type="radio"
-              name="mode"
-              :value="item"
-              :checked="item === mode"
-              class="cursor-pointer"
-              @change="setMode(item)"
-            />
-          </div>
-        </div>
-        <div class="pt-24px">
-          <span class="pr-8px">fixedHeaderAndTab</span>
-          <input type="checkbox" :checked="fixedHeaderAndTab" @change="setFixedHeaderAndTab" />
-        </div>
-        <div class="pt-24px">
-          <span class="pr-8px">fixedFooter</span>
-          <input type="checkbox" :checked="fixedFooter" @change="setFixedFooter" />
-        </div>
-        <div class="pt-24px">
-          <span class="pr-8px">siderCollapse</span>
-          <input type="checkbox" :checked="siderCollapse" @change="setSiderCollapse" />
-        </div>
+      <div class="flex-center h-full bg-#1166ee">
+        <nav class="ttt">
+          <div>LOGO</div>
+          <RouterLink
+            to="/"
+            class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700 border-none cursor-pointer"
+            >Home</RouterLink
+          >
+          <RouterLink to="/about">About</RouterLink>
+          <div>新时代的计划</div>
+          <button
+            class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700 border-none cursor-pointer"
+          >
+            Click me
+          </button>
+        </nav>
       </div>
     </template>
-    <template #footer>
-      <div class="flex-center h-full bg-#e6e6e6">Footer</div>
-    </template>
-    <div v-for="i in 100" :key="i" class="text-center">{{ i }}</div>
+    <template #asideL> qwerqer </template>
   </admin-layout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AdminLayout from '@asialine/xia-ui/layout';
-type Mode = 'vertical' | 'horizontal';
-const mode = ref<Mode>('vertical');
-const modeList: Mode[] = ['vertical', 'horizontal'];
-function setMode(value: Mode) {
-  mode.value = value;
-}
-const fixedHeaderAndTab = ref(true);
-function setFixedHeaderAndTab() {
-  fixedHeaderAndTab.value = !fixedHeaderAndTab.value;
-}
-const fixedFooter = ref(false);
-function setFixedFooter() {
-  fixedFooter.value = !fixedFooter.value;
-}
-const siderCollapse = ref(false);
-function setSiderCollapse() {
-  siderCollapse.value = !siderCollapse.value;
-}
+import AdminLayout from '@asialine/xia-ui/lay';
+
+type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
+const position0 = ref<Position>('absolute');
+const position1 = ref<Position>('sticky');
+
+type Auto = number | 'auto';
+const top0 = ref<Auto>(100);
+const top1 = ref<Auto>(60);
 </script>
 
 <style>
