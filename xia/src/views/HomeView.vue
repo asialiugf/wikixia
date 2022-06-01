@@ -5,11 +5,11 @@
     :tPosition="position1"
     :tTop="top1"
     :aLtop="top1"
-    :aLheight="3000"
+    :aLheight="500"
     :aLwidth="200"
   >
     <template #header>
-      <div class="flex-center h-full bg-#1166ee">
+      <div class="flex-center h-full bg-#5533ee">
         <nav class="ttt">
           <div>LOGO</div>
           <RouterLink
@@ -43,8 +43,33 @@
           >
             Click me
           </button>
+          <RouterLink to="/layout"> ！layout！</RouterLink>
         </nav>
       </div>
+    </template>
+    <template #main>
+      <ul id="example-2">
+        <li v-for="n in 150" :key="n">adfsafd {{ n }} <br /></li>
+        <div class="zxx-scroll">
+          <p>
+            最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
+              href="https://www.zhangxinxu.com/life/category/light-novel/"
+              >轻小说</a
+            >，题目是“身为前端开发的我成为了一个渔民”。
+          </p>
+          <p>
+            跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
+          </p>
+          <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
+          <p>
+            欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
+              href="https://www.zhangxinxu.com/life/fisher-1/"
+              >点击这里</a
+            >开始阅读。
+          </p>
+        </div>
+        <li v-for="n in 150" :key="n">adfsafd {{ n }} <br /></li>
+      </ul>
     </template>
     <template #asideL> qwerqer </template>
   </admin-layout>
@@ -55,17 +80,32 @@ import { ref } from 'vue';
 import AdminLayout from '@asialine/xia-ui/lay';
 
 type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-const position0 = ref<Position>('absolute');
+const position0 = ref<Position>('relative');
 const position1 = ref<Position>('sticky');
 
 type Auto = number | 'auto';
-const top0 = ref<Auto>(100);
-const top1 = ref<Auto>(60);
+const top0 = ref<Auto>(0);
+const top1 = ref<Auto>(0);
 </script>
 
 <style>
 .ttt div {
   padding: 8px;
   display: inline-block;
+}
+
+.zxx-scroll {
+  position: sticky;
+  top: 60px;
+  bottom: 100px;
+  display: block;
+  width: 350px;
+  height: 200px;
+  padding: 0.5em 1em;
+  margin: 5em auto;
+  border: solid deepskyblue;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -ms-scroll-chaining: contain;
 }
 </style>

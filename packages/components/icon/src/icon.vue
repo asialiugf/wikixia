@@ -4,10 +4,11 @@
   </i>
 </template>
 <script lang="ts">
-import { computed, defineComponent } from "vue";
-import { iconProps } from "./icon";
+import { computed, defineComponent } from 'vue';
+import { iconProps } from './icon';
+
 export default defineComponent({
-  name: "XIcon",
+  name: 'XIcon',
   props: iconProps,
   setup(props) {
     const style = computed(() => {
@@ -15,13 +16,13 @@ export default defineComponent({
         return {};
       }
       const style = {
-        ...(props.size ? { "font-size": props.size + "px" } : {}),
-        ...(props.color ? { color: props.color } : {}),
+        ...(props.size ? { 'font-size': `${props.size}px` } : {}),
+        ...(props.color ? { color: props.color } : {})
       };
-      console.log("style", style);
+      console.log('style', style);
       return style;
     });
     return { style };
-  },
+  }
 });
 </script>

@@ -31,7 +31,7 @@
     </div>
     <aside class="asidel" :style="layoutAsideL">aside left</aside>
     <main class="main" :style="layoutMain">
-      <li v-for="n in 10">adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+      <li v-for="n in 100" :key="n">adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
       <zxx-scroll>
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
@@ -50,7 +50,7 @@
           >开始阅读。
         </p>
       </zxx-scroll>
-      <li v-for="n in 10">adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+      <li v-for="n in 10" :key="n">adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
     </main>
     <aside class="asider" :style="layoutAsideR">
       <zxx-scroll>
@@ -79,7 +79,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useWindowScroll, useIntervalFn } from '@vueuse/core';
-import SlotTest from '../components/SlotTest.vue';
 
 // ---------------------------------------------------------------------
 const timer = ref(1);
@@ -128,7 +127,6 @@ const style = computed(() => {
 // height: ${mainh.value + 150}px;
 const layoutHeader = computed(() => {
   return `
-    height: 150px;
     margin: 0px;
     position: relative;
 		z-index: 10;
@@ -204,8 +202,8 @@ const { x, y } = useWindowScroll();
 }
 .header {
   background-color: #e3e3e3;
-  height: 50px;
   line-height: 50px;
+  min-height: 100px;
   text-align: center;
   font-size: 20px;
   font-weight: bold;

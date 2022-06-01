@@ -1,6 +1,7 @@
 <template>
-  <div class="wikixia-admin-layout">
+  <div class="layout" :style="style">
     <layout-header
+      tag="header"
       :position="props.hPosition"
       :top="props.hTop"
       :left="props.hLeft"
@@ -57,6 +58,7 @@
     </layout-header>
 
     <layout-header
+      class="main"
       :position="props.tPosition"
       :top="props.tTop"
       :left="props.tLeft"
@@ -64,16 +66,16 @@
       :bottom="props.tBottom"
       :z-index="1001"
       :width="1200"
-      :height="48"
       :padding-left="0"
     >
-      <slot name="main"></slot>
+      <slot name="main"> </slot>
     </layout-header>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useWindowScroll, useIntervalFn } from '@vueuse/core';
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 import LayoutHeader from './LayoutHeader.vue';
 // import LayoutTab from './LayoutTab.vue';
@@ -131,11 +133,6 @@ interface Props {
   fFwidth?: number | 'auto';
   fFheight?: number | 'auto';
   fFpaddingLeft?: number | 'auto';
-
-  /** 动画过渡时间 */
-  transitionDuration?: number;
-  /** 动画过渡时间 */
-  transitionTimingFunction?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   /* Header */
@@ -146,7 +143,7 @@ const props = withDefaults(defineProps<Props>(), {
   hBottom: 'auto',
   hzIndex: 1001,
   hWidth: 1200,
-  hHeight: 48,
+  hHeight: 148,
   hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
@@ -156,7 +153,7 @@ const props = withDefaults(defineProps<Props>(), {
   tBottom: 'auto',
   tzIndex: 1001,
   tWidth: 1200,
-  tHeight: 48,
+  tHeight: 148,
   tPaddingLeft: 0,
   /* Aside Left */
   aLposition: 'relative',
@@ -166,7 +163,7 @@ const props = withDefaults(defineProps<Props>(), {
   aLbottom: 'auto',
   aLzIndex: 1001,
   aLwidth: 1200,
-  aLheight: 48,
+  aLheight: 148,
   aLpaddingLeft: 0,
   /* Aside Right */
   aRposition: 'relative',
@@ -176,7 +173,7 @@ const props = withDefaults(defineProps<Props>(), {
   aRbottom: 'auto',
   aRzIndex: 1001,
   aRwidth: 1200,
-  aRheight: 48,
+  aRheight: 148,
   aRpaddingLeft: 0,
   /* Footer */
   fFposition: 'relative',
@@ -186,10 +183,8 @@ const props = withDefaults(defineProps<Props>(), {
   fFbottom: 'auto',
   fFzIndex: 1001,
   fFwidth: 1200,
-  fFheight: 48,
-  fFpaddingLeft: 0,
-  transitionDuration: 300,
-  transitionTimingFunction: 'ease-in-out'
+  fFheight: 148,
+  fFpaddingLeft: 0
 });
 
 // const commonProps = computed(() => {
@@ -205,11 +200,42 @@ const props = withDefaults(defineProps<Props>(), {
 
 // type Auto = number | 'auto';
 // const auto = ref<Auto>('auto');
-console.log(props);
+const { x, y } = useWindowScroll();
+
+const sx = ref(0);
+const sy = ref(0);
+const mainh = ref(0);
+
+function onResize() {
+  sx.value = window.innerWidth - 20;
+  sy.value = window.innerHeight;
+  const element = document.querySelector('.main') as HTMLElement;
+  mainh.value = element.clientHeight;
+  console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+  console.log(sx.value, sy.value, mainh.value);
+  console.log(element);
+}
+
+onMounted(() => {
+  window.addEventListener('resize', onResize);
+  onResize();
+});
+
+const style = computed(() => {
+  console.log('ssssssssssssssssssssssssssssssssss');
+  console.log(mainh.value);
+  return `
+    margin: 0px;
+    width: ${sx.value}px;
+    position: relative;
+    height: 6000px;
+  `;
+});
 </script>
 <style>
 .wikixia-admin-layout {
   position: relative;
-  height: 1000px;
+  height: 5000px;
+  margin: 0px;
 }
 </style>

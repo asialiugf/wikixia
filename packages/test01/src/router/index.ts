@@ -5,9 +5,15 @@ const SlotTest = () => import('../views/SlotTest.vue');
 const LayoutDemo = () => import('../views/LayoutDemo.vue');
 // const Timepass = () => import('../views/TimePass.vue');
 const Timepass = () => import('../views/UseIntervalFn.vue');
+const LayoutGrid = () => import('../views/LayoutGrid.vue');
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/grid',
+      name: 'grid',
+      component: LayoutGrid
+    },
     {
       path: '/timepass',
       name: 'timepass',

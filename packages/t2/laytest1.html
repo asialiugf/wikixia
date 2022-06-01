@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+<style>
+body {color:red;margin: 0;}
+h1 {color:#00ff00;}
+p.ex {color:rgb(0,0,255);}
+
+.layout {
+  background-color: rgb(255, 140, 0);
+	margin: 0px;
+    width: 1250px;
+    position: relative;
+}
+.header {
+  background-color: #e3e3e3;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+	height: 150px;
+    margin: 0px;
+    position: relative;
+		z-index: 10;
+}
+.tab {
+  background-color: #485ff7;
+	width: 1000px;
+    height: 150px;
+    margin: 0px;
+    position: sticky;
+    top: -1px;
+		left:250px;
+		right:auto;
+		bottom:auto;
+    z-index: 2;
+}
+.asidel {
+  background-color: #676666;
+	width: 250px;
+    margin: 0px;
+    position: absolute;
+    top: 50px;
+    left: 0px;
+		right: auto;
+}
+.asider {
+  background-color: #52d1ff;
+	width: 250px;
+    margin: 0px;
+    position: absolute;
+    top: 0px;
+		left: auto;
+    right: 0px;
+}
+.main {
+  background-color: #00bc55;
+	width:750px;
+    margin: 0px;
+    position: relative;
+    top: 0px;
+    left: 250px;
+		z-index: 1;
+}
+.footer {
+  background-color: #ffa7a7;
+	width: 1250px;
+    height: 550px;
+    margin: 0px;
+    position: relative;
+    top:  0px;
+    left: 0px;
+}
+
+.box1 {
+	background-color: #5af5bc;
+	width: 50px;
+    height: 50px;
+    margin: 0px;
+    position: relative;
+    top:  0px;
+    left: 0px;
+}
+.box2 {
+	background-color: #cef55a;
+	width: 50px;
+    height: 50px;
+    margin: 0px;
+    position: relative;
+    top:  0px;
+    left: 60px;
+}
+.box3 {
+	background-color: #485af8;
+	width: 50px;
+    height: 50px;
+    margin: 0px;
+    position: absolute;
+    top:  0px;
+    left: 0px;
+}
+.box4 {
+	background-color: #f848e9;
+	width: 50px;
+    height: 50px;
+    margin: 0px;
+    position: relative;
+    top:  0px;
+    left: 0px;
+}
+
+
+
+
+
+
+
+/* -------------------- -----------  -------------------------------   */
+zxx-scroll {
+  position: sticky;
+  top: 60px;
+  bottom: 100px;
+  display: block;
+  width: 250px;
+  height: 200px;
+  padding: 0.5em 1em;
+  margin: 5em auto;
+  border: solid deepskyblue;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -ms-scroll-chaining: contain;
+}
+
+zxx-scroll-ad {
+  position: sticky;
+  top: 60px;
+  bottom: 100px;
+  display: block;
+  width: 250px;
+  height: 200px;
+  padding: 0.5em 1em;
+  margin: 5em auto;
+  border: solid deepskyblue;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -ms-scroll-chaining: contain;
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+  <div class="layout">
+    <header class="header">
+      header utyru
+      <p>adsfasdfasdfasdf</p>
+
+      <button >Pause</button>
+      <!-- <button v-if="!isActive" @click="pause">Resume</button> -->
+
+      <zxx-scroll-ad >
+        <p>
+          最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
+            href="https://www.zhangxinxu.com/life/category/light-novel/"
+            >轻小说</a
+          >，题目是“身为前端开发的我成为了一个渔民”。
+        </p>
+        <p>
+          跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
+        </p>
+        <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
+        <p>
+          欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
+            href="https://www.zhangxinxu.com/life/fisher-1/"
+            >点击这里</a
+          >开始阅读。
+        </p>
+      </zxx-scroll-ad>
+    </header>
+    <div class="tab" >
+      <div></div>
+    </div>
+    <aside class="asidel" >aside left</aside>
+    <main class="main" >
+			这是开始的主体
+        <p> 这是开始 </p>
+        <li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+        <zxx-scroll>
+          <p>
+            最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
+              href="https://www.zhangxinxu.com/life/category/light-novel/"
+              >轻小说</a
+            >，题目是“身为前端开发的我成为了一个渔民”。
+          </p>
+          <p>
+            跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
+          </p>
+          <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
+          <p>
+            欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
+              href="https://www.zhangxinxu.com/life/fisher-1/"
+              >点击这里</a
+            >开始阅读。
+          </p>
+        </zxx-scroll>
+        <li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+				<li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
+
+    </main>
+    <aside class="asider" >
+      <zxx-scroll>
+        <p>
+          最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
+            href="https://www.zhangxinxu.com/life/category/light-novel/"
+            >轻小说</a
+          >，题目是“身为前端开发的我成为了一个渔民”。
+        </p>
+        <p>
+          跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
+        </p>
+        <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
+        <p>
+          欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
+            href="https://www.zhangxinxu.com/life/fisher-1/"
+            >点击这里</a
+          >开始阅读。
+        </p>
+      </zxx-scroll>
+    </aside>
+    <footer class="footer" :style="layoutFooter">
+			<div class="box1">
+				1
+			</div>
+			<div class="box2">
+				2
+			</div>
+			<div class="box3">
+				3
+			</div>
+			<div class="box4">
+				4
+			</div>
+			<div class="grid-box">
+
+			</div>
+
+		</footer>
+
+
+  </div>
+
+</body>
+</html>

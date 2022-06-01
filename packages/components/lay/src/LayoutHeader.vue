@@ -1,12 +1,19 @@
 <template>
-  <div class="" :style="style">
+  <!-- <div :style="style">
     <slot></slot>
-  </div>
+  </div> -->
+  <!-- <component :is="user === false ? 'div' : 'main'" :style="style"></component> -->
+  <component :is="ttt" :style="style">
+    <slot></slot>
+  </component>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useCssRender } from '../../../hooks';
+import { ref, computed } from 'vue';
+// import { useCssRender } from '../../../hooks';
+
+const user = ref(true);
+const ttt = ref('section');
 
 interface Props {
   /** 开启fixed布局 */
@@ -23,10 +30,6 @@ interface Props {
   height?: number | 'auto';
   /** 左侧内边距 */
   paddingLeft?: number | 'auto';
-  /** 动画过渡时间 */
-  transitionDuration?: number | 'auto';
-  /** 动画过渡时间 */
-  transitionTimingFunction?: string;
 }
 const props = withDefaults(defineProps<Props>(), {
   position: 'relative',
@@ -37,58 +40,30 @@ const props = withDefaults(defineProps<Props>(), {
   zIndex: 1001,
   width: 1200,
   height: 48,
-  paddingLeft: 0,
-  transitionDuration: 300,
-  transitionTimingFunction: 'ease-in-out'
+  paddingLeft: 0
 });
 
 // const { cssRender } = useCssRender();
 const style = computed(() => {
-  const {
-    position,
-    top,
-    left,
-    right,
-    bottom,
-    zIndex,
-    width,
-    height,
-    paddingLeft,
-    transitionDuration,
-    transitionTimingFunction
-  } = props;
+  const { position, top, left, right, bottom, zIndex, width, height, paddingLeft } = props;
 
-  let Top: string;
-  let Left: string;
-
-  if (top === 'auto') {
-    Top = top;
-  } else {
-    Top = `${top}px`;
-  }
-
-  if (left === 'auto') {
-    Left = left;
-  } else {
-    Left = `${left}px`;
-  }
-
+  const Top = top === 'auto' ? top : `${top}px`;
+  const Left = left === 'auto' ? left : `${left}px`;
   const Right = right === 'auto' ? right : `${right}px`;
   const Bottom = bottom === 'auto' ? bottom : `${bottom}px`;
 
   return `
+		width: ${width}px;
+	  height: auto;
 	  position: ${position};
 		top: ${Top};
 		left: ${Left};
 		right: ${Right};
 		bottom: ${Bottom};
 		z-index: ${zIndex};
-		width: ${width}px;
-	  height: ${height}px;
 		padding-left: ${paddingLeft}px;
 		padding-right: ${paddingLeft}px;
-		transition-duration: ${transitionDuration}ms;
-	  transition-timing-function: ${transitionTimingFunction};`;
+;`;
 });
 // css
 // cssRender('.wikixia-header', {
