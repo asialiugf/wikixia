@@ -1,6 +1,7 @@
 <template>
   <div class="layout" :style="style">
-    <layout-header
+    <layout-block
+      v-if="hasHeader"
       tag="header"
       :position="props.hPosition"
       :top="props.hTop"
@@ -9,67 +10,96 @@
       :bottom="props.hBottom"
       :z-index="1001"
       :width="1200"
-      :height="48"
+      :min-height="48"
       :padding-left="0"
     >
       <slot name="header"></slot>
-    </layout-header>
+    </layout-block>
 
-    <layout-header
+    <layout-block
+      v-if="hasTab"
+      tag="div"
       :position="props.tPosition"
       :top="props.tTop"
       :left="props.tLeft"
       :right="props.tRight"
       :bottom="props.tBottom"
-      :z-index="1001"
+      :min-height="48"
+      :z-index="props.tzIndex"
       :width="1200"
       :height="48"
       :padding-left="0"
     >
       <slot name="tab"></slot>
-    </layout-header>
+    </layout-block>
 
-    <layout-header
-      :position="props.aLposition"
+    <layout-block
+      v-if="hasAsideLeft"
+      tag="aside"
+      class="asideL"
+      :position="'absolute'"
       :top="props.aLtop"
       :left="props.aLleft"
       :right="props.aLright"
       :bottom="props.aLbottom"
       :z-index="1001"
-      :width="props.aLwidth"
+      :width="widthX"
       :height="props.aLheight"
       :padding-left="0"
     >
-      <slot name="asideL"></slot>
-    </layout-header>
+      <slot name="asideL"> {{ xxx }} -- {{ yyy }} </slot>
+      <div v-if="hasAsideLeft" class="resize resizeL"></div>
+    </layout-block>
 
-    <layout-header
-      :position="props.aRposition"
-      :top="props.aRtop"
-      :left="props.aRleft"
-      :right="props.aRright"
-      :bottom="props.aRbottom"
+    <layout-block
+      v-if="hasAsideRight"
+      tag="aside"
+      class="asideR"
+      :position="'absolute'"
+      :top="150"
+      :left="500"
+      :right="'auto'"
+      :bottom="'auto'"
       :z-index="1001"
       :width="props.aRwidth"
-      :height="props.aRheight"
+      :height="500"
       :padding-left="0"
     >
-      <slot name="asideR"></slot>
-    </layout-header>
+      <div v-if="hasAsideLeft" class="resize resizeR"></div>
+      <slot name="asideR">qeqerqwer</slot>
+    </layout-block>
 
-    <layout-header
+    <layout-block
+      tag="main"
       class="main"
+      :position="'relative'"
+      :top="props.tTop"
+      :left="props.aLwidth + 10"
+      :right="props.tRight"
+      :bottom="props.tBottom"
+      :z-index="1001"
+      :width="props.mWidth"
+      :padding-left="0"
+    >
+      <slot name="main"> </slot>
+    </layout-block>
+
+    <layout-block
+      v-if="hasFooter"
+      tag="footer"
+      class="footer"
       :position="props.tPosition"
       :top="props.tTop"
       :left="props.tLeft"
       :right="props.tRight"
       :bottom="props.tBottom"
+      :min-height="48"
       :z-index="1001"
       :width="1200"
       :padding-left="0"
     >
       <slot name="main"> </slot>
-    </layout-header>
+    </layout-block>
   </div>
 </template>
 
@@ -77,11 +107,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useWindowScroll, useIntervalFn } from '@vueuse/core';
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
-import LayoutHeader from './LayoutHeader.vue';
-// import LayoutTab from './LayoutTab.vue';
-// import LayoutSider from './LayoutSider.vue';
-// import LayoutContent from './LayoutContent.vue';
-// import LayoutFooter from './LayoutFooter.vue';
+import LayoutBlock from './LayoutBlock.vue';
 
 interface Props {
   /** 开启fixed布局 */
@@ -110,7 +136,7 @@ interface Props {
   aLright?: number | 'auto';
   aLbottom?: number | 'auto';
   aLzIndex?: number | 'auto';
-  aLwidth?: number | 'auto';
+  aLwidth?: number;
   aLheight?: number | 'auto';
   aLpaddingLeft?: number | 'auto';
   /* Aside Right */
@@ -133,6 +159,7 @@ interface Props {
   fFwidth?: number | 'auto';
   fFheight?: number | 'auto';
   fFpaddingLeft?: number | 'auto';
+  mWidth: number;
 }
 const props = withDefaults(defineProps<Props>(), {
   /* Header */
@@ -151,12 +178,12 @@ const props = withDefaults(defineProps<Props>(), {
   tLeft: 'auto',
   tRight: 'auto',
   tBottom: 'auto',
-  tzIndex: 1001,
+  tzIndex: 1003,
   tWidth: 1200,
   tHeight: 148,
   tPaddingLeft: 0,
   /* Aside Left */
-  aLposition: 'relative',
+  aLposition: 'absolute',
   aLtop: 'auto',
   aLleft: 'auto',
   aLright: 'auto',
@@ -166,7 +193,7 @@ const props = withDefaults(defineProps<Props>(), {
   aLheight: 148,
   aLpaddingLeft: 0,
   /* Aside Right */
-  aRposition: 'relative',
+  aRposition: 'absolute',
   aRtop: 'auto',
   aRleft: 'auto',
   aRright: 'auto',
@@ -184,9 +211,29 @@ const props = withDefaults(defineProps<Props>(), {
   fFzIndex: 1001,
   fFwidth: 1200,
   fFheight: 148,
-  fFpaddingLeft: 0
+  fFpaddingLeft: 0,
+  mWidth: 500
 });
 
+const hasHeader = computed(() => {
+  return props.hPosition !== 'static';
+});
+
+const hasTab = computed(() => {
+  return props.tPosition !== 'static';
+});
+
+const hasFooter = computed(() => {
+  return props.hPosition !== 'static';
+});
+
+const hasAsideLeft = computed(() => {
+  return props.hPosition !== 'static';
+});
+
+const hasAsideRight = computed(() => {
+  return props.hPosition !== 'static';
+});
 // const commonProps = computed(() => {
 //   const { transitionDuration, transitionTimingFunction } = props;
 //   return {
@@ -200,7 +247,54 @@ const props = withDefaults(defineProps<Props>(), {
 
 // type Auto = number | 'auto';
 // const auto = ref<Auto>('auto');
+
 const { x, y } = useWindowScroll();
+
+const widthX = computed(() => {
+  return props.aLwidth;
+});
+
+// --------------------------------------------------------------------------
+
+const xxx = ref(0);
+const yyy = ref(0);
+
+interface Emits {
+  (e: 'update:width', asideWidth: number): void;
+}
+const emit = defineEmits<Emits>();
+const asideWidth = computed({
+  get() {
+    return props.aLwidth;
+  },
+  set(newValue: number) {
+    emit('update:width', newValue);
+  }
+});
+
+function handleWidth(className: string): boolean {
+  // asideWidth.value += 10;
+  const element = document.querySelector(className) as HTMLElement;
+  element.onmousedown = e => {
+    e.preventDefault(); // 阻止默认事件发生
+    const startX = e.clientX;
+    const kkk = props.aLwidth;
+    document.onmousemove = e1 => {
+      const endX = e1.clientX;
+      const moveLen = endX - startX;
+      asideWidth.value = kkk + moveLen;
+      xxx.value = startX;
+      yyy.value = endX;
+    };
+  };
+  element.onmouseup = () => {
+    document.onmousemove = null;
+    document.onmouseup = null;
+  };
+  return false;
+}
+
+// --------------------------------------------------------------------------
 
 const sx = ref(0);
 const sy = ref(0);
@@ -219,6 +313,9 @@ function onResize() {
 onMounted(() => {
   window.addEventListener('resize', onResize);
   onResize();
+  // dragControllerDiv();
+  handleWidth('.resizeL');
+  // handleWidth('.resizeR');
 });
 
 const style = computed(() => {
@@ -237,5 +334,37 @@ const style = computed(() => {
   position: relative;
   height: 5000px;
   margin: 0px;
+}
+
+.resize {
+  background-color: rgb(173, 173, 255);
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  cursor: ew-resize;
+}
+.resizeL {
+  right: -2px;
+}
+.resizeR {
+  left: -2px;
+}
+.resize:hover {
+  background-color: #0054c9;
+  transition: all 0.5s;
+}
+
+.asideL {
+  /* position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100px;
+	height: 100%; */
+  background-color: #c3dcff;
+}
+
+.main {
+  background-color: aqua;
 }
 </style>
