@@ -1,12 +1,19 @@
 <template>
   <admin-layout
+    @update:widthL="setWidthL"
+    @update:widthR="setWidthR"
     :hPosition="position0"
     :hTop="top0"
     :tPosition="position1"
+    :tzIndex="1021"
     :tTop="top1"
-    :aLtop="top1"
+    :aLtop="aLtop"
     :aLheight="500"
-    :aLwidth="200"
+    :aLwidth="aLwidth"
+    :aRtop="aLtop"
+    :aRheight="500"
+    :aRwidth="aRwidth"
+    :mWidth="mWidth"
   >
     <template #header>
       <div class="flex-center h-full bg-#5533ee">
@@ -71,13 +78,16 @@
         <li v-for="n in 150" :key="n">adfsafd {{ n }} <br /></li>
       </ul>
     </template>
-    <template #asideL> qwerqer </template>
+    <template #asideL></template>
+    <template #asideR></template>
   </admin-layout>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import AdminLayout from '@asialine/xia-ui/lay';
+
+console.log('layout', AdminLayout);
 
 type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
 const position0 = ref<Position>('relative');
@@ -86,6 +96,19 @@ const position1 = ref<Position>('sticky');
 type Auto = number | 'auto';
 const top0 = ref<Auto>(0);
 const top1 = ref<Auto>(0);
+const aLtop = ref<Auto>(100);
+const aLwidth = ref<number>(200);
+const aRwidth = ref<number>(200);
+const mWidth = ref<number>(500);
+
+function setWidthL(width: number) {
+  aLwidth.value = width;
+  mWidth.value = 700 - width;
+}
+function setWidthR(width: number) {
+  aRwidth.value = width;
+  mWidth.value = 700 - width;
+}
 </script>
 
 <style>

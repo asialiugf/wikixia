@@ -47,7 +47,7 @@
       :height="props.aLheight"
       :padding-left="0"
     >
-      <slot name="asideL"> {{ xxx }} -- {{ yyy }} </slot>
+      <slot name="asideL"> {{ xxx }} -- {{ yyy }} rlen: {{ rlen }}</slot>
       <div v-if="hasAsideLeft" class="resize resizeL"></div>
     </layout-block>
 
@@ -57,11 +57,11 @@
       class="asideR"
       :position="'absolute'"
       :top="150"
-      :left="500"
-      :right="'auto'"
+      :left="'auto'"
+      :right="0"
       :bottom="'auto'"
       :z-index="1001"
-      :width="props.aRwidth"
+      :width="widthR"
       :height="500"
       :padding-left="0"
     >
@@ -93,12 +93,12 @@
       :left="props.tLeft"
       :right="props.tRight"
       :bottom="props.tBottom"
-      :min-height="48"
+      :min-height="348"
       :z-index="1001"
       :width="1200"
       :padding-left="0"
     >
-      <slot name="main"> </slot>
+      <slot name="footer"> </slot>
     </layout-block>
   </div>
 </template>
@@ -108,6 +108,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useWindowScroll, useIntervalFn } from '@vueuse/core';
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 import LayoutBlock from './LayoutBlock.vue';
+import type { LayoutBlockProps } from './LayoutBlock.vue';
 
 interface Props {
   /** 开启fixed布局 */
@@ -136,6 +137,7 @@ interface Props {
   aLright?: number | 'auto';
   aLbottom?: number | 'auto';
   aLzIndex?: number | 'auto';
+  aLMinWidth?: number;
   aLwidth?: number;
   aLheight?: number | 'auto';
   aLpaddingLeft?: number | 'auto';
@@ -146,7 +148,8 @@ interface Props {
   aRright?: number | 'auto';
   aRbottom?: number | 'auto';
   aRzIndex?: number | 'auto';
-  aRwidth?: number | 'auto';
+  aRMinWidth?: number;
+  aRwidth?: number;
   aRheight?: number | 'auto';
   aRpaddingLeft?: number | 'auto';
   /* Footer */
@@ -160,7 +163,9 @@ interface Props {
   fFheight?: number | 'auto';
   fFpaddingLeft?: number | 'auto';
   mWidth: number;
+  // myFooter: footerType;
 }
+
 const props = withDefaults(defineProps<Props>(), {
   /* Header */
   hPosition: 'relative',
@@ -189,6 +194,7 @@ const props = withDefaults(defineProps<Props>(), {
   aLright: 'auto',
   aLbottom: 'auto',
   aLzIndex: 1001,
+  aLMinWidth: 200,
   aLwidth: 1200,
   aLheight: 148,
   aLpaddingLeft: 0,
@@ -199,6 +205,7 @@ const props = withDefaults(defineProps<Props>(), {
   aRright: 'auto',
   aRbottom: 'auto',
   aRzIndex: 1001,
+  aRMinWidth: 200,
   aRwidth: 1200,
   aRheight: 148,
   aRpaddingLeft: 0,
@@ -214,6 +221,18 @@ const props = withDefaults(defineProps<Props>(), {
   fFpaddingLeft: 0,
   mWidth: 500
 });
+
+// tag: 'footer',
+// position: 'relative',
+// top: 'auto',
+// left: 'auto',
+// right: 'auto',
+// bottom: 'auto',
+// zIndex: 1001,
+// width: 1200,
+// height: 148,
+// paddingLeft: 0,
+// minHeight: 0
 
 const hasHeader = computed(() => {
   return props.hPosition !== 'static';
@@ -253,37 +272,59 @@ const { x, y } = useWindowScroll();
 const widthX = computed(() => {
   return props.aLwidth;
 });
+const widthR = computed(() => {
+  return props.aRwidth;
+});
 
 // --------------------------------------------------------------------------
 
 const xxx = ref(0);
 const yyy = ref(0);
+const rlen = ref(0);
 
 interface Emits {
-  (e: 'update:width', asideWidth: number): void;
+  (e: 'update:widthL', asideWidthL: number): void;
+  (e: 'update:widthR', asideWidthR: number): void;
 }
 const emit = defineEmits<Emits>();
-const asideWidth = computed({
+const asideWidthL = computed({
   get() {
     return props.aLwidth;
   },
   set(newValue: number) {
-    emit('update:width', newValue);
+    emit('update:widthL', newValue);
   }
 });
 
-function handleWidth(className: string): boolean {
+const asideWidthR = computed({
+  get() {
+    return props.aRwidth;
+  },
+  set(newValue: number) {
+    emit('update:widthL', newValue);
+  }
+});
+
+function handleWidth(className: string, isLeft: boolean): boolean {
   // asideWidth.value += 10;
   const element = document.querySelector(className) as HTMLElement;
   element.onmousedown = e => {
     e.preventDefault(); // 阻止默认事件发生
     const startX = e.clientX;
-    const kkk = props.aLwidth;
+    const w = isLeft ? props.aLwidth : props.aRwidth;
+    xxx.value = startX;
     document.onmousemove = e1 => {
       const endX = e1.clientX;
-      const moveLen = endX - startX;
-      asideWidth.value = kkk + moveLen;
-      xxx.value = startX;
+      // const len = w + endX - startX;
+      if (isLeft) {
+        const len = w + endX - startX;
+        asideWidthL.value = len < props.aLMinWidth ? props.aLMinWidth : len;
+      } else {
+        const len = w + startX - endX;
+        asideWidthR.value = len < props.aRMinWidth ? props.aRMinWidth : len;
+        rlen.value = len;
+      }
+
       yyy.value = endX;
     };
   };
@@ -305,19 +346,20 @@ function onResize() {
   sy.value = window.innerHeight;
   const element = document.querySelector('.main') as HTMLElement;
   mainh.value = element.clientHeight;
-  console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
-  console.log(sx.value, sy.value, mainh.value);
-  console.log(element);
+  // console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+  // console.log(sx.value, sy.value, mainh.value);
+  // console.log(element);
 }
 
 onMounted(() => {
   window.addEventListener('resize', onResize);
   onResize();
   // dragControllerDiv();
-  handleWidth('.resizeL');
-  // handleWidth('.resizeR');
+  handleWidth('.resizeL', true);
+  handleWidth('.resizeR', false);
 });
 
+// 整个页面的宽度
 const style = computed(() => {
   console.log('ssssssssssssssssssssssssssssssssss');
   console.log(mainh.value);
@@ -325,17 +367,11 @@ const style = computed(() => {
     margin: 0px;
     width: ${sx.value}px;
     position: relative;
-    height: 6000px;
+		background-color: #ddeeaa
   `;
 });
 </script>
 <style>
-.wikixia-admin-layout {
-  position: relative;
-  height: 5000px;
-  margin: 0px;
-}
-
 .resize {
   background-color: rgb(173, 173, 255);
   width: 4px;
@@ -364,6 +400,12 @@ const style = computed(() => {
   background-color: #c3dcff;
 }
 
+.asideR {
+  background-color: #c3dcff;
+}
+.footer {
+  background-color: #368aff;
+}
 .main {
   background-color: aqua;
 }

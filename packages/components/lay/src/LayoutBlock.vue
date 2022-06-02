@@ -12,25 +12,22 @@
 import { ref, computed } from 'vue';
 // import { useCssRender } from '../../../hooks';
 
-interface Props {
+export interface LayoutBlockProps {
   tag: string; // 可以是 div | main | aside | header | footer | section | article | nav  | content | footer
-  /** 开启fixed布局 */
   position?: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
   top?: number | 'auto';
   left?: number | 'auto';
   right?: number | 'auto';
   bottom?: number | 'auto';
   minHeight?: number;
-  /** fixed布局的层级 */
-  zIndex?: number | 'auto';
-  /** 最小宽度 */
-  width?: number | 'auto';
-  /** 高度 */
-  height?: number | 'auto';
-  /** 左侧内边距 */
-  paddingLeft?: number | 'auto';
+  minWidth?: number;
+  zIndex?: number | 'auto' /** fixed布局的层级 */;
+  width?: number | 'auto' /** 最小宽度 */;
+  height?: number | 'auto' /** 高度 */;
+  paddingLeft?: number | 'auto' /** 左侧内边距 */;
 }
-const props = withDefaults(defineProps<Props>(), {
+
+const props = withDefaults(defineProps<LayoutBlockProps>(), {
   tag: 'div',
   position: 'relative',
   top: 'auto',
@@ -38,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   right: 'auto',
   bottom: 'auto',
   minHeight: 50,
+  minWidth: 200,
   zIndex: 1001,
   width: 1200,
   height: 'auto',
@@ -50,7 +48,7 @@ const tag = computed(() => {
 });
 
 const style = computed(() => {
-  const { position, top, left, right, bottom, minHeight, zIndex, width, height, paddingLeft } = props;
+  const { position, top, left, right, bottom, minHeight, minWidth, zIndex, width, height, paddingLeft } = props;
   const Top = top === 'auto' ? top : `${top}px`;
   const Left = left === 'auto' ? left : `${left}px`;
   const Right = right === 'auto' ? right : `${right}px`;
@@ -65,6 +63,7 @@ const style = computed(() => {
 		width: ${width}px;
 	  height: ${height}px;
 		min-height: ${minHeight}px;
+		min-width: ${minWidth}px;
 		z-index: ${zIndex};
 		padding-left: ${paddingLeft}px;
 		padding-right: ${paddingLeft}px;
