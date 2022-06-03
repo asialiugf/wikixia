@@ -98,16 +98,14 @@ const top0 = ref<Auto>(0);
 const top1 = ref<Auto>(0);
 const aLtop = ref<Auto>(100);
 const aLwidth = ref<number>(200);
-const aRwidth = ref<number>(200);
+const aRwidth = ref<number>(300);
 const mWidth = ref<number>(500);
 
 function setWidthL(width: number) {
   aLwidth.value = width;
-  mWidth.value = 700 - width;
 }
 function setWidthR(width: number) {
   aRwidth.value = width;
-  mWidth.value = 700 - width;
 }
 </script>
 

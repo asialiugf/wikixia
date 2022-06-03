@@ -9,7 +9,7 @@
       :right="props.hRight"
       :bottom="props.hBottom"
       :z-index="1001"
-      :width="1200"
+      :width="hWidth"
       :min-height="48"
       :padding-left="0"
     >
@@ -26,7 +26,7 @@
       :bottom="props.tBottom"
       :min-height="48"
       :z-index="props.tzIndex"
-      :width="1200"
+      :width="lWidth"
       :height="48"
       :padding-left="0"
     >
@@ -43,11 +43,11 @@
       :right="props.aLright"
       :bottom="props.aLbottom"
       :z-index="1001"
-      :width="widthX"
+      :width="widthL"
       :height="props.aLheight"
       :padding-left="0"
     >
-      <slot name="asideL"> {{ xxx }} -- {{ yyy }} rlen: {{ rlen }}</slot>
+      <slot name="asideL"> {{ xxx }} -- {{ yyy }} rlen: {{ rlen }} -- {{ layouth }} {{ mainh }}</slot>
       <div v-if="hasAsideLeft" class="resize resizeL"></div>
     </layout-block>
 
@@ -65,7 +65,7 @@
       :height="500"
       :padding-left="0"
     >
-      <div v-if="hasAsideLeft" class="resize resizeR"></div>
+      <div v-if="hasAsideRight" class="resize resizeR"></div>
       <slot name="asideR">qeqerqwer</slot>
     </layout-block>
 
@@ -78,10 +78,11 @@
       :right="props.tRight"
       :bottom="props.tBottom"
       :z-index="1001"
-      :width="props.mWidth"
+      :width="mWidth"
       :padding-left="0"
     >
       <slot name="main"> </slot>
+      <div class="minimap" :style="ministyle"></div>
     </layout-block>
 
     <layout-block
@@ -95,7 +96,7 @@
       :bottom="props.tBottom"
       :min-height="348"
       :z-index="1001"
-      :width="1200"
+      :width="lWidth"
       :padding-left="0"
     >
       <slot name="footer"> </slot>
@@ -247,11 +248,11 @@ const hasFooter = computed(() => {
 });
 
 const hasAsideLeft = computed(() => {
-  return props.hPosition !== 'static';
+  return false;
 });
 
 const hasAsideRight = computed(() => {
-  return props.hPosition !== 'static';
+  return false;
 });
 // const commonProps = computed(() => {
 //   const { transitionDuration, transitionTimingFunction } = props;
@@ -261,23 +262,16 @@ const hasAsideRight = computed(() => {
 //   };
 // });
 
-// type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-// const position = ref<Position>('absolute');
-
-// type Auto = number | 'auto';
-// const auto = ref<Auto>('auto');
-
 const { x, y } = useWindowScroll();
 
-const widthX = computed(() => {
+const widthL = computed(() => {
   return props.aLwidth;
 });
 const widthR = computed(() => {
   return props.aRwidth;
 });
 
-// --------------------------------------------------------------------------
-
+// ---------------------------------拖动改变宽度-----------------------------------------
 const xxx = ref(0);
 const yyy = ref(0);
 const rlen = ref(0);
@@ -301,12 +295,11 @@ const asideWidthR = computed({
     return props.aRwidth;
   },
   set(newValue: number) {
-    emit('update:widthL', newValue);
+    emit('update:widthR', newValue);
   }
 });
 
 function handleWidth(className: string, isLeft: boolean): boolean {
-  // asideWidth.value += 10;
   const element = document.querySelector(className) as HTMLElement;
   element.onmousedown = e => {
     e.preventDefault(); // 阻止默认事件发生
@@ -322,7 +315,6 @@ function handleWidth(className: string, isLeft: boolean): boolean {
       } else {
         const len = w + startX - endX;
         asideWidthR.value = len < props.aRMinWidth ? props.aRMinWidth : len;
-        rlen.value = len;
       }
 
       yyy.value = endX;
@@ -340,29 +332,46 @@ function handleWidth(className: string, isLeft: boolean): boolean {
 const sx = ref(0);
 const sy = ref(0);
 const mainh = ref(0);
+const layouth = ref(0);
+
+const mWidth = computed(() => {
+  return sx.value - props.aLwidth - props.aRwidth - 20;
+});
+
+const lWidth = computed(() => {
+  return sx.value;
+});
+
+const hWidth = computed(() => {
+  return sx.value;
+});
 
 function onResize() {
+  // 下面的 -20是为了让页面滚动条不占用宽度
   sx.value = window.innerWidth - 20;
   sy.value = window.innerHeight;
   const element = document.querySelector('.main') as HTMLElement;
   mainh.value = element.clientHeight;
-  // console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
-  // console.log(sx.value, sy.value, mainh.value);
-  // console.log(element);
+
+  // const element1 = document.querySelector('.layout') as HTMLElement;
+  // layouth.value = element1.clientHeight;
 }
 
 onMounted(() => {
   window.addEventListener('resize', onResize);
   onResize();
-  // dragControllerDiv();
-  handleWidth('.resizeL', true);
-  handleWidth('.resizeR', false);
+  if (hasAsideLeft.value) {
+    handleWidth('.resizeL', true);
+  }
+  if (hasAsideRight.value) {
+    handleWidth('.resizeR', false);
+  }
 });
 
 // 整个页面的宽度
 const style = computed(() => {
-  console.log('ssssssssssssssssssssssssssssssssss');
-  console.log(mainh.value);
+  // console.log('ssssssssssssssssssssssssssssssssss');
+  // console.log(mainh.value);
   return `
     margin: 0px;
     width: ${sx.value}px;
@@ -370,8 +379,39 @@ const style = computed(() => {
 		background-color: #ddeeaa
   `;
 });
+
+const ministyle = computed(() => {
+  return `
+	position: absolute;
+	width:${mWidth.value / 10}px;
+	top:0px;
+	right:0px;
+	height:${mainh.value}px;
+	background-color: #886655;
+	`;
+});
 </script>
 <style>
+.layout::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+  /**/
+}
+.layout::-webkit-scrollbar-track {
+  background: rgb(239, 239, 239);
+  border-radius: 2px;
+}
+.layout::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 10px;
+}
+.layout::-webkit-scrollbar-thumb:hover {
+  background: #333;
+}
+.layout::-webkit-scrollbar-corner {
+  background: #179a16;
+}
+
 .resize {
   background-color: rgb(173, 173, 255);
   width: 4px;
