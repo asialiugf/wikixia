@@ -1,102 +1,70 @@
 <template>
   <div class="layout" :style="layoutStyle">
-    <header v-if="hasHeader" :style="headerStyle">
+    <header v-if="props.hasCover" ref="cover" :style="coverStyle">
+      <slot name="cover"></slot>
+    </header>
+    <header v-if="props.hasHidden" ref="hidden" :style="hiddenStyle">
+      <slot name="hidden"></slot>
+    </header>
+    <header v-if="props.hasHeader" ref="header1" class="header" :style="headerStyle">
       <slot name="header"></slot>
     </header>
 
-    <div v-if="hasTab" class="layout-tab" :style="tabStyle">
+    <div v-if="props.hasTab" class="layout-tab" :style="tabStyle">
       <slot name="tab"
         >sx:y {{ sx }} - {{ sy }} -- main height: {{ mainh }} -- footero {{ footero }}
         <div v-if="props.headerTimeout">来了！</div>
       </slot>
     </div>
 
-    <layout-block
-      v-if="hasAsideLeft"
-      tag="aside"
-      class="asideL"
-      :position="'fixed'"
-      :top="asideLTop"
-      :left="props.aLleft"
-      :right="props.aLright"
-      :bottom="0"
-      :z-index="1001"
-      :width="widthL"
-      :height="300"
-      :padding-left="0"
-    >
-      <slot name="asideL"> {{ xxx }} -- {{ yyy }} rlen: {{ rlen }} -- {{ layouth }} {{ mainh }}</slot>
+    <aside v-if="props.hasAsideLeft" class="asideL" :style="asideLStyle">
+      <slot name="asideL"></slot>
       <!-- 拖拽变宽窄 -->
       <div class="resize resizeL"></div>
       <!-- 折叠小图标 -->
       <div class="hello" :style="asideZhedie" @click="changeWidth"></div>
-    </layout-block>
+    </aside>
 
-    <layout-block
-      v-if="hasAsideRight"
-      tag="aside"
-      class="asideR"
-      :position="'absolute'"
-      :top="asideRTop"
-      :left="'auto'"
-      :right="0"
-      :bottom="0"
-      :z-index="1001"
-      :width="widthR"
-      :padding-left="0"
-    >
+    <aside v-if="props.hasAsideRight" class="asideR" :style="asideRStyle">
       <div class="resize resizeR"></div>
       <slot name="asideR">qeqerqwer</slot>
-    </layout-block>
+    </aside>
 
-    <layout-block
-      tag="main"
-      class="main"
-      :position="'relative'"
-      :top="props.tTop"
-      :left="props.aLwidth + 10"
-      :right="props.tRight"
-      :bottom="props.tBottom"
-      :z-index="1001"
-      :width="mWidth"
-      :padding-left="0"
-    >
-      <slot name="main"> </slot>
-      <div v-if="hasMinimap" class="minimap" :style="ministyle"></div>
-    </layout-block>
+    <main class="main" :style="mainStyle">
+      <slot name="main"></slot>
+      <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div>
+    </main>
 
-    <!-- <layout-block
-      v-if="hasFooter"
-      tag="footer"
-      class="footer"
-      :position="props.tPosition"
-      :top="props.tTop"
-      :left="props.tLeft"
-      :right="props.tRight"
-      :bottom="props.tBottom"
-      :min-height="348"
-      :z-index="1"
-      :width="lWidth"
-      :padding-left="0"
-    >
-      <slot name="footer"> </slot>
-    </layout-block> -->
-
-    <footer v-if="hasFooter" class="footer" :style="footerStyle">
+    <footer v-if="props.hasFooter" class="footer" :style="footerStyle">
       <slot name="footer"></slot>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-import { useWindowScroll, useIntervalFn } from '@vueuse/core';
+import { ref, computed, onMounted, watch, onBeforeMount } from 'vue';
+import { isString, useWindowScroll, useElementSize, useResizeObserver } from '@vueuse/core';
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
-import LayoutBlock from './LayoutBlock.vue';
-import type { LayoutBlockProps } from './LayoutBlock.vue';
+// import LayoutBlock from './LayoutBlock.vue';
 
 interface Props {
+  hasCover?: boolean;
+  hasHidden?: boolean;
+  hasHeader?: boolean;
+
+  hasTab?: boolean;
+  hasAsideLeft?: boolean;
+  hasAsideRight?: boolean;
+  hasMinimap?: boolean;
+  hasFooter?: boolean;
+
+  // 暂时不需要以下属性 用于广告？
+  // hasTabInfo: boolean;
+  // hasMainInfo: boolean;
+  // hasFooterInfo: boolean;
+
   headerTimeout?: boolean;
+
   /** 开启fixed布局 */
   hPosition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky'; // 'relative'
   hTop?: number | 'auto';
@@ -106,6 +74,7 @@ interface Props {
   hzIndex?: number | 'auto';
   hWidth?: number | 'auto';
   hHeight?: number | 'auto';
+  hMinHeight?: number | 'auto';
   hPaddingLeft?: number | 'auto';
   tPosition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
   tTop?: number | 'auto';
@@ -115,6 +84,7 @@ interface Props {
   tzIndex?: number | 'auto';
   tWidth?: number | 'auto';
   tHeight?: number | 'auto';
+  tMinHeight?: number | string;
   tPaddingLeft?: number | 'auto';
   /* Aside Left */
   aLposition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
@@ -148,11 +118,21 @@ interface Props {
   fWidth?: number | 'auto';
   fHeight?: number | 'auto';
 
-  mWidth: number;
+  // mWidth: number;
   // myFooter: footerType;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  hasCover: false,
+  hasHidden: false,
+
+  hasHeader: true,
+  hasTab: true,
+  hasAsideLeft: false,
+  hasAsideRight: false,
+  hasMinimap: true,
+  hasFooter: true,
+
   headerTimeout: false,
   /* Header */
   hPosition: 'sticky',
@@ -163,6 +143,7 @@ const props = withDefaults(defineProps<Props>(), {
   hzIndex: 1001,
   hWidth: 1200,
   hHeight: 'auto',
+  hMinHeight: 48,
   hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
@@ -173,6 +154,7 @@ const props = withDefaults(defineProps<Props>(), {
   tzIndex: 1003,
   tWidth: 1200,
   tHeight: 148,
+  tMinHeight: 50,
   tPaddingLeft: 0,
   /* Aside Left */
   aLposition: 'absolute',
@@ -204,47 +186,20 @@ const props = withDefaults(defineProps<Props>(), {
   fBottom: 'auto',
   fzIndex: 1001,
   fWidth: 1200,
-  fHeight: 148,
+  fHeight: 148
 
-  mWidth: 500
+  // mWidth: 500
 });
 
-const hasHeader = computed(() => {
-  return props.hPosition !== 'static';
-});
+// interface myTF {
+//   isA: boolean;
+//   isB: boolean;
+// }
 
-const hasTab = computed(() => {
-  return props.tPosition !== 'static';
-});
-
-const hasFooter = computed(() => {
-  return props.hPosition !== 'static';
-});
-
-const hasAsideLeft = computed(() => {
-  return true;
-});
-
-const hasAsideRight = computed(() => {
-  return true;
-});
-
-// 文章的minimap
-const hasMinimap = computed(() => {
-  return true;
-});
-
-// const mouseInaside = computed(() => {
-//   return true;
+// const myTFx = computed<myTF>(() => {
+//   const { hasCover, hasHidden, hasHeader, hasTab } = props;
+//   return { isA: hasCover, isB: hasHidden || hasHeader || hasTab };
 // });
-
-const mouseInaside = ref(true);
-const mouseover = () => {
-  mouseInaside.value = true;
-};
-const mouseout = () => {
-  mouseInaside.value = false;
-};
 
 // const commonProps = computed(() => {
 //   const { transitionDuration, transitionTimingFunction } = props;
@@ -266,7 +221,6 @@ const widthR = computed(() => {
 // ---------------------------------拖动改变宽度-----------------------------------------
 const xxx = ref(0);
 const yyy = ref(0);
-const rlen = ref(0);
 
 interface Emits {
   (e: 'update:widthL', asideWidthL: number): void;
@@ -286,6 +240,7 @@ const asideWidthR = computed({
   get() {
     return props.aRwidth;
   },
+  // 当给 asideWidthR 赋值时，会触发 set 方法
   set(newValue: number) {
     emit('update:widthR', newValue);
   }
@@ -320,81 +275,99 @@ function handleWidth(className: string, isLeft: boolean): boolean {
 }
 // --------------------------------拖动改变宽度------------------------------------------
 function changeWidth() {
-  // mouseInaside.value = true;
   asideWidthL.value = 0;
 }
 
 const sx = ref(0);
 const sy = ref(0);
 const mainh = ref(0);
-const layouth = ref(0);
+// const layouth = ref(0);
 const footero = ref(0);
 
-const mWidth = computed(() => {
-  return sx.value - props.aLwidth - props.aRwidth - 20;
+// type Auto = number | 'auto';
+// const headerHeight = ref<Auto>(0);
+
+const header1 = ref(null);
+const { height } = useElementSize(header1);
+const headerHeight = computed(() => {
+  return height.value;
 });
 
-const lWidth = computed(() => {
-  return sx.value;
+// 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-------------------------------------
+const mainWidth = computed(() => {
+  const a = props.hasAsideLeft ? props.aLwidth : 0;
+  const b = props.hasAsideRight ? props.aRwidth : 0;
+  const c = sx.value - a - b - 20;
+  return c < 600 ? 600 : c;
 });
 
-const hWidth = computed(() => {
-  return sx.value;
-});
+// const lWidth = computed(() => {
+//   return sx.value;
+// });
+
+// const hWidth = computed(() => {
+//   return sx.value;
+// });
 
 // 计算高度 --------------------------------------------------------------------------
 const asideLTop = ref(300);
 const asideRTop = ref(300);
 // const headerHeight = ref(0);
 
-watch(
-  () => props.headerTimeout,
-  () => {
-    asideLTop.value = 300;
-    asideRTop.value = 500;
-    // headerHeight.value = 400;
-  },
-  {
-    immediate: true
-  }
-);
+// headerTimeout是从父组件中传过来的，但它早于 v- if 指令的执行，所以它的值是 undefined
+// watch(
+//   () => props.headerTimeout,
+//   () => {
+//     asideLTop.value = 300; // 需要计算*******
+//     asideRTop.value = 300;
+//     // headerHeight.value = 400;
+//     const element = document.querySelector('.header') as HTMLElement;
+//     console.log('kkkkkkkkkkkkkkkkkkkk', element.offsetHeight);
+//     headerHeight.value = element === null ? props.hMinHeight : element.offsetHeight;
+//   },
+//   {
+//     immediate: false
+//   }
+// );
 
 // 计算高度 --------------------------------------------------------------------------
-const headerHeight = computed(() => {
-  const { headerTimeout } = props;
-  if (headerTimeout) {
-    return 200;
-  }
-  return props.hHeight;
-});
+
 // 计算高度 --------------------------------------------------------------------------
 
 function onResize() {
   // 下面的 -20是为了让页面滚动条不占用宽度
   sx.value = window.innerWidth - 20;
   sy.value = window.innerHeight;
+  console.log('111111111ooooooooooooooooooo', sx.value, sy.value);
   const element = document.querySelector('.main') as HTMLElement;
-  mainh.value = element.clientHeight;
-
-  const element1 = document.querySelector('.layout') as HTMLElement;
-  layouth.value = element1.clientHeight;
+  mainh.value = element.offsetHeight < sy.value ? sy.value : element.offsetHeight;
 
   const element2 = document.querySelector('.footer') as HTMLElement;
-  footero.value = element2.offsetHeight;
+  footero.value = element2 === null ? 0 : element2.offsetHeight;
 }
 
+onBeforeMount(() => {
+  sx.value = window.innerWidth - 20;
+  sy.value = window.innerHeight;
+  console.log('ooooooooooooooooooo', sx.value, sy.value);
+});
+
 onMounted(() => {
+  // const element = document.querySelector('.header') as HTMLElement;
+  // headerHeight.value = element === null ? props.hMinHeight : element.offsetHeight;
+  // console.log('onMounted headerHeight', element.offsetHeight);
+
   window.addEventListener('resize', onResize);
   onResize();
-  if (hasAsideLeft.value) {
+  if (props.hasAsideLeft) {
     handleWidth('.resizeL', true);
   }
-  if (hasAsideRight.value) {
+  if (props.hasAsideRight) {
     handleWidth('.resizeR', false);
   }
 });
 
-// ------------------------------------------ 页面样式 ------------------------------------------------
+// ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
   return `
@@ -404,9 +377,9 @@ const layoutStyle = computed(() => {
 		background-color: #ddeeaa
   `;
 });
-// header 的样式
-const headerStyle = computed(() => {
-  const { hPosition, hTop, hLeft, hRight, hBottom, hzIndex, hWidth, hHeight } = props;
+
+const coverStyle = computed(() => {
+  const { hPosition } = props;
   return `
 		width: ${sx.value}px;
 		height: ${headerHeight.value}px;
@@ -417,12 +390,41 @@ const headerStyle = computed(() => {
 		background-color: #aeae23;
 	`;
 });
-// tab 的样式
-const tabStyle = computed(() => {
-  const { tPosition, tTop, tLeft, tRight, tBottom, tzIndex, tWidth, tHeight } = props;
+
+const hiddenStyle = computed(() => {
+  const { hPosition } = props;
   return `
 		width: ${sx.value}px;
 		height: ${headerHeight.value}px;
+		position: ${hPosition};
+		top: 0px;
+		left: 0px;
+		z-index: 100;
+		background-color: #aeae23;
+	`;
+});
+
+// header 的样式
+const headerStyle = computed(() => {
+  const { hPosition, hMinHeight } = props;
+  return `
+		width: ${sx.value}px;
+		position: ${hPosition};
+		min-height: ${hMinHeight}px;
+		top: 0px;
+		left: 0px;
+		z-index: 100;
+		background-color: #aeae23;
+	`;
+});
+// tab 的样式
+const tabStyle = computed(() => {
+  const { tPosition, tHeight, tMinHeight } = props;
+  const height1 = isString(tHeight) ? tHeight : `${tHeight}px`;
+  return `
+		width: ${sx.value}px;
+		height: ${height1};
+		min-height: ${tMinHeight}px;
 		position: ${tPosition};
 		top: 0px;
 		left: 0px;
@@ -431,8 +433,53 @@ const tabStyle = computed(() => {
 	`;
 });
 
+const mainStyle = computed(() => {
+  const { tTop, aLwidth, tRight } = props;
+  return `
+		width: ${mainWidth.value}px;
+		position: relative;
+		top: ${tTop}px;
+		left: ${aLwidth + 10}px;
+		right: ${tRight}px;
+		z-index: 1001;
+		height: ${mainh.value}px;
+		background-color: #f1f1f1;
+	`;
+});
+
+const asideLStyle = computed(() => {
+  const { aLleft, aLright } = props;
+  return `
+		width: ${mainWidth.value}px;
+		position: absolute;
+		top: ${asideLTop.value}px;
+		left: ${aLleft}px;
+		right: ${aLright}px;
+		bottom: 0px;
+		width: ${widthL.value}px;
+    height: ${mainh.value}px;
+		z-index: 1001;
+	`;
+});
+
+const asideRStyle = computed(() => {
+  // const { mPosition, tTop, aLleft, aLright, mBottom, mzIndex, mHeight } = props;
+  return `
+		width: ${mainWidth.value}px;
+		position: absolute;
+		top: ${asideRTop.value}px;
+		left: auto;
+		right: 0px;
+		bottom: 0px;
+		width: ${widthR.value}px;
+    height: ${mainh.value}px;
+		z-index: 1001;
+
+	`;
+});
+
 const footerStyle = computed(() => {
-  const { fPosition, fTop, fLeft, fRight, fBottom, fzIndex, fWidth, fHeight } = props;
+  const { fPosition, fzIndex } = props;
   return `
 		width: ${sx.value}px;
 		height: ${headerHeight.value}px;
@@ -447,11 +494,12 @@ const footerStyle = computed(() => {
 const ministyle = computed(() => {
   return `
 	position: absolute;
-	width:${mWidth.value / 10}px;
+	width:${mainWidth.value / 10}px;
 	top:0px;
 	right:0px;
 	bottom:0px;
 	background-color: #886655;
+	height:${mainh.value}px;
 	`;
 });
 

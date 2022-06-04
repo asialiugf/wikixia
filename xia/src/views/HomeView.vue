@@ -2,10 +2,18 @@
   <admin-layout
     @update:widthL="setWidthL"
     @update:widthR="setWidthR"
-    :headerTimeout="headerTimeOut"
+    :hasCover="false"
+    :hasHidden="false"
+    :hasHeader="true"
+    :hasTab="true"
+    :hasAsideLeft="true"
+    :hasAsideRight="true"
+    :hasMinimap="true"
+    :hasFooter="true"
     :hPosition="'relative'"
     :hTop="top0"
     :tPosition="'sticky'"
+    :tHeight="100"
     :tzIndex="1021"
     :tTop="top1"
     :aLtop="aLtop"
@@ -20,7 +28,6 @@
       <div class="flex-center h-full bg-#5533ee">
         <nav class="ttt">
           <div>LOGO</div>
-
           <div v-if="!headerTimeOut" class="zxx-scroll">
             <p>
               最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
@@ -57,7 +64,7 @@
     <template #tab> </template>
     <template #main>
       <ul id="example-2">
-        <li v-for="n in 100" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
         <div class="zxx-scroll">
           <p>
             最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
@@ -76,7 +83,7 @@
             >开始阅读。
           </p>
         </div>
-        <li v-for="n in 110" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
       </ul>
     </template>
     <template #asideL>
@@ -112,7 +119,7 @@ import { ref } from 'vue';
 import AdminLayout from '@asialine/xia-ui/lay';
 import { useTimeout } from '@vueuse/core';
 
-const headerTimeOut = useTimeout(5000); // 设置一个定时器
+const headerTimeOut = useTimeout(8000); // 设置一个定时器
 
 type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
 const position0 = ref<Position>('sticky');
