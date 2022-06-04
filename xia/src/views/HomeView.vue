@@ -3,9 +3,9 @@
     @update:widthL="setWidthL"
     @update:widthR="setWidthR"
     :headerTimeout="headerTimeOut"
-    :hPosition="position0"
+    :hPosition="'relative'"
     :hTop="top0"
-    :tPosition="position1"
+    :tPosition="'sticky'"
     :tzIndex="1021"
     :tTop="top1"
     :aLtop="aLtop"
@@ -115,7 +115,7 @@ import { useTimeout } from '@vueuse/core';
 const headerTimeOut = useTimeout(5000); // 设置一个定时器
 
 type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-const position0 = ref<Position>('relative');
+const position0 = ref<Position>('sticky');
 const position1 = ref<Position>('sticky');
 
 type Auto = number | 'auto';

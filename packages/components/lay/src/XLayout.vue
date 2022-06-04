@@ -1,42 +1,15 @@
 <template>
-  <div class="layout" :style="style">
-    <layout-block
-      v-if="hasHeader"
-      tag="header"
-      :position="props.hPosition"
-      :top="props.hTop"
-      :left="props.hLeft"
-      :right="props.hRight"
-      :bottom="props.hBottom"
-      :z-index="1001"
-      :width="hWidth"
-      :height="headerHeight"
-      :min-height="48"
-      :padding-left="0"
-    >
+  <div class="layout" :style="layoutStyle">
+    <header v-if="hasHeader" :style="headerStyle">
       <slot name="header"></slot>
-    </layout-block>
+    </header>
 
-    <layout-block
-      v-if="hasTab"
-      tag="div"
-      :position="props.tPosition"
-      :top="props.tTop"
-      :left="props.tLeft"
-      :right="props.tRight"
-      :bottom="props.tBottom"
-      :min-height="48"
-      :z-index="props.tzIndex"
-      :width="lWidth"
-      :height="48"
-      :padding-left="0"
-      style="background-color: #f0f0f0"
-    >
+    <div v-if="hasTab" class="layout-tab" :style="tabStyle">
       <slot name="tab"
         >sx:y {{ sx }} - {{ sy }} -- main height: {{ mainh }} -- footero {{ footero }}
         <div v-if="props.headerTimeout">来了！</div>
       </slot>
-    </layout-block>
+    </div>
 
     <layout-block
       v-if="hasAsideLeft"
@@ -53,8 +26,10 @@
       :padding-left="0"
     >
       <slot name="asideL"> {{ xxx }} -- {{ yyy }} rlen: {{ rlen }} -- {{ layouth }} {{ mainh }}</slot>
+      <!-- 拖拽变宽窄 -->
       <div class="resize resizeL"></div>
-      <div :style="asideZhedie" class="hello" @click="changeWidth"></div>
+      <!-- 折叠小图标 -->
+      <div class="hello" :style="asideZhedie" @click="changeWidth"></div>
     </layout-block>
 
     <layout-block
@@ -90,7 +65,7 @@
       <div v-if="hasMinimap" class="minimap" :style="ministyle"></div>
     </layout-block>
 
-    <layout-block
+    <!-- <layout-block
       v-if="hasFooter"
       tag="footer"
       class="footer"
@@ -100,12 +75,16 @@
       :right="props.tRight"
       :bottom="props.tBottom"
       :min-height="348"
-      :z-index="1001"
+      :z-index="1"
       :width="lWidth"
       :padding-left="0"
     >
       <slot name="footer"> </slot>
-    </layout-block>
+    </layout-block> -->
+
+    <footer v-if="hasFooter" class="footer" :style="footerStyle">
+      <slot name="footer"></slot>
+    </footer>
   </div>
 </template>
 
@@ -119,7 +98,7 @@ import type { LayoutBlockProps } from './LayoutBlock.vue';
 interface Props {
   headerTimeout?: boolean;
   /** 开启fixed布局 */
-  hPosition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
+  hPosition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky'; // 'relative'
   hTop?: number | 'auto';
   hLeft?: number | 'auto';
   hRight?: number | 'auto';
@@ -160,15 +139,15 @@ interface Props {
   aRheight?: number | 'auto';
   aRpaddingLeft?: number | 'auto';
   /* Footer */
-  fFposition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-  fFtop?: number | 'auto';
-  fFleft?: number | 'auto';
-  fFright?: number | 'auto';
-  fFbottom?: number | 'auto';
-  fFzIndex?: number | 'auto';
-  fFwidth?: number | 'auto';
-  fFheight?: number | 'auto';
-  fFpaddingLeft?: number | 'auto';
+  fPosition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
+  fTop?: number | 'auto';
+  fLeft?: number | 'auto';
+  fRight?: number | 'auto';
+  fBottom?: number | 'auto';
+  fzIndex?: number | 'auto';
+  fWidth?: number | 'auto';
+  fHeight?: number | 'auto';
+
   mWidth: number;
   // myFooter: footerType;
 }
@@ -176,7 +155,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   headerTimeout: false,
   /* Header */
-  hPosition: 'relative',
+  hPosition: 'sticky',
   hTop: 'auto',
   hLeft: 'auto',
   hRight: 'auto',
@@ -218,29 +197,17 @@ const props = withDefaults(defineProps<Props>(), {
   aRheight: 148,
   aRpaddingLeft: 0,
   /* Footer */
-  fFposition: 'relative',
-  fFtop: 'auto',
-  fFleft: 'auto',
-  fFright: 'auto',
-  fFbottom: 'auto',
-  fFzIndex: 1001,
-  fFwidth: 1200,
-  fFheight: 148,
-  fFpaddingLeft: 0,
+  fPosition: 'relative',
+  fTop: 'auto',
+  fLeft: 'auto',
+  fRight: 'auto',
+  fBottom: 'auto',
+  fzIndex: 1001,
+  fWidth: 1200,
+  fHeight: 148,
+
   mWidth: 500
 });
-
-// tag: 'footer',
-// position: 'relative',
-// top: 'auto',
-// left: 'auto',
-// right: 'auto',
-// bottom: 'auto',
-// zIndex: 1001,
-// width: 1200,
-// height: 148,
-// paddingLeft: 0,
-// minHeight: 0
 
 const hasHeader = computed(() => {
   return props.hPosition !== 'static';
@@ -427,10 +394,9 @@ onMounted(() => {
   }
 });
 
-// 整个页面的宽度
-const style = computed(() => {
-  // console.log('ssssssssssssssssssssssssssssssssss');
-  // console.log(mainh.value);
+// ------------------------------------------ 页面样式 ------------------------------------------------
+// layout页面的样式
+const layoutStyle = computed(() => {
   return `
     margin: 0px;
     width: ${sx.value}px;
@@ -438,8 +404,46 @@ const style = computed(() => {
 		background-color: #ddeeaa
   `;
 });
+// header 的样式
+const headerStyle = computed(() => {
+  const { hPosition, hTop, hLeft, hRight, hBottom, hzIndex, hWidth, hHeight } = props;
+  return `
+		width: ${sx.value}px;
+		height: ${headerHeight.value}px;
+		position: ${hPosition};
+		top: 0px;
+		left: 0px;
+		z-index: 100;
+		background-color: #aeae23;
+	`;
+});
+// tab 的样式
+const tabStyle = computed(() => {
+  const { tPosition, tTop, tLeft, tRight, tBottom, tzIndex, tWidth, tHeight } = props;
+  return `
+		width: ${sx.value}px;
+		height: ${headerHeight.value}px;
+		position: ${tPosition};
+		top: 0px;
+		left: 0px;
+		z-index: 3001;
+		background-color: #ae4423;
+	`;
+});
 
-// 文章的minimap
+const footerStyle = computed(() => {
+  const { fPosition, fTop, fLeft, fRight, fBottom, fzIndex, fWidth, fHeight } = props;
+  return `
+		width: ${sx.value}px;
+		height: ${headerHeight.value}px;
+		position: ${fPosition};
+		z-index: ${fzIndex};
+		background-color: #ae4423;
+		:min-height="348"
+	`;
+});
+
+// 文章的minimap样式
 const ministyle = computed(() => {
   return `
 	position: absolute;
@@ -447,12 +451,11 @@ const ministyle = computed(() => {
 	top:0px;
 	right:0px;
 	bottom:0px;
-
 	background-color: #886655;
 	`;
 });
 
-// --------------------- 左侧折叠图标
+// --------------------- 左侧折叠图标样式
 const asideZhedie = computed(() => {
   return `
 	position: fixed;
@@ -463,6 +466,8 @@ const asideZhedie = computed(() => {
 	z-index:8000
 	`;
 });
+
+// ------------------------------------------ 页面样式 ------------------------------------------------
 </script>
 
 <style>
