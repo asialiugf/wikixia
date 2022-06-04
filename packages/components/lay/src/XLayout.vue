@@ -10,6 +10,7 @@
       :bottom="props.hBottom"
       :z-index="1001"
       :width="hWidth"
+      :height="headerHeight"
       :min-height="48"
       :padding-left="0"
     >
@@ -29,26 +30,31 @@
       :width="lWidth"
       :height="48"
       :padding-left="0"
+      style="background-color: #f0f0f0"
     >
-      <slot name="tab"></slot>
+      <slot name="tab"
+        >sx:y {{ sx }} - {{ sy }} -- main height: {{ mainh }} -- footero {{ footero }}
+        <div v-if="props.headerTimeout">来了！</div>
+      </slot>
     </layout-block>
 
     <layout-block
       v-if="hasAsideLeft"
       tag="aside"
       class="asideL"
-      :position="'absolute'"
-      :top="props.aLtop"
+      :position="'fixed'"
+      :top="asideLTop"
       :left="props.aLleft"
       :right="props.aLright"
-      :bottom="props.aLbottom"
+      :bottom="0"
       :z-index="1001"
       :width="widthL"
-      :height="props.aLheight"
+      :height="300"
       :padding-left="0"
     >
       <slot name="asideL"> {{ xxx }} -- {{ yyy }} rlen: {{ rlen }} -- {{ layouth }} {{ mainh }}</slot>
-      <div v-if="hasAsideLeft" class="resize resizeL"></div>
+      <div class="resize resizeL"></div>
+      <div :style="asideZhedie" class="hello" @click="changeWidth"></div>
     </layout-block>
 
     <layout-block
@@ -56,16 +62,15 @@
       tag="aside"
       class="asideR"
       :position="'absolute'"
-      :top="150"
+      :top="asideRTop"
       :left="'auto'"
       :right="0"
-      :bottom="'auto'"
+      :bottom="0"
       :z-index="1001"
       :width="widthR"
-      :height="500"
       :padding-left="0"
     >
-      <div v-if="hasAsideRight" class="resize resizeR"></div>
+      <div class="resize resizeR"></div>
       <slot name="asideR">qeqerqwer</slot>
     </layout-block>
 
@@ -82,7 +87,7 @@
       :padding-left="0"
     >
       <slot name="main"> </slot>
-      <div class="minimap" :style="ministyle"></div>
+      <div v-if="hasMinimap" class="minimap" :style="ministyle"></div>
     </layout-block>
 
     <layout-block
@@ -105,13 +110,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useWindowScroll, useIntervalFn } from '@vueuse/core';
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 import LayoutBlock from './LayoutBlock.vue';
 import type { LayoutBlockProps } from './LayoutBlock.vue';
 
 interface Props {
+  headerTimeout?: boolean;
   /** 开启fixed布局 */
   hPosition: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
   hTop?: number | 'auto';
@@ -168,6 +174,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  headerTimeout: false,
   /* Header */
   hPosition: 'relative',
   hTop: 'auto',
@@ -176,7 +183,7 @@ const props = withDefaults(defineProps<Props>(), {
   hBottom: 'auto',
   hzIndex: 1001,
   hWidth: 1200,
-  hHeight: 148,
+  hHeight: 'auto',
   hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
@@ -195,7 +202,7 @@ const props = withDefaults(defineProps<Props>(), {
   aLright: 'auto',
   aLbottom: 'auto',
   aLzIndex: 1001,
-  aLMinWidth: 200,
+  aLMinWidth: 0,
   aLwidth: 1200,
   aLheight: 148,
   aLpaddingLeft: 0,
@@ -206,7 +213,7 @@ const props = withDefaults(defineProps<Props>(), {
   aRright: 'auto',
   aRbottom: 'auto',
   aRzIndex: 1001,
-  aRMinWidth: 200,
+  aRMinWidth: 0,
   aRwidth: 1200,
   aRheight: 148,
   aRpaddingLeft: 0,
@@ -248,12 +255,30 @@ const hasFooter = computed(() => {
 });
 
 const hasAsideLeft = computed(() => {
-  return false;
+  return true;
 });
 
 const hasAsideRight = computed(() => {
-  return false;
+  return true;
 });
+
+// 文章的minimap
+const hasMinimap = computed(() => {
+  return true;
+});
+
+// const mouseInaside = computed(() => {
+//   return true;
+// });
+
+const mouseInaside = ref(true);
+const mouseover = () => {
+  mouseInaside.value = true;
+};
+const mouseout = () => {
+  mouseInaside.value = false;
+};
+
 // const commonProps = computed(() => {
 //   const { transitionDuration, transitionTimingFunction } = props;
 //   return {
@@ -326,13 +351,17 @@ function handleWidth(className: string, isLeft: boolean): boolean {
   };
   return false;
 }
-
-// --------------------------------------------------------------------------
+// --------------------------------拖动改变宽度------------------------------------------
+function changeWidth() {
+  // mouseInaside.value = true;
+  asideWidthL.value = 0;
+}
 
 const sx = ref(0);
 const sy = ref(0);
 const mainh = ref(0);
 const layouth = ref(0);
+const footero = ref(0);
 
 const mWidth = computed(() => {
   return sx.value - props.aLwidth - props.aRwidth - 20;
@@ -346,6 +375,33 @@ const hWidth = computed(() => {
   return sx.value;
 });
 
+// 计算高度 --------------------------------------------------------------------------
+const asideLTop = ref(300);
+const asideRTop = ref(300);
+// const headerHeight = ref(0);
+
+watch(
+  () => props.headerTimeout,
+  () => {
+    asideLTop.value = 300;
+    asideRTop.value = 500;
+    // headerHeight.value = 400;
+  },
+  {
+    immediate: true
+  }
+);
+
+// 计算高度 --------------------------------------------------------------------------
+const headerHeight = computed(() => {
+  const { headerTimeout } = props;
+  if (headerTimeout) {
+    return 200;
+  }
+  return props.hHeight;
+});
+// 计算高度 --------------------------------------------------------------------------
+
 function onResize() {
   // 下面的 -20是为了让页面滚动条不占用宽度
   sx.value = window.innerWidth - 20;
@@ -353,8 +409,11 @@ function onResize() {
   const element = document.querySelector('.main') as HTMLElement;
   mainh.value = element.clientHeight;
 
-  // const element1 = document.querySelector('.layout') as HTMLElement;
-  // layouth.value = element1.clientHeight;
+  const element1 = document.querySelector('.layout') as HTMLElement;
+  layouth.value = element1.clientHeight;
+
+  const element2 = document.querySelector('.footer') as HTMLElement;
+  footero.value = element2.offsetHeight;
 }
 
 onMounted(() => {
@@ -380,55 +439,66 @@ const style = computed(() => {
   `;
 });
 
+// 文章的minimap
 const ministyle = computed(() => {
   return `
 	position: absolute;
 	width:${mWidth.value / 10}px;
 	top:0px;
 	right:0px;
-	height:${mainh.value}px;
+	bottom:0px;
+
 	background-color: #886655;
 	`;
 });
+
+// --------------------- 左侧折叠图标
+const asideZhedie = computed(() => {
+  return `
+	position: fixed;
+	top:250px;
+	left:${asideWidthL.value - 10}px;
+	height:20px;
+	width:20px;
+	z-index:8000
+	`;
+});
 </script>
+
 <style>
-.layout::-webkit-scrollbar {
-  width: 5px;
-  height: 10px;
-  /**/
-}
-.layout::-webkit-scrollbar-track {
-  background: rgb(239, 239, 239);
-  border-radius: 2px;
-}
-.layout::-webkit-scrollbar-thumb {
-  background: #bfbfbf;
-  border-radius: 10px;
-}
-.layout::-webkit-scrollbar-thumb:hover {
-  background: #333;
-}
-.layout::-webkit-scrollbar-corner {
-  background: #179a16;
+/* ---------------------相邻选择器 实现 hover 控制 子DIV 显示隐藏 --------------  */
+.asideL:hover .hello {
+  display: block;
 }
 
+.hello {
+  background-color: #ff0000;
+  display: none;
+}
+
+.hello:hover {
+  background-color: #0054c9;
+  transition: all 0.5s;
+}
+/* ---------------------相邻选择器 实现 hover 控制 子DIV 显示隐藏 --------------  */
 .resize {
   background-color: rgb(173, 173, 255);
-  width: 4px;
+  width: 14px;
   height: 100%;
   position: absolute;
   top: 0px;
   cursor: ew-resize;
+  z-index: 5001;
 }
 .resizeL {
-  right: -2px;
+  right: -8px;
 }
 .resizeR {
   left: -2px;
 }
 .resize:hover {
   background-color: #0054c9;
-  transition: all 0.5s;
+  /* transition: all 0.5s; */
 }
 
 .asideL {
@@ -438,15 +508,56 @@ const ministyle = computed(() => {
 	width: 100px;
 	height: 100%; */
   background-color: #c3dcff;
+  /* transition: all 0.5s; */
+  overflow: scroll;
+  scrollbar-width: thin;
 }
 
 .asideR {
   background-color: #c3dcff;
+  scrollbar-width: thin;
+}
+
+.minimap {
+  background-color: rgb(31, 31, 255);
+  width: 154px;
+  position: absolute;
+  top: 0px;
+  right: 30px;
+  /* height: 100%; */
 }
 .footer {
   background-color: #368aff;
 }
 .main {
   background-color: aqua;
+}
+
+.asideL::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+  height: 8px;
+  /* display: none; */
+}
+.asideL::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  background-color: skyblue;
+  background-image: -webkit-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.2) 75%,
+    transparent 75%,
+    transparent
+  );
+}
+.asideL::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #ededed;
+  border-radius: 10px;
 }
 </style>

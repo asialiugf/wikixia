@@ -1,271 +1,149 @@
-<img src="http://lorempixel.com/600/300/abstract/5" width="600" height="300" />
 
-<div class="content">
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>position:sticky最基本表现测试</title>
+<style>
+	.layout{
+		background-color: rgb(255, 140, 0);
+		margin: 0px;
+		width: 40%;
+		position: fixed;
+		top:100px;
+		left:100px;
+		height: 80%;
+		overflow: scroll;
+		/* overflow-x: hidden;
+	overflow-y: hidden; */
+	/* overflow: -moz-scrollbars-none; */
+	/* scrollbar-width: none; */
+	}
 
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent bibendum, lorem vel tincidunt imperdiet, nibh elit laoreet felis, a bibendum nisl tortor non orci. Donec pretium fermentum felis, quis aliquet est rutrum ut. Integer quis massa ut lacus viverra pharetra in eu lacus. Aliquam tempus odio adipiscing diam pellentesque rhoncus. Curabitur a bibendum est. Mauris vehicula cursus risus id luctus. Curabitur accumsan venenatis nibh, non egestas ipsum vulputate ac. Vivamus consectetur dolor sit amet enim aliquet eu scelerisque ipsum hendrerit. Donec lobortis suscipit vestibulum. Nullam luctus pellentesque risus in ullamcorper. Nam neque nunc, mattis vitae ornare ut, feugiat a erat. Ut tempus iaculis augue vel pellentesque.</p>
+	.layout {
+  /*隐藏滚动条，当IE下溢出，仍然可以滚动*/
+  -ms-overflow-style: none;
+  /*火狐下隐藏滚动条*/
+  scrollbar-width: thin;
+}
 
-  <p>Vestibulum nunc massa, gravida quis porta nec, feugiat id metus. Nunc ac arcu dolor, quis vestibulum leo. Cras viverra mollis ipsum, non rhoncus lectus aliquam et. Morbi faucibus purus sit amet lacus aliquet elementum. Donec sit amet posuere enim. Cras in eros id tortor fringilla ultricies. Mauris faucibus ullamcorper velit, pulvinar varius odio eleifend eu. Quisque id odio metus. Morbi adipiscing ultricies posuere. Pellentesque elementum porttitor eros in molestie. Maecenas ut leo quis nisi tempor tincidunt.</p>
+.layout::-webkit-scrollbar {
+  display: none;
+	width: 0 !important; /*  和display:none效果一样*/
 
-  <img src="http://lorempixel.com/600/300/abstract/3" width="600" height="300" />
+}
 
-  <p>Donec nunc ligula, vulputate quis mollis eu, interdum quis libero. Donec nulla ante, facilisis sit amet vulputate at, tincidunt a velit. Maecenas vestibulum, nulla sed tincidunt viverra, lorem turpis aliquam urna, ut pretium orci purus consequat augue. Etiam a enim orci, vitae pulvinar odio. In elit urna, tincidunt a pellentesque et, scelerisque at nibh. Sed nec est sapien. Aliquam ullamcorper eros eu quam ultrices vel faucibus eros interdum. Etiam mattis eleifend sapien, eu iaculis massa feugiat sed. Aliquam erat volutpat. Vivamus facilisis ultricies eros, a pretium purus mollis id. Sed dapibus elit ut neque rutrum dignissim. Nulla eros nisl, venenatis quis rhoncus sit amet, molestie nec nisl. Pellentesque vel neque sapien, et sagittis nulla.</p>
+	.layout1{
+		background-color: rgb(255, 140, 0);
+		margin: 0px;
+		width: 40%;
+		position: fixed;
+		top:100px;
+		left:700px;
+		height: 80%;
+		overflow: auto;
+	}
 
-  <p>Aliquam eu iaculis mauris. Etiam arcu lectus, imperdiet sit amet volutpat vitae, commodo sed nibh. Fusce faucibus tempor cursus. Donec ut ligula tortor. Maecenas malesuada, diam vitae pharetra dictum, erat ante iaculis risus, sed sollicitudin nisl nisl vel metus. Nulla libero augue, convallis nec luctus id, iaculis nec urna. Cras vitae mi ut augue ultricies tempus.</p>
 
-  <p>Vestibulum euismod vehicula sollicitudin. Duis nibh justo, rhoncus ac ullamcorper nec, rutrum sit amet leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum varius posuere nisi sed aliquet. Etiam dolor nisi, placerat vel congue tempus, posuere sed erat. Phasellus turpis eros, molestie sed consequat in, pretium at erat. In sed faucibus metus. Vestibulum fermentum libero nec eros fermentum dapibus. Duis nec libero eros. Pellentesque magna ligula, sagittis dictum fringilla at, posuere porttitor sem. Donec aliquam, ipsum quis pulvinar dapibus, augue sem viverra sapien, nec tempus odio nulla ac metus. Nunc ut augue mi, nec consequat urna.</p>
+	.inin{
+		background-color: rgb(255, 140, 0);
+		margin: 0px;
+		width: 450px;
+		position: absolute;
+		left:50px;
+		/* overflow: scroll; */
+	}
+nav {
+	display: table;
+	width: 100%;
+	table-layout: fixed;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+}
+nav h3 {
+	display: table-cell;
+	outline: 1px solid #fff;
+	background-color: #333;
+	color: #fff;
+	text-align: center;
+	padding: 10px;
+}
+</style>
+</head>
 
-  <img src="http://lorempixel.com/600/300/abstract/2" width="600" height="300" />
+<body>
+	<div class="layout">
+		<div class="inin">
+<h1>我是标题，题题，题，……</h1>
+<nav>
+	<h3>导航A</h3>
+    <h3>导航B</h3>
+    <h3>导航C</h3>
+</nav>
+<article>
+	<p>今晚的爱奇艺尖叫之夜中，唐嫣上台领取年度戏剧女艺人奖，主持人朱丹希望她分享婚后甜蜜，可唐嫣已经下台，引发网友质疑场面尴尬。刚刚，朱丹发文回应，表示唐嫣没有不礼貌，自己也没有尴尬。随后，唐嫣也评论：“美丽的误会” </p>
+	<p>韩寒：我的生活有两个节点，一个是出书，另一个就是写博客。出书让我有了收入，博客让我有了跟读者的连接。我从小就被贴过很多标签，每多一个标签就更接近真实的我。微博也一样，每一次更新都跟随着时代的风向，与时代同行。</p>
+	<p>《游戏人生》作者榎宫祐 表示，近日有朋友想成为漫画家，过来找他商量。<br>
+他：“漫画家相当于无职啊，月收入又低，如果请助手花费更大。”（为了让朋友知道现实，又不否定梦想的小心翼翼的说法）<br>
+朋友：“可是我有一栋公寓用来收租唉......”<br>
+他：“那你想怎么活就怎么活吧！” ​​​​</p>
+<p>【湖北一小学三年级才教数学，校长回应争议：实验班的成绩远高于对比班】湖北赤壁一小学施行三年级才上数学课的教学设置，引起关注。该校校长表示，数学是一个抽象思维的功课，6岁的小孩是形象思维发展的最佳期，应该把数学往后移，按照知识发展规律。从三年级开始学数学，用3年时间学完原本5年的课程是可行的，并且经过3年的实验，实验班的成绩都要远高于对比班。</p>
+	<p>刘国梁：暮然回首这一路走来⋯⋯感恩国家队30年的培养，把我从一个13岁的孩子，培养成大满贯、总教练、再到乒协主席🏓️[心]感谢这么多年跟我一起努力征战国际赛场的教练员和运动员，是你们辛勤的付出取得的荣耀造就了今天的自己[抱抱][心]感动的是亿万国人和球迷粉丝，这么多年不离不弃的支持，才有了今日国乒的新辉煌。赢不狂.输不慌.陪国乒.战东京！</p>
 
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent bibendum, lorem vel tincidunt imperdiet, nibh elit laoreet felis, a bibendum nisl tortor non orci. Donec pretium fermentum felis, quis aliquet est rutrum ut. Integer quis massa ut lacus viverra pharetra in eu lacus. Aliquam tempus odio adipiscing diam pellentesque rhoncus. Curabitur a bibendum est. Mauris vehicula cursus risus id luctus. Curabitur accumsan venenatis nibh, non egestas ipsum vulputate ac. Vivamus consectetur dolor sit amet enim aliquet eu scelerisque ipsum hendrerit. Donec lobortis suscipit vestibulum. Nullam luctus pellentesque risus in ullamcorper. Nam neque nunc, mattis vitae ornare ut, feugiat a erat. Ut tempus iaculis augue vel pellentesque.</p>
-
-  <p>Vestibulum nunc massa, gravida quis porta nec, feugiat id metus. Nunc ac arcu dolor, quis vestibulum leo. Cras viverra mollis ipsum, non rhoncus lectus aliquam et. Morbi faucibus purus sit amet lacus aliquet elementum. Donec sit amet posuere enim. Cras in eros id tortor fringilla ultricies. Mauris faucibus ullamcorper velit, pulvinar varius odio eleifend eu. Quisque id odio metus. Morbi adipiscing ultricies posuere. Pellentesque elementum porttitor eros in molestie. Maecenas ut leo quis nisi tempor tincidunt.</p>
-
+	<p>今晚的爱奇艺尖叫之夜中，唐嫣上台领取年度戏剧女艺人奖，主持人朱丹希望她分享婚后甜蜜，可唐嫣已经下台，引发网友质疑场面尴尬。刚刚，朱丹发文回应，表示唐嫣没有不礼貌，自己也没有尴尬。随后，唐嫣也评论：“美丽的误会” </p>
+    <p>韩寒：我的生活有两个节点，一个是出书，另一个就是写博客。出书让我有了收入，博客让我有了跟读者的连接。我从小就被贴过很多标签，每多一个标签就更接近真实的我。微博也一样，每一次更新都跟随着时代的风向，与时代同行。</p>
+    <p>《游戏人生》作者榎宫祐 表示，近日有朋友想成为漫画家，过来找他商量。<br>
+他：“漫画家相当于无职啊，月收入又低，如果请助手花费更大。”（为了让朋友知道现实，又不否定梦想的小心翼翼的说法）<br>
+朋友：“可是我有一栋公寓用来收租唉......”<br>
+他：“那你想怎么活就怎么活吧！” ​​​​</p>
+	<p>【湖北一小学三年级才教数学，校长回应争议：实验班的成绩远高于对比班】湖北赤壁一小学施行三年级才上数学课的教学设置，引起关注。该校校长表示，数学是一个抽象思维的功课，6岁的小孩是形象思维发展的最佳期，应该把数学往后移，按照知识发展规律。从三年级开始学数学，用3年时间学完原本5年的课程是可行的，并且经过3年的实验，实验班的成绩都要远高于对比班。</p>
+    <p>刘国梁：暮然回首这一路走来⋯⋯感恩国家队30年的培养，把我从一个13岁的孩子，培养成大满贯、总教练、再到乒协主席🏓️[心]感谢这么多年跟我一起努力征战国际赛场的教练员和运动员，是你们辛勤的付出取得的荣耀造就了今天的自己[抱抱][心]感动的是亿万国人和球迷粉丝，这么多年不离不弃的支持，才有了今日国乒的新辉煌。赢不狂.输不慌.陪国乒.战东京！</p>
+</article>
+</div>
 </div>
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-		<style>
-			.slider {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  /* //width: 15%; */
-  min-width: 20px;
-  max-width: 60px;
-  /* //border: solid 1px #000; */
-  box-shadow: 0 2px 13px rgba(0,0,0,0.3);
-  cursor: grab;
-  opacity: 0.5;
-  transition: opacity 800ms ease-in-out 200ms;
-  z-index: 999;
 
-  &:hover {
-    opacity: 1;
-    transition-delay: 0ms;
-  }
-}
+<div class="layout1">
+	<div class="inin">
+<h1>我是标题，题题，题，……</h1>
+<nav>
+<h3>导航A</h3>
+	<h3>导航B</h3>
+	<h3>导航C</h3>
+</nav>
+<article>
+<p>今晚的爱奇艺尖叫之夜中，唐嫣上台领取年度戏剧女艺人奖，主持人朱丹希望她分享婚后甜蜜，可唐嫣已经下台，引发网友质疑场面尴尬。刚刚，朱丹发文回应，表示唐嫣没有不礼貌，自己也没有尴尬。随后，唐嫣也评论：“美丽的误会” </p>
+<p>韩寒：我的生活有两个节点，一个是出书，另一个就是写博客。出书让我有了收入，博客让我有了跟读者的连接。我从小就被贴过很多标签，每多一个标签就更接近真实的我。微博也一样，每一次更新都跟随着时代的风向，与时代同行。</p>
+<p>《游戏人生》作者榎宫祐 表示，近日有朋友想成为漫画家，过来找他商量。<br>
+他：“漫画家相当于无职啊，月收入又低，如果请助手花费更大。”（为了让朋友知道现实，又不否定梦想的小心翼翼的说法）<br>
+朋友：“可是我有一栋公寓用来收租唉......”<br>
+他：“那你想怎么活就怎么活吧！” ​​​​</p>
+<p>【湖北一小学三年级才教数学，校长回应争议：实验班的成绩远高于对比班】湖北赤壁一小学施行三年级才上数学课的教学设置，引起关注。该校校长表示，数学是一个抽象思维的功课，6岁的小孩是形象思维发展的最佳期，应该把数学往后移，按照知识发展规律。从三年级开始学数学，用3年时间学完原本5年的课程是可行的，并且经过3年的实验，实验班的成绩都要远高于对比班。</p>
+<p>刘国梁：暮然回首这一路走来⋯⋯感恩国家队30年的培养，把我从一个13岁的孩子，培养成大满贯、总教练、再到乒协主席🏓️[心]感谢这么多年跟我一起努力征战国际赛场的教练员和运动员，是你们辛勤的付出取得的荣耀造就了今天的自己[抱抱][心]感动的是亿万国人和球迷粉丝，这么多年不离不弃的支持，才有了今日国乒的新辉煌。赢不狂.输不慌.陪国乒.战东京！</p>
 
-.slider__size {
-  position: relative;
-  z-index: 3;
-}
+<p>今晚的爱奇艺尖叫之夜中，唐嫣上台领取年度戏剧女艺人奖，主持人朱丹希望她分享婚后甜蜜，可唐嫣已经下台，引发网友质疑场面尴尬。刚刚，朱丹发文回应，表示唐嫣没有不礼貌，自己也没有尴尬。随后，唐嫣也评论：“美丽的误会” </p>
+<p>韩寒：我的生活有两个节点，一个是出书，另一个就是写博客。出书让我有了收入，博客让我有了跟读者的连接。我从小就被贴过很多标签，每多一个标签就更接近真实的我。微博也一样，每一次更新都跟随着时代的风向，与时代同行。</p>
+<p>《游戏人生》作者榎宫祐 表示，近日有朋友想成为漫画家，过来找他商量。<br>
+他：“漫画家相当于无职啊，月收入又低，如果请助手花费更大。”（为了让朋友知道现实，又不否定梦想的小心翼翼的说法）<br>
+朋友：“可是我有一栋公寓用来收租唉......”<br>
+他：“那你想怎么活就怎么活吧！” ​​​​</p>
+<p>【湖北一小学三年级才教数学，校长回应争议：实验班的成绩远高于对比班】湖北赤壁一小学施行三年级才上数学课的教学设置，引起关注。该校校长表示，数学是一个抽象思维的功课，6岁的小孩是形象思维发展的最佳期，应该把数学往后移，按照知识发展规律。从三年级开始学数学，用3年时间学完原本5年的课程是可行的，并且经过3年的实验，实验班的成绩都要远高于对比班。</p>
+<p>刘国梁：暮然回首这一路走来⋯⋯感恩国家队30年的培养，把我从一个13岁的孩子，培养成大满贯、总教练、再到乒协主席🏓️[心]感谢这么多年跟我一起努力征战国际赛场的教练员和运动员，是你们辛勤的付出取得的荣耀造就了今天的自己[抱抱][心]感动的是亿万国人和球迷粉丝，这么多年不离不弃的支持，才有了今日国乒的新辉煌。赢不狂.输不慌.陪国乒.战东京！</p>
 
-.slider__controller {
-/*  outline: solid 3px black; */
-  width: 100%;
-  padding-top: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform-origin: 0 0;
-  margin: -3px;
-  border-radius: 10px;
-  border: solid 3px black;
-}
+<p>今晚的爱奇艺尖叫之夜中，唐嫣上台领取年度戏剧女艺人奖，主持人朱丹希望她分享婚后甜蜜，可唐嫣已经下台，引发网友质疑场面尴尬。刚刚，朱丹发文回应，表示唐嫣没有不礼貌，自己也没有尴尬。随后，唐嫣也评论：“美丽的误会” </p>
+	<p>韩寒：我的生活有两个节点，一个是出书，另一个就是写博客。出书让我有了收入，博客让我有了跟读者的连接。我从小就被贴过很多标签，每多一个标签就更接近真实的我。微博也一样，每一次更新都跟随着时代的风向，与时代同行。</p>
+	<p>《游戏人生》作者榎宫祐 表示，近日有朋友想成为漫画家，过来找他商量。<br>
+他：“漫画家相当于无职啊，月收入又低，如果请助手花费更大。”（为了让朋友知道现实，又不否定梦想的小心翼翼的说法）<br>
+朋友：“可是我有一栋公寓用来收租唉......”<br>
+他：“那你想怎么活就怎么活吧！” ​​​​</p>
+<p>【湖北一小学三年级才教数学，校长回应争议：实验班的成绩远高于对比班】湖北赤壁一小学施行三年级才上数学课的教学设置，引起关注。该校校长表示，数学是一个抽象思维的功课，6岁的小孩是形象思维发展的最佳期，应该把数学往后移，按照知识发展规律。从三年级开始学数学，用3年时间学完原本5年的课程是可行的，并且经过3年的实验，实验班的成绩都要远高于对比班。</p>
+	<p>刘国梁：暮然回首这一路走来⋯⋯感恩国家队30年的培养，把我从一个13岁的孩子，培养成大满贯、总教练、再到乒协主席🏓️[心]感谢这么多年跟我一起努力征战国际赛场的教练员和运动员，是你们辛勤的付出取得的荣耀造就了今天的自己[抱抱][心]感动的是亿万国人和球迷粉丝，这么多年不离不弃的支持，才有了今日国乒的新辉煌。赢不狂.输不慌.陪国乒.战东京！</p>
+</article>
+</div>
+</div>
 
-.slider__content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  transform-origin: 0 0;
-}
-
-
-
-/* Presentational Styles */
-
-html { font-size: 52.6%; }
-body {
-  font: 1.6rem/1.6 sans-serif;
-  background: linear-gradient(to bottom, #FFF, #AAA, #CE93D8, #BA68C8, #AB47BC, #9C27B0, #8E24AA);
-  background: white;
-  background-repeat: repeat-x;
-  background-size: cover;
-  max-width: 100%;
-}
-
-
-.content {
-  max-width: 26em;
-  padding: 2em;
-  margin: auto;
-}
-
-p { margin: 0 0 2em; }
-img { max-width: 100%; height: auto; margin-bottom: 2em; }
-img {
-  display: block;
-  position: relative;
-  left: -50vw;
-  margin-left: 50%; /* /calc(-50vw + 50%); */
-  width: 100vw;
-  max-width: none;
-}
-		</style>
-  </head>
-  <body>
-    <div id="app"></div>
-		<img src="http://lorempixel.com/600/300/abstract/5" width="600" height="300" />
-
-		<div class="content">
-
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent bibendum, lorem vel tincidunt imperdiet, nibh elit laoreet felis, a bibendum nisl tortor non orci. Donec pretium fermentum felis, quis aliquet est rutrum ut. Integer quis massa ut lacus viverra pharetra in eu lacus. Aliquam tempus odio adipiscing diam pellentesque rhoncus. Curabitur a bibendum est. Mauris vehicula cursus risus id luctus. Curabitur accumsan venenatis nibh, non egestas ipsum vulputate ac. Vivamus consectetur dolor sit amet enim aliquet eu scelerisque ipsum hendrerit. Donec lobortis suscipit vestibulum. Nullam luctus pellentesque risus in ullamcorper. Nam neque nunc, mattis vitae ornare ut, feugiat a erat. Ut tempus iaculis augue vel pellentesque.</p>
-
-			<p>Vestibulum nunc massa, gravida quis porta nec, feugiat id metus. Nunc ac arcu dolor, quis vestibulum leo. Cras viverra mollis ipsum, non rhoncus lectus aliquam et. Morbi faucibus purus sit amet lacus aliquet elementum. Donec sit amet posuere enim. Cras in eros id tortor fringilla ultricies. Mauris faucibus ullamcorper velit, pulvinar varius odio eleifend eu. Quisque id odio metus. Morbi adipiscing ultricies posuere. Pellentesque elementum porttitor eros in molestie. Maecenas ut leo quis nisi tempor tincidunt.</p>
-
-			<img src="http://lorempixel.com/600/300/abstract/3" width="600" height="300" />
-
-			<p>Donec nunc ligula, vulputate quis mollis eu, interdum quis libero. Donec nulla ante, facilisis sit amet vulputate at, tincidunt a velit. Maecenas vestibulum, nulla sed tincidunt viverra, lorem turpis aliquam urna, ut pretium orci purus consequat augue. Etiam a enim orci, vitae pulvinar odio. In elit urna, tincidunt a pellentesque et, scelerisque at nibh. Sed nec est sapien. Aliquam ullamcorper eros eu quam ultrices vel faucibus eros interdum. Etiam mattis eleifend sapien, eu iaculis massa feugiat sed. Aliquam erat volutpat. Vivamus facilisis ultricies eros, a pretium purus mollis id. Sed dapibus elit ut neque rutrum dignissim. Nulla eros nisl, venenatis quis rhoncus sit amet, molestie nec nisl. Pellentesque vel neque sapien, et sagittis nulla.</p>
-
-			<p>Aliquam eu iaculis mauris. Etiam arcu lectus, imperdiet sit amet volutpat vitae, commodo sed nibh. Fusce faucibus tempor cursus. Donec ut ligula tortor. Maecenas malesuada, diam vitae pharetra dictum, erat ante iaculis risus, sed sollicitudin nisl nisl vel metus. Nulla libero augue, convallis nec luctus id, iaculis nec urna. Cras vitae mi ut augue ultricies tempus.</p>
-
-			<p>Vestibulum euismod vehicula sollicitudin. Duis nibh justo, rhoncus ac ullamcorper nec, rutrum sit amet leo. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum varius posuere nisi sed aliquet. Etiam dolor nisi, placerat vel congue tempus, posuere sed erat. Phasellus turpis eros, molestie sed consequat in, pretium at erat. In sed faucibus metus. Vestibulum fermentum libero nec eros fermentum dapibus. Duis nec libero eros. Pellentesque magna ligula, sagittis dictum fringilla at, posuere porttitor sem. Donec aliquam, ipsum quis pulvinar dapibus, augue sem viverra sapien, nec tempus odio nulla ac metus. Nunc ut augue mi, nec consequat urna.</p>
-
-			<img src="http://lorempixel.com/600/300/abstract/2" width="600" height="300" />
-
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent bibendum, lorem vel tincidunt imperdiet, nibh elit laoreet felis, a bibendum nisl tortor non orci. Donec pretium fermentum felis, quis aliquet est rutrum ut. Integer quis massa ut lacus viverra pharetra in eu lacus. Aliquam tempus odio adipiscing diam pellentesque rhoncus. Curabitur a bibendum est. Mauris vehicula cursus risus id luctus. Curabitur accumsan venenatis nibh, non egestas ipsum vulputate ac. Vivamus consectetur dolor sit amet enim aliquet eu scelerisque ipsum hendrerit. Donec lobortis suscipit vestibulum. Nullam luctus pellentesque risus in ullamcorper. Nam neque nunc, mattis vitae ornare ut, feugiat a erat. Ut tempus iaculis augue vel pellentesque.</p>
-
-			<p>Vestibulum nunc massa, gravida quis porta nec, feugiat id metus. Nunc ac arcu dolor, quis vestibulum leo. Cras viverra mollis ipsum, non rhoncus lectus aliquam et. Morbi faucibus purus sit amet lacus aliquet elementum. Donec sit amet posuere enim. Cras in eros id tortor fringilla ultricies. Mauris faucibus ullamcorper velit, pulvinar varius odio eleifend eu. Quisque id odio metus. Morbi adipiscing ultricies posuere. Pellentesque elementum porttitor eros in molestie. Maecenas ut leo quis nisi tempor tincidunt.</p>
-
-		</div>
-		<script>
-console.clear();
-
-(function(){
-
-var doc = document,
-    docEl = document.documentElement,
-    body = doc.body,
-    win = window;
-
-var slider = doc.createElement('div'),
-  sliderSize = doc.createElement('div'),
-  controller = doc.createElement('div'),
-  sliderContent = doc.createElement('iframe'),
-  scale = 0.1,
-  realScale = scale;
-
-slider.className = 'slider';
-sliderSize.className = 'slider__size';
-controller.className = 'slider__controller';
-
-sliderContent.className += ' slider__content';
-sliderContent.style.transformOrigin = '0 0';
-
-slider.appendChild(sliderSize);
-slider.appendChild(controller);
-slider.appendChild(sliderContent);
-body.appendChild(slider);
-
-var html = doc.documentElement.outerHTML
-      .replace(/<script([\s\S]*?)>([\s\S]*?)<\/script>/gim, '');// Remove all scripts
-
- var script = '<script>var slider=document.querySelector(".slider"); slider.parentNode.removeChild(slider);<'+'/script>';
-  /*function checkChildren(node){ if ( node.nodeValue ) { node.nodeValue = node.nodeValue.replace(/[a-z0-9]/gi,"\u2592"); return; } for ( var i = 0; i < node.childNodes.length; i++) { checkChildren(node.childNodes[i]); } } /* checkChildren(body); */
-
-html = html.replace('</body>',script + '</body>');
-
-// Must be appended to body to work.
-  var iframeDoc = sliderContent.contentWindow.document;
-
-iframeDoc.open();
-iframeDoc.write(html);
-iframeDoc.close();
-
-
-////////////////////////////////////////
-
-function getDimensions() {
-  var bodyWidth = body.clientWidth,
-      bodyRatio = body.clientHeight / bodyWidth,
-      winRatio = win.innerHeight / win.innerWidth;
-
-  slider.style.width = (scale * 100) + '%';
-
-  // Calculate the actual scale in case a max-width/min-width is set.
-  realScale = slider.clientWidth / bodyWidth;
-
-  sliderSize.style.paddingTop = (bodyRatio * 100) + '%';
-  controller.style.paddingTop = (winRatio * 100) + '%';
-
-  sliderContent.style.transform = 'scale(' + realScale + ')';
-  sliderContent.style.width = (100 / realScale) + '%';
-  sliderContent.style.height = (100 / realScale) + '%';
-}
-
-getDimensions();
-win.addEventListener('resize', getDimensions);
-win.addEventListener('load', getDimensions);
-
-////////////////////////////////////////
-// Track Scroll
-
-function trackScroll(){
-  controller.style.transform = 'translate(' +
-    ((win.pageXOffset * realScale)) + 'px, ' +
-    ((win.pageYOffset * realScale)) + 'px)';
-}
-
-win.addEventListener('scroll', trackScroll);
-//body.addEventListener('scroll', trackScroll);
-
-
-////////////////////////////////////////
-// Click & Drag Events
-
-var mouseY = 0,
-    mouseX = 0,
-    mouseDown = false;
-
-function pointerDown(e){
-  e.preventDefault();
-  mouseDown = true;
-  mouseX = e.touches ? e.touches[0].clientX : e.clientX;
-  mouseY = e.touches ? e.touches[0].clientY : e.clientY;
-
-  var offsetX = ((mouseX - slider.offsetLeft) - (controller.clientWidth / 2)) / realScale;
-  var offsetY = ((mouseY - slider.offsetTop) - (controller.clientHeight / 2)) / realScale;
-
-  win.scrollTo(offsetX, offsetY);
-}
-slider.addEventListener('mousedown', pointerDown);
-slider.addEventListener('touchdown', pointerDown);
-
-function pointerMove(e) {
-  if (mouseDown) {
-    e.preventDefault();
-
-    var x = e.touches ? e.touches[0].clientX : e.clientX,
-        y = e.touches ? e.touches[0].clientY : e.clientY;
-
-    win.scrollBy((x - mouseX) / realScale, ((y - mouseY) / realScale));
-    mouseX = x;
-    mouseY = y;
-  }
-}
-win.addEventListener('mousemove', pointerMove);
-win.addEventListener('touchmove', pointerMove);
-
-function pointerReset(e) { mouseDown = false; }
-win.addEventListener('mouseup', pointerReset);
-win.addEventListener('touchend', pointerReset);
-
-function pointerLeave(e){
-  if ( e.target === body ) { mouseDown = false; }
-}
-body.addEventListener('mouseleave', pointerLeave);
-body.addEventListener('touchleave', pointerLeave);
-
-}())
-
-		</script>
-  </body>
+</body>
 </html>

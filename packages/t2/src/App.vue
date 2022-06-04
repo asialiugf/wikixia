@@ -6,7 +6,7 @@
       <button v-if="isActive" class="orange" @click="pause">Pause</button>
       <!-- <button v-if="!isActive" @click="pause">Resume</button> -->
 
-      <div v-if="isActive" class="zxx-scroll-ad">
+      <div v-if="!ready" class="zxx-scroll-ad">
         <li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
         <li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
         <li>adfsafd {{ n }} {{ x }} {{ y }} {{ mainh }}<br /></li>
@@ -75,11 +75,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useWindowScroll, useIntervalFn } from '@vueuse/core';
+import { useWindowScroll, useIntervalFn, useTimeout } from '@vueuse/core';
 
 // ---------------------------------------------------------------------
 const timer = ref(1);
-const interval = ref(12000);
+const interval = ref(2000);
 const { pause, isActive } = useIntervalFn(() => {
   if (timer.value <= 0) {
     isActive.value = false;
@@ -88,6 +88,8 @@ const { pause, isActive } = useIntervalFn(() => {
     timer.value -= 1;
   }
 }, interval);
+
+const ready = useTimeout(5000);
 // ---------------------------------------------------------------------
 
 const sx = ref(0);

@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { isString } from '@vueuse/core';
 // import { useCssRender } from '../../../hooks';
 
 export interface LayoutBlockProps {
@@ -23,7 +24,7 @@ export interface LayoutBlockProps {
   minWidth?: number;
   zIndex?: number | 'auto' /** fixed布局的层级 */;
   width?: number | 'auto' /** 最小宽度 */;
-  height?: number | 'auto' /** 高度 */;
+  height?: number | 'auto' | '100%' /** 高度 */;
   paddingLeft?: number | 'auto' /** 左侧内边距 */;
 }
 
@@ -35,7 +36,7 @@ const props = withDefaults(defineProps<LayoutBlockProps>(), {
   right: 'auto',
   bottom: 'auto',
   minHeight: 50,
-  minWidth: 200,
+  minWidth: 0,
   zIndex: 1001,
   width: 1200,
   height: 'auto',
@@ -48,11 +49,13 @@ const tag = computed(() => {
 });
 
 const style = computed(() => {
+  console.log(props);
   const { position, top, left, right, bottom, minHeight, minWidth, zIndex, width, height, paddingLeft } = props;
   const Top = top === 'auto' ? top : `${top}px`;
   const Left = left === 'auto' ? left : `${left}px`;
   const Right = right === 'auto' ? right : `${right}px`;
   const Bottom = bottom === 'auto' ? bottom : `${bottom}px`;
+  const height1 = isString(height) ? height : `${height}px`;
 
   return `
 	  position: ${position};
@@ -61,7 +64,7 @@ const style = computed(() => {
 		right: ${Right};
 		bottom: ${Bottom};
 		width: ${width}px;
-	  height: ${height}px;
+	  height: ${height1};
 		min-height: ${minHeight}px;
 		min-width: ${minWidth}px;
 		z-index: ${zIndex};
