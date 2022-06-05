@@ -1,18 +1,17 @@
 <template>
   <div class="layout" :style="layoutStyle">
-    <header v-if="props.hasCover" ref="cover" :style="coverStyle">
+    <header v-show="props.hasCover" ref="cover" :style="coverStyle">
       <slot name="cover"></slot>
     </header>
-    <header v-if="props.hasHidden" ref="hidden" :style="hiddenStyle">
-      <slot name="hidden"></slot>
+    <header v-show="props.hasHidden" ref="" class="xia-hidden info" :style="hiddenStyle">
+      <slot name="hidden">这里是广告区</slot>
     </header>
-    <header v-if="props.hasHeader" ref="header1" class="header" :style="headerStyle">
+    <header v-if="props.hasHeader" ref="info1" class="header info" :style="headerStyle">
       <slot name="header"></slot>
     </header>
-
-    <div v-if="props.hasTab" class="layout-tab" :style="tabStyle">
+    <div v-if="props.hasTab" ref="info" class="layout-tab info" :style="tabStyle">
       <slot name="tab"
-        >sx:y {{ sx }} - {{ sy }} -- main height: {{ mainh }} -- footero {{ footero }}
+        >sx:sy {{ sx }} - {{ sy }} -- main height: {{ mainh }} -- footero {{ footero }}
         <div v-if="props.headerTimeout">来了！</div>
       </slot>
     </div>
@@ -25,10 +24,16 @@
       <div class="hello" :style="asideZhedie" @click="changeWidth"></div>
     </aside>
 
-    <aside v-if="props.hasAsideRight" class="asideR" :style="asideRStyle">
-      <div class="resize resizeR"></div>
-      <slot name="asideR">qeqerqwer</slot>
-    </aside>
+    <div class="xia-layout-aside" :style="layoutStyle1">
+      <header v-show="props.hasCover" :style="coverStyle1"></header>
+      <header v-show="props.hasHidden" :style="hiddenStyle1"></header>
+      <header v-if="props.hasHeader" :style="headerStyle1"></header>
+      <div v-if="props.hasTab" :style="tabStyle1"></div>
+      <aside v-if="props.hasAsideRight" class="asideR" :style="asideRStyle">
+        <div class="resize resizeR"></div>
+        <slot name="asideR">qeqerqwer</slot>
+      </aside>
+    </div>
 
     <main class="main" :style="mainStyle">
       <slot name="main"></slot>
@@ -240,7 +245,7 @@ const asideWidthR = computed({
   get() {
     return props.aRwidth;
   },
-  // 当给 asideWidthR 赋值时，会触发 set 方法
+  // 当给 asideWidthR 赋值时，会触发 set 方法 通过下面的handleWidth()方法赋值
   set(newValue: number) {
     emit('update:widthR', newValue);
   }
@@ -273,26 +278,92 @@ function handleWidth(className: string, isLeft: boolean): boolean {
   };
   return false;
 }
-// --------------------------------拖动改变宽度------------------------------------------
+// -------------------------------- 折叠图标处理 ------------------------------------------
 function changeWidth() {
   asideWidthL.value = 0;
 }
-
+// -------------------------------- resize处理 ------------------------------------------
 const sx = ref(0);
 const sy = ref(0);
 const mainh = ref(0);
 // const layouth = ref(0);
 const footero = ref(0);
 
+const headerHH = ref(0);
+const tabHH = ref(0);
+const footerHH = ref(0);
+const eleOb = ref<ResizeObserverEntry>();
+
+interface allHeight {
+  header: number;
+  tab: number;
+  footer: number;
+}
+
+const allHeightV: allHeight = {
+  header: 0,
+  tab: 0,
+  footer: 0
+};
+// const allHeight = computed<allHeight>(() => {
+//   const { header, tab, footer } = allHeightV;
+//   return {
+//     header: header.hHeight,
+//     tab: tab.tHeight,
+//     footer: footer.fHeight
+//   };
+// });
+
+// const allHH = computed<allHeight>(() => {
+//   if (eleOb.value !== undefined) {
+//     const { height } = eleOb.value;
+//     if (eleOb.value.target.classList.contains('header')) {
+//       headerHH.value = entry.contentRect.height;
+//     } else if (entry.target.classList.contains('layout-tab')) {
+//       tabHH.value = entry.contentRect.height;
+//     }
+//     const { headerHH, tabHH, footerHH } = props;
+//   }
+//   return {
+//     header: headerHH,
+//     tab: tabHH,
+//     footer: footerHH
+//   };
+// });
+
 // type Auto = number | 'auto';
 // const headerHeight = ref<Auto>(0);
 
-const header1 = ref(null);
-const { height } = useElementSize(header1);
+const info1 = ref(null);
+const { height } = useElementSize(info1);
 const headerHeight = computed(() => {
   return height.value;
 });
 
+// const el = ref(null);
+// const text = ref('');
+// useResizeObserver
+
+onMounted(() => {
+  // 只有 entries[0]有内容，虽然是观察多个，但是一个一个返回的。
+  const resizeObserver = new ResizeObserver(entries => {
+    entries.forEach(entry => {
+      console.log('11111obobobobobobobobobobob', entry);
+      eleOb.value = entry;
+      if (entry.target.classList.contains('header')) {
+        headerHH.value = entry.contentRect.height;
+      } else if (entry.target.classList.contains('layout-tab')) {
+        tabHH.value = entry.contentRect.height;
+      }
+    });
+    footerHH.value = headerHH.value + tabHH.value;
+  });
+  const boxes = document.querySelectorAll('.info') as NodeListOf<Element>;
+  boxes.forEach(box => {
+    console.log('======obobobobobobobobobobob', box);
+    resizeObserver.observe(box);
+  });
+});
 // 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-------------------------------------
 const mainWidth = computed(() => {
   const a = props.hasAsideLeft ? props.aLwidth : 0;
@@ -338,19 +409,17 @@ function onResize() {
   // 下面的 -20是为了让页面滚动条不占用宽度
   sx.value = window.innerWidth - 20;
   sy.value = window.innerHeight;
-  console.log('111111111ooooooooooooooooooo', sx.value, sy.value);
+
   const element = document.querySelector('.main') as HTMLElement;
   mainh.value = element.offsetHeight < sy.value ? sy.value : element.offsetHeight;
-
-  const element2 = document.querySelector('.footer') as HTMLElement;
-  footero.value = element2 === null ? 0 : element2.offsetHeight;
+  console.log('ttttttttttttttttttttttttt', mainh.value);
 }
 
-onBeforeMount(() => {
-  sx.value = window.innerWidth - 20;
-  sy.value = window.innerHeight;
-  console.log('ooooooooooooooooooo', sx.value, sy.value);
-});
+// onBeforeMount(() => {
+//   sx.value = window.innerWidth - 20;
+//   sy.value = window.innerHeight;
+//   console.log('ooooooooooooooooooo', sx.value, sy.value);
+// });
 
 onMounted(() => {
   // const element = document.querySelector('.header') as HTMLElement;
@@ -378,6 +447,77 @@ const layoutStyle = computed(() => {
   `;
 });
 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+const layoutStyle1 = computed(() => {
+  return `
+    margin: 0px;
+    position: absolute;
+		top: 0px;
+		left: auto;
+		right: 0px;
+		bottom: 0px;
+		width: ${widthR.value}px;
+		z-index: 1;
+  `;
+});
+
+const coverStyle1 = computed(() => {
+  const { hPosition } = props;
+  return `
+		width: ${widthR.value}px;
+		height: ${headerHeight.value}px;
+		position: ${hPosition};
+		top: 0px;
+		left: 0px;
+		z-index: 100;
+		background-color: #55ae23;
+		z-index: 1;
+	`;
+});
+
+const hiddenStyle1 = computed(() => {
+  const { hPosition } = props;
+  return `
+		width: ${widthR.value}px;
+		height: ${headerHeight.value}px;
+		position: ${hPosition};
+		top: 0px;
+		left: 0px;
+		z-index: 1;
+		background-color: #ae55ee;
+	`;
+});
+
+// header 的样式
+const headerStyle1 = computed(() => {
+  const { hPosition, hMinHeight } = props;
+  return `
+		width: ${widthR.value}px;
+		position: ${hPosition};
+		min-height: ${hMinHeight}px;
+		height:${headerHH.value}px;
+		top: 0px;
+		left: 0px;
+		z-index: 1;
+		background-color: #a2a2a2;
+	`;
+});
+
+const tabStyle1 = computed(() => {
+  const { tPosition, tMinHeight } = props;
+  return `
+		width: ${widthR.value}px;
+		height: ${tabHH.value}px;
+		min-height: ${tMinHeight}px;
+		position: ${tPosition};
+		top: 0px;
+		left: 0px;
+		z-index: 3001;
+		background-color: #ae4423;
+	`;
+});
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 const coverStyle = computed(() => {
   const { hPosition } = props;
   return `
@@ -387,7 +527,7 @@ const coverStyle = computed(() => {
 		top: 0px;
 		left: 0px;
 		z-index: 100;
-		background-color: #aeae23;
+		background-color: #55ae23;
 	`;
 });
 
@@ -400,7 +540,7 @@ const hiddenStyle = computed(() => {
 		top: 0px;
 		left: 0px;
 		z-index: 100;
-		background-color: #aeae23;
+		background-color: #ae55ee;
 	`;
 });
 
@@ -414,7 +554,7 @@ const headerStyle = computed(() => {
 		top: 0px;
 		left: 0px;
 		z-index: 100;
-		background-color: #aeae23;
+		background-color: #e2e2e2;
 	`;
 });
 // tab 的样式
@@ -442,7 +582,7 @@ const mainStyle = computed(() => {
 		left: ${aLwidth + 10}px;
 		right: ${tRight}px;
 		z-index: 1001;
-		height: ${mainh.value}px;
+
 		background-color: #f1f1f1;
 	`;
 });
@@ -450,7 +590,6 @@ const mainStyle = computed(() => {
 const asideLStyle = computed(() => {
   const { aLleft, aLright } = props;
   return `
-		width: ${mainWidth.value}px;
 		position: absolute;
 		top: ${asideLTop.value}px;
 		left: ${aLleft}px;
@@ -465,9 +604,8 @@ const asideLStyle = computed(() => {
 const asideRStyle = computed(() => {
   // const { mPosition, tTop, aLleft, aLright, mBottom, mzIndex, mHeight } = props;
   return `
-		width: ${mainWidth.value}px;
-		position: absolute;
-		top: ${asideRTop.value}px;
+		position: relative;
+		top: 0px;
 		left: auto;
 		right: 0px;
 		bottom: 0px;
@@ -478,11 +616,20 @@ const asideRStyle = computed(() => {
 	`;
 });
 
+// position: absolute;
+// top: ${asideRTop.value}px;
+// left: auto;
+// right: 0px;
+// bottom: 0px;
+// width: ${widthR.value}px;
+// height: ${mainh.value}px;
+// z-index: 1001;
+
 const footerStyle = computed(() => {
   const { fPosition, fzIndex } = props;
   return `
 		width: ${sx.value}px;
-		height: ${headerHeight.value}px;
+		height: ${footerHH.value}px;
 		position: ${fPosition};
 		z-index: ${fzIndex};
 		background-color: #ae4423;
@@ -519,6 +666,10 @@ const asideZhedie = computed(() => {
 </script>
 
 <style>
+.xia-layout-aside {
+  position: fixed;
+}
+
 /* ---------------------相邻选择器 实现 hover 控制 子DIV 显示隐藏 --------------  */
 .asideL:hover .hello {
   display: block;
