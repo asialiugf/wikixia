@@ -1,15 +1,17 @@
 <template>
   <div class="layout" :style="layoutStyle">
-    <header v-show="props.hasCover" ref="cover" :style="coverStyle">
-      <slot name="cover"></slot>
-    </header>
-    <header v-show="props.hasHidden" ref="" class="xia-hidden info" :style="hiddenStyle">
+    <Transition>
+      <div v-show="coverOut" id="xia-layout-cover" class="xia-layout-cover info" :style="coverStyle">
+        <slot name="cover"></slot>
+      </div>
+    </Transition>
+    <div v-show="props.hasHidden" id="xia-layout-hidden" class="xia-layout-hidden info" :style="hiddenStyle">
       <slot name="hidden">这里是广告区</slot>
-    </header>
-    <header v-if="props.hasHeader" ref="info1" class="header info" :style="headerStyle">
+    </div>
+    <header v-show="props.hasHeader" id="xia-layout-header" class="xia-layout-header info" :style="headerStyle">
       <slot name="header"></slot>
     </header>
-    <div v-if="props.hasTab" ref="info" class="layout-tab info" :style="tabStyle">
+    <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab info" :style="tabStyle">
       <slot name="tab"
         >sx:sy {{ sx }} - {{ sy }} -- main height: {{ mainh }} -- footero {{ footero }}
         <div v-if="props.headerTimeout">来了！</div>
@@ -25,8 +27,8 @@
     </aside>
 
     <div class="xia-layout-aside" :style="layoutStyle1">
-      <header v-show="props.hasCover" :style="coverStyle1"></header>
-      <header v-show="props.hasHidden" :style="hiddenStyle1"></header>
+      <div v-show="props.hasCover" :style="coverStyle1"></div>
+      <div v-show="props.hasHidden" :style="hiddenStyle1"></div>
       <header v-if="props.hasHeader" :style="headerStyle1"></header>
       <div v-if="props.hasTab" :style="tabStyle1"></div>
       <aside v-if="props.hasAsideRight" class="asideR" :style="asideRStyle">
@@ -35,20 +37,45 @@
       </aside>
     </div>
 
-    <main class="main" :style="mainStyle">
+    <main id="xia-layout-main" class="main info" :style="mainStyle">
       <slot name="main"></slot>
       <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div>
     </main>
 
-    <footer v-if="props.hasFooter" class="footer" :style="footerStyle">
+    <footer v-if="props.hasFooter" id="xia-layout-footer" class="footer" :style="footerStyle">
       <slot name="footer"></slot>
     </footer>
   </div>
+
+  <layout-aside
+    :tag="'div'"
+    :has-cover="coverOut"
+    :has-hidden="props.hasHidden"
+    :has-header="props.hasHeader"
+    :has-tab="props.hasTab"
+    :has-footer="props.hasFooter"
+    :parent-position="'absolute'"
+    :parent-top="0"
+    :parent-left="500"
+    :parent-right="'auto'"
+    :parent-bottom="'auto'"
+    :parent-width="200"
+    :aside-z-index="8000"
+    :cover-height="coverHH"
+    :cover-hidden="hiddenHH"
+    :header-height="headerHH"
+    :aside-height="mainh"
+    :tab-height="tabHH"
+  >
+    <template #aside> a;sdkfjasdfk 11111111111 </template>
+    <template #aside1> </template>
+  </layout-aside>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onBeforeMount } from 'vue';
 import { isString, useWindowScroll, useElementSize, useResizeObserver } from '@vueuse/core';
+import LayoutAside from './LayoutAside.vue';
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 // import LayoutBlock from './LayoutBlock.vue';
 
@@ -215,6 +242,11 @@ const props = withDefaults(defineProps<Props>(), {
 // });
 
 const { x, y } = useWindowScroll();
+const coverOut = computed(() => {
+  const { hasCover } = props;
+  const b: boolean = hasCover && y.value > 198;
+  return b;
+});
 
 const widthL = computed(() => {
   return props.aLwidth;
@@ -285,12 +317,14 @@ function changeWidth() {
 // -------------------------------- resize处理 ------------------------------------------
 const sx = ref(0);
 const sy = ref(0);
-const mainh = ref(0);
 // const layouth = ref(0);
 const footero = ref(0);
 
+const coverHH = ref(0);
+const hiddenHH = ref(0);
 const headerHH = ref(0);
 const tabHH = ref(0);
+const mainh = ref(0);
 const footerHH = ref(0);
 const eleOb = ref<ResizeObserverEntry>();
 
@@ -319,7 +353,7 @@ const allHeightV: allHeight = {
 //     const { height } = eleOb.value;
 //     if (eleOb.value.target.classList.contains('header')) {
 //       headerHH.value = entry.contentRect.height;
-//     } else if (entry.target.classList.contains('layout-tab')) {
+//     } else if (entry.target.classList.contains('xia-layout-tab')) {
 //       tabHH.value = entry.contentRect.height;
 //     }
 //     const { headerHH, tabHH, footerHH } = props;
@@ -350,10 +384,18 @@ onMounted(() => {
     entries.forEach(entry => {
       console.log('11111obobobobobobobobobobob', entry);
       eleOb.value = entry;
-      if (entry.target.classList.contains('header')) {
+      if (entry.target.id === 'xia-layout-header') {
         headerHH.value = entry.contentRect.height;
-      } else if (entry.target.classList.contains('layout-tab')) {
+      } else if (entry.target.id === 'xia-layout-tab') {
         tabHH.value = entry.contentRect.height;
+      } else if (entry.target.id === 'xia-layout-cover') {
+        coverHH.value = entry.contentRect.height;
+      } else if (entry.target.id === 'xia-layout-footer') {
+        footerHH.value = entry.contentRect.height;
+      } else if (entry.target.id === 'xia-layout-main') {
+        mainh.value = entry.contentRect.height;
+      } else if (entry.target.id === 'xia-layout-hidden') {
+        hiddenHH.value = entry.contentRect.height;
       }
     });
     footerHH.value = headerHH.value + tabHH.value;
@@ -410,9 +452,9 @@ function onResize() {
   sx.value = window.innerWidth - 20;
   sy.value = window.innerHeight;
 
-  const element = document.querySelector('.main') as HTMLElement;
-  mainh.value = element.offsetHeight < sy.value ? sy.value : element.offsetHeight;
-  console.log('ttttttttttttttttttttttttt', mainh.value);
+  // const element = document.querySelector('.main') as HTMLElement;
+  // mainh.value = element.offsetHeight < sy.value ? sy.value : element.offsetHeight;
+  // console.log('ttttttttttttttttttttttttt', mainh.value);
 }
 
 // onBeforeMount(() => {
@@ -422,10 +464,6 @@ function onResize() {
 // });
 
 onMounted(() => {
-  // const element = document.querySelector('.header') as HTMLElement;
-  // headerHeight.value = element === null ? props.hMinHeight : element.offsetHeight;
-  // console.log('onMounted headerHeight', element.offsetHeight);
-
   window.addEventListener('resize', onResize);
   onResize();
   if (props.hasAsideLeft) {
@@ -447,7 +485,7 @@ const layoutStyle = computed(() => {
   `;
 });
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++ begin
 const layoutStyle1 = computed(() => {
   return `
     margin: 0px;
@@ -462,11 +500,10 @@ const layoutStyle1 = computed(() => {
 });
 
 const coverStyle1 = computed(() => {
-  const { hPosition } = props;
   return `
 		width: ${widthR.value}px;
-		height: ${headerHeight.value}px;
-		position: ${hPosition};
+		height: ${coverHH.value}px;
+		position: sticky;
 		top: 0px;
 		left: 0px;
 		z-index: 100;
@@ -479,7 +516,6 @@ const hiddenStyle1 = computed(() => {
   const { hPosition } = props;
   return `
 		width: ${widthR.value}px;
-		height: ${headerHeight.value}px;
 		position: ${hPosition};
 		top: 0px;
 		left: 0px;
@@ -516,18 +552,19 @@ const tabStyle1 = computed(() => {
 		background-color: #ae4423;
 	`;
 });
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++ end
 
 const coverStyle = computed(() => {
-  const { hPosition } = props;
+  // const { hPosition } = props;
   return `
-		width: ${sx.value}px;
-		height: ${headerHeight.value}px;
-		position: ${hPosition};
+		position: sticky;
 		top: 0px;
 		left: 0px;
-		z-index: 100;
-		background-color: #55ae23;
+		width: ${sx.value}px;
+		min-height:50px;
+		height: 78px;
+		z-index: 4000;
+    background-color: rgb(240, 121, 17);
 	`;
 });
 
@@ -535,10 +572,10 @@ const hiddenStyle = computed(() => {
   const { hPosition } = props;
   return `
 		width: ${sx.value}px;
-		height: ${headerHeight.value}px;
 		position: ${hPosition};
 		top: 0px;
 		left: 0px;
+		min-height:50px;
 		z-index: 100;
 		background-color: #ae55ee;
 	`;
@@ -602,10 +639,10 @@ const asideLStyle = computed(() => {
 });
 
 const asideRStyle = computed(() => {
-  // const { mPosition, tTop, aLleft, aLright, mBottom, mzIndex, mHeight } = props;
+  const { tTop } = props;
   return `
 		position: relative;
-		top: 0px;
+		top: ${tTop}px;
 		left: auto;
 		right: 0px;
 		bottom: 0px;
@@ -666,8 +703,7 @@ const asideZhedie = computed(() => {
 </script>
 
 <style>
-.xia-layout-aside {
-  position: fixed;
+.xia-layout-cover {
 }
 
 /* ---------------------相邻选择器 实现 hover 控制 子DIV 显示隐藏 --------------  */
@@ -763,5 +799,13 @@ const asideZhedie = computed(() => {
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   background: #ededed;
   border-radius: 10px;
+}
+
+.v-enter-active {
+  transition: opacity 0.8s ease;
+}
+
+.v-enter-from {
+  opacity: 0;
 }
 </style>
