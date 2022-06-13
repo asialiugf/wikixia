@@ -12,8 +12,9 @@
     :hasFooter="true"
     :hiddenPosition="'sticky'"
     :hPosition="'sticky'"
+    :tPosition="'relative'"
+    :fPosition="'sticky'"
     :hTop="top0"
-    :tPosition="'sticky'"
     :tHeight="'auto'"
     :tzIndex="1021"
     :tTop="top1"
@@ -102,12 +103,8 @@
       </div>
     </template>
     <template #main>
-      <ul id="example-2">
-        <p>
-          这里是main.
-          跟绝大多数的小说不同，跟绝大多数的小说不同在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
-        </p>
-        <div v-for="n in 0" :key="n">adfsafd {{ n }} <br /></div>
+      <ul class="example-2">
+        <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
         <div class="zxx-scroll">
           <p>
             最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
@@ -116,7 +113,9 @@
             >，题目是“身为前端开发的我成为了一个渔民”。
           </p>
           <p>
-            跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
+            Some articles claim that the solution to this is to make sure that the ancestor or parent element has a
+            specified height. However, that's not what you want to do (right?), because you don't want to set a fixed
+            height on the sticky element's ancestor or parent elemen。
           </p>
           <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
           <p>
@@ -126,7 +125,7 @@
             >开始阅读。
           </p>
         </div>
-        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
       </ul>
     </template>
     <template #asideL>
@@ -197,8 +196,8 @@ const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const asideArray = ref<asideType[]>([
   {
     position: 'sticky',
-    header: 'header',
-    footer: false,
+    header: 'hidden',
+    footer: true,
     key: 'asidea',
     side: 'right',
     width: 200,
@@ -211,14 +210,14 @@ const asideArray = ref<asideType[]>([
     footer: false,
     key: 'asideb',
     side: 'right',
-    width: 400,
+    width: 200,
     display: true,
     draggbale: true
   },
   {
     position: 'sticky',
     header: 'none',
-    footer: false,
+    footer: true,
     key: 'asidec',
     side: 'right',
     width: 200,

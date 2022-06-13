@@ -1,16 +1,10 @@
 <template>
-  <!-- <component :is="user === false ? 'div' : 'main'" :style="style"></component> -->
-  <!-- <component v-show="props.asideShow" class="xia-layout-aside" :style="asideStyle"> -->
   <div ref="resizeLL" class="resize1 resizeLL"></div>
   <div v-if="props.asidePosition === 'sticky'" class="zxx-scroll11" :style="asideStyle">
-    <slot name="aside">qeqerqwer</slot>
-    <div>这是 sticky ！</div>
+    <slot name="aside"></slot>
   </div>
-  <slot v-if="props.asidePosition === 'absolute'" name="aside">qeqerqwer</slot>
-
+  <slot v-if="props.asidePosition === 'absolute'" name="aside"></slot>
   <div ref="resizeRR" class="resize1 resizeRR"></div>
-  <div>wwwwwwwwwwwwww {{ xL.x }} {{ xR.x }}</div>
-  <!-- </component> -->
 </template>
 
 <script setup lang="ts">
@@ -149,7 +143,7 @@ const asideStyle = computed(() => {
 		left: 0px;
 		bottom: 0px;
 	  width: ${asideWidth}px;
-		height: 300px;
+		height: ${asideHeight}px;
 		overflow: scroll;
 `;
 });
