@@ -1,3 +1,4 @@
+import listChange from '@/views/listChange.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 const CssMedia = () => import('../views/CssMedia.vue');
@@ -9,6 +10,11 @@ const LayoutGrid = () => import('../views/LayoutGrid.vue');
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/lsit',
+      name: 'list',
+      component: listChange
+    },
     {
       path: '/grid',
       name: 'grid',

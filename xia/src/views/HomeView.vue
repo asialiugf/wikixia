@@ -2,15 +2,16 @@
   <admin-layout
     @update:widthL="setWidthL"
     @update:widthR="setWidthR"
-    :hasCover="true"
-    :hasHidden="!hashiddenn"
+    :has-cover="true"
+    :has-hidden="!hashiddenn"
     :has-header="true"
-    :hasTab="true"
+    :has-tab="true"
     :hasAsideLeft="true"
     :hasAsideRight="true"
     :hasMinimap="true"
-    :hasFooter="false"
-    :hPosition="'relative'"
+    :hasFooter="true"
+    :hiddenPosition="'sticky'"
+    :hPosition="'sticky'"
     :hTop="top0"
     :tPosition="'sticky'"
     :tHeight="'auto'"
@@ -23,6 +24,7 @@
     :aRheight="500"
     :aRwidth="aRwidth"
     :mWidth="mWidth"
+    :aside-array="asideArray"
   >
     <template #cover>
       <nav class="ttt">
@@ -80,7 +82,7 @@
       </div>
     </template>
     <template #tab>
-      <div v-if="!headerTimeOut1" class="zxx-scroll">
+      <div v-if="!tabTimeOut" class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -102,9 +104,10 @@
     <template #main>
       <ul id="example-2">
         <p>
+          这里是main.
           跟绝大多数的小说不同，跟绝大多数的小说不同在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
         </p>
-        <li v-for="n in 100" :key="n">adfsafd {{ n }} <br /></li>
+        <div v-for="n in 0" :key="n">adfsafd {{ n }} <br /></div>
         <div class="zxx-scroll">
           <p>
             最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
@@ -128,7 +131,7 @@
     </template>
     <template #asideL>
       <ul class="example-2">
-        <li v-for="n in 100" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
         <div class="zxx-scroll">
           <p>
             最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
@@ -147,30 +150,37 @@
             >开始阅读。
           </p>
         </div>
-        <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
       </ul>
     </template>
-    <template #asideR>
-      <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
-      <div class="zxx-scroll">
-        <p>
-          最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
-            href="https://www.zhangxinxu.com/life/category/light-novel/"
-            >轻小说</a
-          >，题目是“身为前端开发的我成为了一个渔民”。
-        </p>
-        <p>
-          跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式。
-        </p>
-        <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
-        <p>
-          欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
-            href="https://www.zhangxinxu.com/life/fisher-1/"
-            >点击这里</a
-          >开始阅读。
-        </p>
-      </div>
-      <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
+    <template #asidea
+      >跟绝大多数的小说不同，在这部小说里面，直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式，利用碎片时间完成，每次更</template
+    >
+    <template #asideb>
+      <ul class="example-2">
+        <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
+        <div class="zxx-scroll">
+          <p>
+            最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
+              href="https://www.zhangxinxu.com/life/category/light-novel/"
+              >轻小说</a
+            >，题目是“身为前端开发的我成为了一个渔民”。
+          </p>
+          <p>
+            Some articles claim that the solution to this is to make sure that the ancestor or parent element has a
+            specified height. However, that's not what you want to do (right?), because you don't want to set a fixed
+            height on the sticky element's ancestor or parent elemen。
+          </p>
+          <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
+          <p>
+            欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
+              href="https://www.zhangxinxu.com/life/fisher-1/"
+              >点击这里</a
+            >开始阅读。
+          </p>
+        </div>
+        <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
+      </ul>
     </template>
   </admin-layout>
 </template>
@@ -178,11 +188,44 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import AdminLayout from '@asialine/xia-ui/lay';
+import type { asideType } from '@asialine/xia-ui/lay';
 import { useTimeout } from '@vueuse/core';
 
-const headerTimeOut = useTimeout(8000); // 设置一个定时器
-const headerTimeOut1 = useTimeout(4000); // 设置一个定时器
-const hashiddenn = useTimeout(16000); // 设置一个定时器
+const headerTimeOut = useTimeout(6000); // 设置一个定时器
+const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const hashiddenn = useTimeout(1119000); // 设置一个定时器
+const asideArray = ref<asideType[]>([
+  {
+    position: 'sticky',
+    header: 'header',
+    footer: false,
+    key: 'asidea',
+    side: 'right',
+    width: 200,
+    display: true,
+    draggbale: true
+  },
+  {
+    position: 'sticky',
+    header: 'tab',
+    footer: false,
+    key: 'asideb',
+    side: 'right',
+    width: 400,
+    display: true,
+    draggbale: true
+  },
+  {
+    position: 'sticky',
+    header: 'none',
+    footer: false,
+    key: 'asidec',
+    side: 'right',
+    width: 200,
+    display: true,
+    draggbale: true
+  }
+]);
 
 type Position = 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
 const position0 = ref<Position>('sticky');
@@ -212,7 +255,7 @@ function setWidthR(width: number) {
 
 .zxx-scroll {
   position: sticky;
-  top: 60px;
+  top: 20px;
   bottom: 100px;
   display: block;
   width: 350px;
@@ -227,6 +270,7 @@ function setWidthR(width: number) {
 }
 .example-2 {
   white-space: nowrap;
+  height: 3000px;
 }
 ul li {
   padding: 0;

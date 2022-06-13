@@ -1,270 +1,232 @@
 <template>
   <!-- <component :is="user === false ? 'div' : 'main'" :style="style"></component> -->
-
-  <div class="xia-layout-aside" :style="parentStyle">
-    <div v-show="props.hasCover" :style="coverStyle"></div>
-    <div v-show="props.hasHidden" :style="hiddenStyle"></div>
-    <header v-show="props.hasHeader" :style="headerStyle"></header>
-    <div v-show="props.hasTab" :style="tabStyle"></div>
-    <component :is="tag" class="aside" :style="asideStyle">
-      <div class="resize resizeR"></div>
-      <slot name="aside">qeqerqwer</slot>
-      <slot name="aside1">qeqerqwer</slot>
-    </component>
-    <footer v-show="props.hasFooter"></footer>
+  <!-- <component v-show="props.asideShow" class="xia-layout-aside" :style="asideStyle"> -->
+  <div ref="resizeLL" class="resize1 resizeLL"></div>
+  <div v-if="props.asidePosition === 'sticky'" class="zxx-scroll11" :style="asideStyle">
+    <slot name="aside">qeqerqwer</slot>
+    <div>这是 sticky ！</div>
   </div>
+  <slot v-if="props.asidePosition === 'absolute'" name="aside">qeqerqwer</slot>
+
+  <div ref="resizeRR" class="resize1 resizeRR"></div>
+  <div>wwwwwwwwwwwwww {{ xL.x }} {{ xR.x }}</div>
+  <!-- </component> -->
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { isString } from '@vueuse/core';
+import { computed, onMounted, ref, unref, watch } from 'vue';
+import type { Ref } from 'vue';
+import { isString, useDraggable, useEventListener } from '@vueuse/core';
+import type { Position, MaybeRef } from '@vueuse/core';
+import { assertBindExpression } from '@babel/types';
 
 interface asideProps {
-  tag?: string; // 可以是 div | main | aside | header | footer | section | article | nav  | content | footer
-  hasCover?: boolean; //
-  hasHidden?: boolean; //
-  hasHeader?: boolean; //
-  hasTab?: boolean; //
-  hasFooter?: boolean; //
-
-  parentPosition?: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-  parentTop?: number | 'auto';
-  parentLeft?: number | 'auto';
-  parentRight?: number | 'auto';
-  parentBottom?: number | 'auto';
-  parentWidth: number | string;
-
-  coverPosition?: string;
-  coverTop?: number | string;
-  coverLeft?: number | string;
-  coverRight?: number | string;
-  coverBottom?: number | string;
-  coverMinHeight?: number | string;
-  coverHeight?: number | string;
-  coverZIndex?: number;
-
-  hiddenPosition?: string;
-  hiddenTop?: number | string;
-  hiddenLeft?: number | string;
-  hiddenRight?: number | string;
-  hiddenBottom?: number | string;
-  hiddenMinHeight?: number | string;
-  hiddenHeight?: number | string;
-  hiddenZIndex?: number;
-
-  headerPosition?: string;
-  headerTop?: number | string;
-  headerLeft?: number | string;
-  headerRight?: number | string;
-  headerBottom?: number | string;
-  headerMinHeight?: number | string;
-  headerHeight?: number | string;
-  headerZIndex?: number;
-
-  tabPosition?: string;
-  tabTop?: number | string;
-  tabLeft?: number | string;
-  tabRight?: number | string;
-  tabBottom?: number | string;
-  tabMinHeight?: number | string;
-  tabHeight?: number | string;
-  tabZIndex?: number | string;
-
-  asidePosition?: string;
-  asideTop?: number | string;
-  asideLeft?: number | string;
-  asideRight?: number | string;
-  asideBottom?: number | string;
-  asideMinHeight?: number | string;
-  asideHeight?: number | string;
-  asideZIndex?: number;
-
-  footerPosition?: string;
-  footerTop?: number | string;
-  footerLeft?: number | string;
-  footerRight?: number | string;
-  footerBottom?: number | string;
-  footerMinHeight?: number | string;
-  footerHeight?: number | string;
-  footerZIndex?: number;
+  id: number; // 用于标识 aside 的 id. emit返回给父组件时, 父组件会用到
+  asideTop: number | 'auto';
+  asideWidth: number;
+  asideHeight: number;
+  asidePosition?: 'absolute' | 'sticky';
 }
 
 const props = withDefaults(defineProps<asideProps>(), {
-  tag: 'div', // 可以是 div | main | aside | header | footer | section | article | nav  | content | footer
-  hasCover: false, //
-  hasHidden: false, //
-  hasHeader: true, //
-  hasTab: false, //
-  hasFooter: false, //
-
-  parentPosition: 'absolute',
-  parentTop: 0,
-  parentLeft: 'auto',
-  parentRight: 'auto',
-  parentBottom: 0,
-  parentWidth: 100,
-
-  coverPosition: 'sticky',
-  coverTop: 0,
-  coverLeft: 0,
-  coverRight: 0,
-  coverBottom: 0,
-  coverMinHeight: 50,
-  coverHeight: 50,
-  coverZIndex: 1,
-
-  hiddenPosition: 'relative',
-  hiddenTop: 0,
-  hiddenLeft: 0,
-  hiddenRight: 0,
-  hiddenBottom: 0,
-  hiddenMinHeight: 50,
-  hiddenHeight: 50,
-  hiddenZIndex: 0,
-
-  headerPosition: 'relative',
-  headerTop: 0,
-  headerLeft: 0,
-  headerRight: 0,
-  headerBottom: 0,
-  headerMinHeight: 50,
-  headerHeight: 150,
-  headerZIndex: 0,
-
-  tabPosition: 'sticky',
-  tabTop: 0,
-  tabLeft: 0,
-  tabRight: 0,
-  tabBottom: 0,
-  tabMinHeight: 50,
-  tabHeight: 50,
-  tabZIndex: 0,
-
-  asidePosition: 'relative',
+  id: 0,
   asideTop: 0,
-  asideLeft: 0,
-  asideRight: 0,
-  asideBottom: 0,
-  asideMinHeight: 0,
+  asideWidth: 0,
   asideHeight: 0,
-  asideZIndex: 1,
+  asidePosition: 'absolute'
+});
 
-  footerPosition: 'relative',
-  footerTop: 0,
-  footerLeft: 0,
-  footerRight: 0,
-  footerBottom: 0,
-  footerMinHeight: 0,
-  footerHeight: 0,
-  footerZIndex: 0
+// ---------------------------------拖动改变宽度-----------------------------------------
+
+interface rtnType {
+  state: 'start' | 'move' | 'end';
+  id: number;
+  side: 'left' | 'right';
+  pos: number;
+  pageX: number;
+}
+
+interface Emits {
+  (e: 'update:widthL', asideWidthL: rtnType): void;
+  (e: 'update:widthR', asideWidthR: rtnType): void;
+}
+const emit = defineEmits<Emits>();
+
+// const asideR = computed<rtnType>(() => {
+//   const { asideWidth, id } = props;
+//   return { width: asideWidth, id };
+// });
+
+// *****************************************************************************
+const styleL = ref('');
+const styleR = ref('');
+const posL = ref(0);
+const posR = ref(0);
+const resizeLL = ref<HTMLElement | null>(null);
+const resizeRR = ref<HTMLElement | null>(null);
+const xR = useDraggable(resizeRR, {
+  onStart: (position: Position, event: PointerEvent) => {
+    emit('update:widthR', { state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX });
+  },
+  onMove: (position: Position, event: PointerEvent) => {
+    emit('update:widthR', { state: 'move', id: props.id, side: 'right', pos: position.x, pageX: event.pageX });
+  },
+  onEnd: (position: Position, event: PointerEvent) => {
+    emit('update:widthR', { state: 'end', id: props.id, side: 'right', pos: position.x, pageX: event.pageX });
+  },
+  preventDefault: true
+});
+
+// 值得佩服！！
+const xL = useDraggable(resizeLL, {
+  onStart: (position: Position, event: PointerEvent) => {
+    emit('update:widthL', { state: 'start', id: props.id, side: 'left', pos: position.x, pageX: event.pageX });
+  },
+  onMove: (position: Position, event: PointerEvent) => {
+    emit('update:widthL', { state: 'move', id: props.id, side: 'left', pos: position.x, pageX: event.pageX });
+  },
+  onEnd: (position: Position, event: PointerEvent) => {
+    emit('update:widthL', { state: 'end', id: props.id, side: 'left', pos: position.x, pageX: event.pageX });
+  },
+  preventDefault: true
+});
+// 这里 watch xl 不行， 必须watch xl.x
+// watch(xL.x, () => {
+//   const left = isString(props.asideLeft) ? 0 : props.asideLeft;
+//   const right = isString(props.asideRight) ? 0 : props.asideRight;
+//   let width = 0;
+//   if (left === 0) {
+//     console.log('left === 0');
+//     width = posL.value + props.asideWidth - xL.x.value < 50 ? 50 : posL.value + props.asideWidth - xL.x.value + 14;
+//   } else {
+//     console.log('left ! 0  ========', left, posL.value);
+//     width = left + props.asideWidth - xL.x.value < 50 ? 50 : left + props.asideWidth - xL.x.value + 14;
+//   }
+//   // styleL.value = `left: ${asideL.value.width}px; `;
+//   emit('update:widthL', { width: props.asideWidth, id: props.id, lr: 'l', left: xL.x.value, right: 0 });
+// });
+// watch(xR.x, () => {
+//   // const width = xR.x.value - props.asideRight < 50 ? 50 : xR.x.value - props.asideRight + 14;
+//   // const width =
+//   //   posL.value + props.asideWidth - xL.x.value < 50 ? 50 : posL.value + props.asideWidth - xL.x.value + 14;
+//   console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', xR.x.value, posR);
+//   emit('update:widthR', { width: props.asideWidth, id: props.id, lr: 'l', right: xR.x.value, left: posR.value });
+// });
+// *****************************************************************************
+
+// const element = ref<HTMLDivElement>();
+// const element2 = ref<HTMLDivElement>();
+// useEventListener(element, 'mousedown', e => {
+//   console.log(e);
+// });
+// useEventListener(element2, 'mousedown', e => {
+//   useEventListener(element2, 'mousemove', e1 => {
+//     console.log(e1);
+//   });
+//   console.log(e);
+// });
+
+function handleWidth(className: string, isLeft: boolean): void {}
+// -------------------------------- 折叠图标处理 ------------------------------------------
+function changeWidth() {
+  // props.asideWidth.value = 0;
+}
+// -------------------------------- resize处理 ------------------------------------------
+
+onMounted(() => {
+  handleWidth('.resizeLL', true);
+  handleWidth('.resizeRR', false);
 });
 
 // layout页面的样式
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++ begin
-
-const parentStyle = computed(() => {
-  const { parentPosition, parentTop, parentLeft, parentRight, parentBottom, parentWidth } = props;
-  const w = isString(parentWidth) ? parentWidth : `${parentWidth}px`;
-  console.log('-----------------pppppppppppp', parentLeft);
-  return `
-    position: ${parentPosition};
-		top: ${parentTop};
-		left: ${parentLeft}px;
-		right: ${parentRight};
-		bottom: ${parentBottom};
-		width: ${w};
-		z-index: 1002;
-		background-color: rgba(255,00,00,0)
-  `;
-});
-
-const coverStyle = computed(() => {
-  const { parentWidth, coverPosition, coverTop, coverLeft, coverRight, coverBottom, coverHeight } = props;
-  const w = isString(parentWidth) ? parentWidth : `${parentWidth}px`;
-  const h = isString(coverHeight) ? coverHeight : `${coverHeight}px`;
-  return `
-		position: ${coverPosition};
-		top: ${coverTop};
-		left: ${coverLeft};
-		right: ${coverRight};
-		bottom: ${coverBottom};
-		width: ${w};
-	  height: ${h};
-		background-color: rgba(255,00,00,0);
-		z-index: 1;
-	`;
-});
-
-const hiddenStyle = computed(() => {
-  const { parentWidth, hiddenPosition, hiddenTop, hiddenLeft, hiddenRight, hiddenBottom, hiddenHeight } = props;
-  const w = isString(parentWidth) ? parentWidth : `${parentWidth}px`;
-  const h = isString(hiddenHeight) ? hiddenHeight : `${hiddenHeight}px`;
-  console.log('hhhhhhhhhhidden:--------------', h);
-  return `
-		position: ${hiddenPosition};
-		top: ${hiddenTop};
-		left: ${hiddenLeft};
-		right: ${hiddenRight};
-		bottom: ${hiddenBottom};
-		width: ${w};
-	  height: ${h};
-		background-color: rgba(255,00,00,0);
-		z-index: 1;
-	`;
-});
-
-// header 的样式
-const headerStyle = computed(() => {
-  const { parentWidth, headerPosition, headerTop, headerLeft, headerRight, headerBottom, headerHeight } = props;
-  const w = isString(parentWidth) ? parentWidth : `${parentWidth}px`;
-  const h = isString(headerHeight) ? headerHeight : `${headerHeight}px`;
-  return `
-		position: ${headerPosition};
-		top: ${headerTop};
-		left: ${headerLeft};
-		right: ${headerRight};
-		bottom: ${headerBottom};
-		width: ${w};
-	  height: ${h};
-		background-color: rgba(255,00,00,0);
-		z-index: 8000;
-	`;
-});
-
-// tab 的样式
-const tabStyle = computed(() => {
-  const { parentWidth, tabPosition, tabTop, tabLeft, tabRight, tabBottom, tabHeight } = props;
-  const w = isString(parentWidth) ? parentWidth : `${parentWidth}px`;
-  const h = isString(tabHeight) ? tabHeight : `${tabHeight}px`;
-  return `
-		position: ${tabPosition};
-		top: ${tabTop};
-		left: ${tabLeft};
-		right: ${tabRight};
-		bottom: ${tabBottom};
-		width: ${w};
-	  height: ${h};
-		background-color: rgba(255,00,00,0);
-		z-index: 1;
-	`;
-});
-
+// 这个样式，只给sticky使用， 属于子DIV样式
 const asideStyle = computed(() => {
-  const { parentWidth, asidePosition, asideTop, asideLeft, asideRight, asideBottom, asideHeight } = props;
-  const w = isString(parentWidth) ? parentWidth : `${parentWidth}px`;
-  const h = isString(asideHeight) ? asideHeight : `${asideHeight}px`;
+  const { asideTop, asideWidth, asideHeight, asidePosition } = props;
+  console.log('sssssssssssssiiiiiiiiiiiiiiii', asidePosition, asideTop, asideWidth, asideHeight);
   return `
-		position: ${asidePosition};
-		top: ${asideTop};
-		left: ${asideLeft};
-		right: ${asideRight};
-		bottom: ${asideBottom};
-		width: ${w};
-	  height: ${h};
-		background-color: #e1e1e1;
-		z-index: 1;
-	`;
+	  position: sticky;
+	  top: ${asideTop}px;
+		left: 0px;
+		bottom: 0px;
+	  width: ${asideWidth}px;
+		height: 300px;
+		overflow: scroll;
+`;
 });
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++ end
 </script>
-<style></style>
+<style scoped>
+.resize1 {
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  cursor: ew-resize;
+  z-index: 5001;
+}
+.resizeLL {
+  left: -0px;
+  background-color: rgb(0, 169, 6);
+}
+.resizeRR {
+  right: -0px;
+  background-color: rgb(11, 88, 255);
+}
+.resizeLL:hover {
+  background-color: hsl(20, 100%, 45%);
+  /* transition: all 0.5s; */
+}
+.resizeRR:hover {
+  background-color: hsl(309, 100%, 59%);
+  /* transition: all 0.5s; */
+}
+
+.xia-layout-aside::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+  height: 8px;
+  display: none;
+}
+
+.xia-layout-aside:hover {
+  background-color: #9a9a9a;
+  /* display: none; */
+  ::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+    /* display: none; */
+  }
+}
+.xia-layout-aside {
+  background-color: #7a149f;
+  /* display: none; */
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: #1c2848;
+}
+
+/*滚动条中间滑动部分*/
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #1c2848;
+}
+
+.xia-layout-aside:hover::-webkit-scrollbar-thumb {
+  background: rgba(144, 147, 153, 0.3);
+}
+
+.zxx-scroll11 {
+  display: block;
+
+  /* padding: 0.5em 1em; */
+  /* margin: 5em auto; */
+  border: solid rgb(255, 106, 47);
+  overflow: auto;
+  overscroll-behavior: contain;
+  -ms-scroll-chaining: contain;
+  white-space: normal;
+}
+</style>

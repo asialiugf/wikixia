@@ -14,6 +14,7 @@ import TheWelcome from '@/components/TheWelcome.vue';
         <RouterLink to="/layout">！LayoutDemo！</RouterLink>
         <RouterLink to="/timepass">！TimePass！</RouterLink>
         <RouterLink to="/grid"> ！ Grid ！ </RouterLink>
+        <RouterLink to="/list"> ！ ListChange ！ </RouterLink>
       </nav>
     </div>
   </header>

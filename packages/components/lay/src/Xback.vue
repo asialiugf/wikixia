@@ -36,11 +36,10 @@
       <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div>
     </main>
 
-    <component :is="'aside'" v-for="(item, index) of asideList" :key="index" :style="asideStyle(item)">
+    <component :is="'aside'" v-for="(item, index) of asideGroup" :key="index" :style="asideStyle(item)">
       <layout-aside
         :id="index"
-        :aside-position="item.slotPosition"
-        :aside-top="item.slotTop"
+        :aside-top="item.slotHeight"
         :aside-height="item.slotHeight"
         :aside-width="item.width"
         @update:width-l="setWidthL"
@@ -51,7 +50,7 @@
           <div>## id : {{ myid }}</div>
           <div>## L?R : {{ lorr }}</div>
           <div>## {{ rtnWidthL }}</div>
-          <div>###################################################### {{ rtnWidthR }}</div>
+          <div>## {{ rtnWidthR }}</div>
         </template>
       </layout-aside>
     </component>
@@ -72,7 +71,7 @@ import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindow
 import LayoutAside from './LayoutAside.vue';
 
 interface asideType {
-  position: 'absolute' | 'sticky';
+  position: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky'; // 'relative'
   key: string; // slots name
   // 针对头部的覆盖 header and footer are covered or not by admin-layout
   header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
@@ -83,12 +82,6 @@ interface asideType {
   display: boolean; // 是否显示
   draggbale: boolean; // 是否可以移动
 }
-
-// 侧边栏列表， 接口的内容一部分是从应用程序中传过来。一部分是计算出来。
-// 侧边栏显示，分为两部分，一部分在本VUE中，position为absolute,参见 【:style="asideStyle(item)"】
-// 另一部分，在LayoutAside子组件中，position 即为interface asideItem中的position，从应用程序中传过来，
-// 需要传给子组件LayoutAside,  其值只能 为 sticky 或 absolute. sticky 表示: 侧边栏的内容会被固定在页面的某个位置，
-// absolute 表示: 但是不会被stick在屏幕中，而是固定在页面的某个位置，跟随页面的滚动条滚动。
 
 interface asideItem {
   key: string; // 侧边栏的key，slot的name会用这个key
@@ -103,13 +96,12 @@ interface asideItem {
   height: number;
   start: number;
   end: number;
+  position: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky'; // 'relative'
   top: number | 'auto';
   left: number | 'auto';
   right: number | 'auto';
   bottom: number | 'auto';
   zIndex: number;
-  slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
-  slotTop: number;
   slotHeight: number;
 }
 
@@ -131,22 +123,6 @@ interface rtnType {
 
 // 侧边栏数组：用于主程序在调用这个组件时，传入侧边栏数组，以及其他的参数=====================
 
-//  +-----------------------------------------------------------------------------------+
-//  |                                 hidden  广告区 可隐藏                              |
-//  +-------------------------------------------------------------------+---------------+
-//  |                             header                                |               |
-//  +-----------------------------------------------------+-------------+               |
-//  |                       tab                           |             |               |
-//  +-----------------------------------------------------+             |               |
-//  |                                                     |             |               |
-//  |                                                     |    aside    |    aside      |
-//  |                                                     |             |               |
-//  |                                                     |             |               |
-//  |                                                     |             |               |
-//  |                                                     |             |               |
-//  +-----------------------------------------------------+-------------+---------------+
-//  |                                 hidden  广告区 可隐藏                              |
-//  +-----------------------------------------------------------------------------------+
 interface Props {
   asideArray?: asideType[];
 
@@ -167,9 +143,9 @@ interface Props {
 
   headerTimeout?: boolean;
 
+  /** 开启fixed布局 */
   hiddenPosition: 'relative' | 'sticky'; // 'relative'
   hPosition: 'relative' | 'sticky'; // 'relative'
-  tPosition: 'relative' | 'sticky';
   hTop?: number | 'auto';
   hLeft?: number | 'auto';
   hRight?: number | 'auto';
@@ -179,6 +155,7 @@ interface Props {
   hHeight?: number | 'auto';
   hMinHeight?: number | 'auto';
   hPaddingLeft?: number | 'auto';
+  tPosition: 'relative' | 'sticky';
   tTop?: number | 'auto';
   tLeft?: number | 'auto';
   tRight?: number | 'auto';
@@ -336,30 +313,30 @@ const noneTop = computed(() => {
   return tPosition === 'sticky' ? tabTop.value + tabHH.value : tabTop.value; // 如果是sticky的话，那么tab的top就是header的高度
 });
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
-const item: asideItem = {
-  key: '',
-  side: 'left',
-  header: 'none',
-  footer: false,
-  width: -1,
-  height: -1,
-  start: -1,
-  end: -1,
-  display: true,
-  top: -1,
-  left: 'auto',
-  right: 'auto',
-  bottom: 'auto',
-  zIndex: -1,
-  draggbale: true,
-  slotPosition: 'absolute',
-  slotTop: 0,
-  slotHeight: 0
-};
-// 初始化 asideList
-const asideList = computed<asideItem[]>(() => {
+
+const asideGroup = computed<asideItem[]>(() => {
   const { asideArray } = props;
+  const item: asideItem = {
+    key: '',
+    side: 'left',
+    header: 'none',
+    footer: false,
+    width: 0,
+    height: 0,
+    start: 0,
+    end: 0,
+    display: true,
+    position: 'absolute',
+    top: 0,
+    left: 'auto',
+    right: 'auto',
+    bottom: 'auto',
+    zIndex: 0,
+    draggbale: true,
+    slotHeight: 0
+  };
   const asideData = ref<asideItem[]>([]);
+
   let sumL = 0;
   let sumR = 0;
   for (let i = 0; i < asideArray.length; i += 1) {
@@ -372,15 +349,13 @@ const asideList = computed<asideItem[]>(() => {
     asideData.value[i].footer = asideArray[i].footer;
     asideData.value[i].width = asideArray[i].width;
     asideData.value[i].display = asideArray[i].display;
-    asideData.value[i].slotPosition = asideArray[i].position;
+    asideData.value[i].position = asideArray[i].position;
     if (asideArray[i].side === 'left') {
-      // 停靠在左边
       asideData.value[i].start = sumL;
       asideData.value[i].end = sumL + asideArray[i].width;
       asideData.value[i].left = sumL; // position
       sumL += asideArray[i].width;
     } else if (asideArray[i].side === 'right') {
-      // 停靠在右边
       asideData.value[i].start = sumR;
       asideData.value[i].end = appWidth.value - sumR - asideArray[i].width;
       asideData.value[i].right = sumR;
@@ -404,35 +379,35 @@ function setWidthL(rtn: rtnType): void {
   // sideWidth.value = rtn.width;
   if (rtn.state === 'move') {
     // 左边栏 拖动左侧
-    if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
-      // alert(asideList.value[rtn.id].start);
-      console.log('sumsmL:::::::::::::::::::::::::::::::::', asideList.value[rtn.id].start);
-      const w = tempWidth.value - rtn.pageX + asideList.value[rtn.id].start;
+    if (asideGroup.value[rtn.id].side === 'left' && rtn.id > 0) {
+      // alert(asideGroup.value[rtn.id].start);
+      console.log('sumsmL:::::::::::::::::::::::::::::::::', asideGroup.value[rtn.id].start);
+      const w = tempWidth.value - rtn.pageX + asideGroup.value[rtn.id].start;
       console.log('w:::::::::::::::::::::::::::::::::', w);
-      asideList.value[rtn.id].width = w < 50 ? 50 : w;
+      asideGroup.value[rtn.id].width = w < 50 ? 50 : w;
       if (w >= 50) {
-        asideList.value[rtn.id].left = rtn.pageX;
+        asideGroup.value[rtn.id].left = rtn.pageX;
       } else {
-        asideList.value[rtn.id].left =
-          typeof asideList.value[rtn.id].start === 'number'
-            ? tempWidth.value - 50 + asideList.value[rtn.id].start
+        asideGroup.value[rtn.id].left =
+          typeof asideGroup.value[rtn.id].start === 'number'
+            ? tempWidth.value - 50 + asideGroup.value[rtn.id].start
             : `auto`;
       }
       // 右边栏 拖动左侧
-    } else if (asideList.value[rtn.id].side === 'right') {
-      const w = rtn.pageX - asideList.value[rtn.id].start;
+    } else if (asideGroup.value[rtn.id].side === 'right') {
+      const w = rtn.pageX - asideGroup.value[rtn.id].start;
     }
   } else if (rtn.state === 'start') {
-    console.log('55555555555555555ssssssssssssssssssssssssssssss', asideList.value);
-    if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
-      // asideList.value[rtn.id].start = asideList.value[rtn.id].left;
-      tempWidth.value = asideList.value[rtn.id].width;
+    console.log('55555555555555555ssssssssssssssssssssssssssssss', asideGroup.value);
+    if (asideGroup.value[rtn.id].side === 'left' && rtn.id > 0) {
+      asideGroup.value[rtn.id].start = asideGroup.value[rtn.id].left;
+      tempWidth.value = asideGroup.value[rtn.id].width;
     } else {
-      asideList.value[rtn.id].start = rtn.pageX;
+      asideGroup.value[rtn.id].start = rtn.pageX;
     }
   } else if (rtn.state === 'end') {
-    if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
-      asideList.value[rtn.id].left = rtn.pageX;
+    if (asideGroup.value[rtn.id].side === 'left' && rtn.id > 0) {
+      asideGroup.value[rtn.id].left = rtn.pageX;
     } else {
     }
   }
@@ -440,14 +415,14 @@ function setWidthL(rtn: rtnType): void {
 function setWidthR(rtn: rtnType): void {
   // sideWidth.value = rtn.width;
   sideStart.value -= 0;
-  // rtnWidthR.value = rtn.width;
-  // lorr.value = rtn.lr;
+  rtnWidthR.value = rtn.width;
+  lorr.value = rtn.lr;
   myid.value = rtn.id;
   console.log('from sub aside: ============', rtn);
-  // asideList.value[rtn.id].width = rtn.width;
-  // asideList.value[rtn.id].width = rtn.width;
-  // asideList.value[rtn.id].right = rtn.left - rtn.right + asideList.value[rtn.id].start;
-  // asideList.value[rtn.id].start += rtn.left - rtn.right;
+  // asideGroup.value[rtn.id].width = rtn.width;
+  asideGroup.value[rtn.id].width = rtn.width;
+  asideGroup.value[rtn.id].right = rtn.left - rtn.right + asideGroup.value[rtn.id].start;
+  // asideGroup.value[rtn.id].start += rtn.left - rtn.right;
 }
 
 // interface myTF {
@@ -475,7 +450,9 @@ function setWidthR(rtn: rtnType): void {
 const { x, y } = useWindowScroll();
 const coverOut = computed(() => {
   const { hasCover } = props;
-  return hasCover && y.value > 400;
+  const s = hiddenHH.value + headerHH.value + tabHH.value;
+  const m = s > 500 ? s : 500;
+  return hasCover && y.value > m;
 });
 
 const widthL = computed(() => {
@@ -603,54 +580,55 @@ onMounted(() => {
       mainT.value = hiddenHH.value + headerHH.value + tabHH.value;
       // 这里需要根据 每个aside的情况，分别计算top值  charmi --------------------------------？？？？----
       // console.log('mainTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT.value', mainT.value);
-      for (let i = 0; i < asideList.value.length; i += 1) {
+      for (let i = 0; i < asideGroup.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
         switch (props.asideArray[i].header) {
           case 'cover': {
-            asideList.value[i].top = 0;
-            asideList.value[i].slotTop = 0;
-            asideList.value[i].zIndex = 8500;
+            asideGroup.value[i].top = 0;
+            asideGroup.value[i].slotHeight = 0;
+            asideGroup.value[i].zIndex = 8500;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            asideGroup.value[i].height = asideGroup.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'hidden': {
-            asideList.value[i].top = 0;
-            asideList.value[i].slotTop = 0;
-            asideList.value[i].zIndex = 7500;
+            asideGroup.value[i].top = 0;
+            asideGroup.value[i].slotHeight = 0;
+            asideGroup.value[i].zIndex = 7500;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            asideGroup.value[i].height = asideGroup.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'header': {
-            asideList.value[i].top = hiddenHH.value;
-            asideList.value[i].slotTop = headerTop.value;
-            asideList.value[i].zIndex = 6500;
+            asideGroup.value[i].top = hiddenHH.value;
+            asideGroup.value[i].slotHeight = headerTop.value;
+            asideGroup.value[i].zIndex = 6500;
             const w = coverHH.value + headerHH.value + tabHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            asideGroup.value[i].height = asideGroup.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'tab': {
-            asideList.value[i].top = hiddenHH.value + headerHH.value;
-            asideList.value[i].slotTop = tabTop.value;
-            asideList.value[i].zIndex = 5500;
+            asideGroup.value[i].top = hiddenHH.value + headerHH.value;
+            asideGroup.value[i].slotHeight = tabTop.value;
+            asideGroup.value[i].zIndex = 5500;
             const w = coverHH.value + tabHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            asideGroup.value[i].height = asideGroup.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'none': {
-            asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
-            asideList.value[i].slotTop = noneTop.value;
-            asideList.value[i].zIndex = 4000;
+            asideGroup.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
+            asideGroup.value[i].slotHeight = noneTop.value;
+            asideGroup.value[i].zIndex = 4000;
             const w = coverHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            asideGroup.value[i].height = asideGroup.value[i].footer ? w + footerHH.value : w;
             break;
           }
           default: {
-            asideList.value[i].top = mainT.value;
-            asideList.value[i].zIndex = 4000;
+            // statements;
+            asideGroup.value[i].top = mainT.value;
+            asideGroup.value[i].zIndex = 4000;
             const w = coverHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            asideGroup.value[i].height = asideGroup.value[i].footer ? w + footerHH.value : w;
             break;
           }
         }
@@ -750,14 +728,13 @@ const hiddenStyle = computed(() => {
 		position: ${hiddenPosition};
 		top: 0px;
 		left: 0px;
-		min-height:150px;
+		min-height:50px;
 		z-index: 7000;
 		background-color: #ae55ee;
 	`;
 });
 
 // header 的样式
-// header 的 position 从 应用程序 传过来。值为 fixed 和 absolute
 const headerStyle = computed(() => {
   const { hiddenPosition, hPosition, hMinHeight } = props;
   const t = hiddenPosition === 'sticky' ? hiddenHH.value : 0;
@@ -797,7 +774,7 @@ const mainStyle = computed(() => {
   return `
 		width: ${mainWidth.value}px;
 		position: relative;
-		top: 0px;
+		top: ${tTop}px;
 		left: ${aLwidth + 10}px;
 		right: ${tRight}px;
 		z-index: 1001;
@@ -821,9 +798,19 @@ const asideLStyle = computed(() => {
 	`;
 });
 
+// :aside-show="item.display"
+// :aside-position="item.position"
+// :aside-top="item.top"
+// :aside-left="item.left"
+// :aside-right="item.right"
+// :aside-bottom="'auto'"
+// :aside-width="item.width"
+// :aside-z-index="item.zIndex"
+// :aside-height="item.height"
 const asideStyle = computed(() => (item: asideItem) => {
+  console.log('cccccccccccccccccccccccccccccccccccccccc', item);
   return `
-		position: absolute;
+		position: ${item.position};
 		top: ${item.top}px;
 		left: ${item.left}px;
 		right: ${item.right}px;
