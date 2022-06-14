@@ -196,21 +196,41 @@ const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const asideArray = ref<asideType[]>([
   {
     position: 'sticky',
-    header: 'hidden',
+    header: 'cover',
     footer: true,
     key: 'asidea',
+    side: 'left',
+    width: 100,
+    display: true,
+    draggbale: true
+  },
+  {
+    position: 'sticky',
+    header: 'hidden',
+    footer: false,
+    key: 'asideb',
     side: 'right',
-    width: 200,
+    width: 100,
+    display: true,
+    draggbale: true
+  },
+  {
+    position: 'sticky',
+    header: 'header',
+    footer: true,
+    key: 'asidec',
+    side: 'left',
+    width: 100,
     display: true,
     draggbale: true
   },
   {
     position: 'sticky',
     header: 'tab',
-    footer: false,
-    key: 'asideb',
+    footer: true,
+    key: 'asided',
     side: 'right',
-    width: 200,
+    width: 100,
     display: true,
     draggbale: true
   },
@@ -218,9 +238,29 @@ const asideArray = ref<asideType[]>([
     position: 'sticky',
     header: 'none',
     footer: true,
-    key: 'asidec',
+    key: 'asidee',
     side: 'right',
-    width: 200,
+    width: 100,
+    display: true,
+    draggbale: true
+  },
+  {
+    position: 'sticky',
+    header: 'none',
+    footer: true,
+    key: 'asidef',
+    side: 'right',
+    width: 100,
+    display: true,
+    draggbale: true
+  },
+  {
+    position: 'sticky',
+    header: 'none',
+    footer: true,
+    key: 'asideg',
+    side: 'left',
+    width: 100,
     display: true,
     draggbale: true
   }
@@ -269,7 +309,7 @@ function setWidthR(width: number) {
 }
 .example-2 {
   white-space: nowrap;
-  height: 3000px;
+  /* height: 3000px; */
 }
 ul li {
   padding: 0;

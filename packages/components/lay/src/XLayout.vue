@@ -331,12 +331,12 @@ const mainMinHeight = computed(() => {
   const ta = tabHH.value;
   const fo = footerHH.value;
   const a = sy.value - hi - he - ta - fo;
-  // console.log('mainMinHeight-----------------------------aaaaaaaaaaa', a);
+  console.log('mainMinHeight-----------------------------aaaaaaaaaaa', a);
   return a;
 });
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
-const item: asideItem = {
+const item0: asideItem = {
   key: '',
   side: 'left',
   header: 'none',
@@ -364,7 +364,7 @@ const asideList = computed<asideItem[]>(() => {
   let sumR = 0;
   for (let i = 0; i < asideArray.length; i += 1) {
     asideData.value.push({
-      ...item
+      ...item0
     });
     asideData.value[i].key = asideArray[i].key;
     asideData.value[i].side = asideArray[i].side;
@@ -392,7 +392,7 @@ const asideList = computed<asideItem[]>(() => {
   return asideData.value;
 });
 
-// ---***------ 为aside sticky情形 提供top值 会通过props传给 LayoutAside.vue -------***************-------------
+// ---计算 aside sticky的 top值 通过props传给 LayoutAside.vue -------------------------------------------------------
 
 // 侧边栏aside覆盖hidden
 const hiddenTop = computed(() => {
@@ -406,7 +406,7 @@ const hT = computed(() => {
 });
 const headerTop = computed(() => {
   if (coverOut.value) {
-    // 当 cover出现时，如果cover的高度大于hT.value，则top的值为cover的高度
+    // 当 cover出现时，如果cover的高度大于hT.value(hidden的高度)，则top的值为cover的高度，要下移。
     return coverHH.value > hT.value ? coverHH.value : hT.value;
   }
   return hT.value;
@@ -434,55 +434,27 @@ const noneTop = computed(() => {
   return t;
 });
 
-// ---***------ 为aside sticky情形 提供计算aside高度 会通过props传给 LayoutAside.vue -------*********************
-// watch(
-//   () => sy.value - hiddenTop.value - 27,
-//   a => {
-//     for (let i = 0; i < asideList.value.length; i += 1) {
-//       // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
-//       switch (props.asideArray[i].header) {
-//         case 'cover': {
-//           asideList.value[i].slotHeight = sy.value - 27;
-//           break;
-//         }
-//         case 'hidden': {
-//           console.log('888888888888888888888888888888888888');
-//           asideList.value[i].slotHeight = a;
-//           break;
-//         }
-//         default: {
-//           break;
-//         }
-//       }
-//     }
-//   },
-//   {
-//     immediate: true
-//   }
-// );
-
+// -----计算侧边栏sticky时的高度---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
 watch(
-  () => [y.value, sy.value, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => [y.value, sx, sy, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
     for (let i = 0; i < asideList.value.length; i += 1) {
       // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
       switch (props.asideArray[i].header) {
         case 'cover': {
           asideList.value[i].slotHeight = sy.value - 27;
-          // console.log('888888888888888888888888888888888888');
           break;
         }
         case 'hidden': {
           asideList.value[i].slotHeight = sy.value - hiddenTop.value - 27;
-          console.log('888888888888888888888888888888888888');
           break;
         }
         case 'header': {
           const { hiddenPosition } = props;
-          const t = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-          const h = t < y.value ? t : y.value;
+          const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+          const h = t0 < y.value ? t0 : y.value;
           const a = sy.value - headerTop.value - 27;
-          asideList.value[i].slotHeight = hiddenPosition === 'relative' ? a + h : a;
+          asideList.value[i].slotHeight = hiddenPosition === 'relative' ? a - t0 + h : a;
           break;
         }
         case 'tab': {
@@ -501,7 +473,6 @@ watch(
           const t2 = tPosition === 'relative' ? tabHH.value : 0;
           const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
           const a = sy.value - noneTop.value - 27;
-          // console.log('888888888888888888888888888888888888', a);
           asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
           break;
         }
@@ -509,7 +480,6 @@ watch(
           break;
         }
       }
-      // }
     }
   },
   {
@@ -889,7 +859,7 @@ const coverStyle = computed(() => {
 		min-height:140px;
 		height: 48px;
 		z-index: 8000;
-    background-color: rgb(240, 121, 17);
+    background-color: rgb(40, 181, 187);
 	`;
 });
 
