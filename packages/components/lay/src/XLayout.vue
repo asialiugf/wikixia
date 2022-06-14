@@ -16,8 +16,8 @@
       <div>{{ x }} --- {{ y }}</div>
     </header>
     <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab info" :style="tabStyle">
-      <slot name="tab"
-        >sx:sy========={{ appWidth }}=={{ appHeight }}===={{ mainT }}======== {{ sx }} - {{ sy }} -- main height:
+      <slot name="tab">
+        - sx:sy==={{ appWidth }}=={{ appHeight }}===={{ mainT }}======== {{ sx }} - {{ sy }} -- main height:
         {{ mainh }} -- footero {{ footero }}
         <div v-if="props.headerTimeout">来了！</div>
       </slot>
@@ -41,7 +41,7 @@
         :id="index"
         :aside-position="item.slotPosition"
         :aside-top="item.slotTop"
-        :aside-height="mainMinHeight"
+        :aside-height="item.slotHeight"
         :aside-width="item.width"
         @update:width-l="setWidthL"
         @update:width-r="setWidthR"
@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onBeforeMount } from 'vue';
+import { ref, computed, onMounted, watch, onBeforeMount, reactive } from 'vue';
 import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindowSize } from '@vueuse/core';
 import LayoutAside from './LayoutAside.vue';
 
@@ -211,7 +211,7 @@ interface Props {
   aRheight?: number | 'auto';
   aRpaddingLeft?: number | 'auto';
   /* Footer */
-  fPosition?: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
+  fPosition?: 'relative' | 'sticky';
   fTop?: number | 'auto';
   fLeft?: number | 'auto';
   fRight?: number | 'auto';
@@ -307,6 +307,10 @@ const mainh = ref(0);
 const mainT = ref(0);
 const footerHH = ref(0);
 
+// ------------ 计算 cover 是否显示 -----------------
+// ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 198时，就会从顶部向下滑出  -------------
+// ------------- coverOut 会传给 边栏子组件 每个边栏子组件都会用到 ------------
+// y.value的值最好要大于 hiddenHH.value + headerHH.value + tabHH.value，否则会出现跳动
 const { x, y } = useWindowScroll();
 const coverOut = computed(() => {
   const { hasCover } = props;
@@ -327,51 +331,10 @@ const mainMinHeight = computed(() => {
   const ta = tabHH.value;
   const fo = footerHH.value;
   const a = sy.value - hi - he - ta - fo;
-  console.log('mainMinHeight-----------------------------aaaaaaaaaaa', a);
+  // console.log('mainMinHeight-----------------------------aaaaaaaaaaa', a);
   return a;
 });
 
-// ------------- 为aside sticky情形 提供top值 会通过props传给 LayoutAside.vue ---------------------------------------------
-
-// 侧边栏aside覆盖hidden
-const hiddenTop = computed(() => {
-  return coverOut.value ? coverHH.value : 0; // 当 cover出现时，top的值为cover的高度
-});
-
-// 侧边栏aside覆盖header
-const hT = computed(() => {
-  const { hiddenPosition } = props;
-  return hiddenPosition === 'sticky' ? hiddenHH.value : 0;
-});
-const headerTop = computed(() => {
-  if (coverOut.value) {
-    // 当 cover出现时，如果cover的高度大于hT.value，则top的值为cover的高度
-    return coverHH.value > hT.value ? coverHH.value : hT.value;
-  }
-  return hT.value;
-});
-
-// 侧边栏aside覆盖tab
-const tT = computed(() => {
-  const { hPosition } = props;
-  return hPosition === 'sticky' ? hT.value + headerHH.value : headerTop.value; // 如果是sticky的话，那么tab的top就是header的高度
-});
-const tabTop = computed(() => {
-  if (coverOut.value) {
-    return coverHH.value > tT.value ? coverHH.value : tT.value;
-  }
-  return tT.value;
-});
-
-// 侧边栏aside 无覆盖
-const noneTop = computed(() => {
-  const { tPosition } = props;
-  const t = tPosition === 'sticky' ? tT.value + tabHH.value : tabTop.value; // 如果是sticky的话，那么tab的top就是header的高度
-  if (coverOut.value) {
-    return coverHH.value > t ? coverHH.value : t;
-  }
-  return t;
-});
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 const item: asideItem = {
   key: '',
@@ -428,6 +391,132 @@ const asideList = computed<asideItem[]>(() => {
   console.log('ssssssssssssssssssssssssssssss', asideData.value);
   return asideData.value;
 });
+
+// ---***------ 为aside sticky情形 提供top值 会通过props传给 LayoutAside.vue -------***************-------------
+
+// 侧边栏aside覆盖hidden
+const hiddenTop = computed(() => {
+  return coverOut.value ? coverHH.value : 0; // 当 cover出现时，top的值为cover的高度
+});
+
+// 侧边栏aside覆盖header
+const hT = computed(() => {
+  const { hiddenPosition } = props;
+  return hiddenPosition === 'sticky' ? hiddenHH.value : 0;
+});
+const headerTop = computed(() => {
+  if (coverOut.value) {
+    // 当 cover出现时，如果cover的高度大于hT.value，则top的值为cover的高度
+    return coverHH.value > hT.value ? coverHH.value : hT.value;
+  }
+  return hT.value;
+});
+
+// 侧边栏aside覆盖tab
+const tT = computed(() => {
+  const { hPosition } = props;
+  return hPosition === 'sticky' ? hT.value + headerHH.value : headerTop.value;
+});
+const tabTop = computed(() => {
+  if (coverOut.value) {
+    return coverHH.value > tT.value ? coverHH.value : tT.value;
+  }
+  return tT.value;
+});
+
+// 侧边栏aside 无覆盖
+const noneTop = computed(() => {
+  const { tPosition } = props;
+  const t = tPosition === 'sticky' ? tT.value + tabHH.value : tabTop.value;
+  if (coverOut.value) {
+    return coverHH.value > t ? coverHH.value : t;
+  }
+  return t;
+});
+
+// ---***------ 为aside sticky情形 提供计算aside高度 会通过props传给 LayoutAside.vue -------*********************
+// watch(
+//   () => sy.value - hiddenTop.value - 27,
+//   a => {
+//     for (let i = 0; i < asideList.value.length; i += 1) {
+//       // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
+//       switch (props.asideArray[i].header) {
+//         case 'cover': {
+//           asideList.value[i].slotHeight = sy.value - 27;
+//           break;
+//         }
+//         case 'hidden': {
+//           console.log('888888888888888888888888888888888888');
+//           asideList.value[i].slotHeight = a;
+//           break;
+//         }
+//         default: {
+//           break;
+//         }
+//       }
+//     }
+//   },
+//   {
+//     immediate: true
+//   }
+// );
+
+watch(
+  () => [y.value, sy.value, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => {
+    for (let i = 0; i < asideList.value.length; i += 1) {
+      // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
+      switch (props.asideArray[i].header) {
+        case 'cover': {
+          asideList.value[i].slotHeight = sy.value - 27;
+          // console.log('888888888888888888888888888888888888');
+          break;
+        }
+        case 'hidden': {
+          asideList.value[i].slotHeight = sy.value - hiddenTop.value - 27;
+          console.log('888888888888888888888888888888888888');
+          break;
+        }
+        case 'header': {
+          const { hiddenPosition } = props;
+          const t = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+          const h = t < y.value ? t : y.value;
+          const a = sy.value - headerTop.value - 27;
+          asideList.value[i].slotHeight = hiddenPosition === 'relative' ? a + h : a;
+          break;
+        }
+        case 'tab': {
+          const { hiddenPosition, hPosition } = props;
+          const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+          const t1 = hPosition === 'relative' ? headerHH.value : 0;
+          const h = t0 + t1 < y.value ? t0 + t1 : y.value;
+          const a = sy.value - tabTop.value - 27;
+          asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 + h : a;
+          break;
+        }
+        case 'none': {
+          const { hiddenPosition, hPosition, tPosition } = props;
+          const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+          const t1 = hPosition === 'relative' ? headerHH.value : 0;
+          const t2 = tPosition === 'relative' ? tabHH.value : 0;
+          const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
+          const a = sy.value - noneTop.value - 27;
+          // console.log('888888888888888888888888888888888888', a);
+          asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      // }
+    }
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+);
 
 const rtnWidthL = ref(0);
 const rtnWidthR = ref(0);
@@ -505,11 +594,6 @@ function setWidthR(rtn: rtnType): void {
 //   };
 // });
 
-// ------------ 计算 cover 是否显示 -----------------
-// ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 198时，就会从顶部向下滑出  -------------
-// ------------- coverOut 会传给 边栏子组件 每个边栏子组件都会用到 ------------
-// y.value的值最好要大于 hiddenHH.value + headerHH.value + tabHH.value，否则会出现跳动
-
 const widthL = computed(() => {
   return props.aLwidth;
 });
@@ -576,7 +660,7 @@ function handleWidth(className: string, isLeft: boolean): boolean {
 function changeWidth() {
   asideWidthL.value = 0;
 }
-// -------------------------------- resize处理 ------------------------------------------
+// -------------------------------- resize处理 -------------------------------------------
 
 // const layouth = ref(0);
 const footero = ref(0);
@@ -638,6 +722,7 @@ const headerHeight = computed(() => {
 //  |                 |
 //  |                 |
 //  +-----------------+
+
 onMounted(() => {
   // 只有 entries[0]有内容，虽然是观察多个，但是一个一个返回的。
   const resizeObserver = new ResizeObserver(entries => {
@@ -756,7 +841,7 @@ function onResize() {
   // 下面的 -20是为了让页面滚动条不占用宽度
   sx.value = window.innerWidth - 20;
   sy.value = window.innerHeight;
-  console.log('999999999999999999999999999999999999999999999', sx.value);
+  // console.log('999999999999999999999999999999999999999999999', sx.value);
   // const element = document.querySelector('.main') as HTMLElement;
   // mainh.value = element.offsetHeight < sy.value ? sy.value : element.offsetHeight;
   // console.log('ttttttttttttttttttttttttt', mainh.value);
@@ -858,10 +943,10 @@ const tabStyle = computed(() => {
 
 const mainStyle = computed(() => {
   const { tTop, aLwidth, tRight } = props;
-  console.log(
-    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa mainh.value',
-    mainMinHeight.value
-  );
+  // console.log(
+  //   'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa mainh.value',
+  //   mainMinHeight.value
+  // );
   return `
 		width: ${mainWidth.value}px;
 		position: relative;

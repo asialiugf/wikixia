@@ -136,7 +136,7 @@ onMounted(() => {
 // 这个样式，只给sticky使用， 属于子DIV样式
 const asideStyle = computed(() => {
   const { asideTop, asideWidth, asideHeight, asidePosition } = props;
-  console.log('sssssssssssssiiiiiiiiiiiiiiii', asidePosition, asideTop, asideWidth, asideHeight);
+  // console.log('sssssssssssssiiiiiiiiiiiiiiii', asidePosition, asideTop, asideWidth, asideHeight);
   return `
 	  position: sticky;
 	  top: ${asideTop}px;
