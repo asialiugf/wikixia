@@ -12,7 +12,7 @@
     :hasFooter="true"
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
-    :tPosition="'relative'"
+    :tPosition="'sticky'"
     :fPosition="'sticky'"
     :hTop="top0"
     :tHeight="'auto'"
@@ -125,7 +125,7 @@
             >开始阅读。
           </p>
         </div>
-        <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 110" :key="n">adfsafd {{ n }} <br /></li>
       </ul>
     </template>
     <template #asideL>
@@ -196,7 +196,7 @@ const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const asideArray = ref<asideType[]>([
   {
     position: 'sticky',
-    header: '0-cover',
+    header: 'cover',
     footer: true,
     key: 'asidea',
     side: 'left',
@@ -206,7 +206,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: '1-hidden',
+    header: 'hidden',
     footer: false,
     key: 'asideb',
     side: 'right',
@@ -216,7 +216,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: '2-header',
+    header: 'header',
     footer: true,
     key: 'asidec',
     side: 'left',
@@ -226,7 +226,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: '3-tab',
+    header: 'tab',
     footer: true,
     key: 'asided',
     side: 'right',
@@ -236,7 +236,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: '4-none',
+    header: 'none',
     footer: true,
     key: 'asidee',
     side: 'right',
@@ -246,7 +246,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: '4-none',
+    header: 'none',
     footer: true,
     key: 'asidef',
     side: 'right',
@@ -256,7 +256,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: '4-none',
+    header: 'cover',
     footer: true,
     key: 'asideg',
     side: 'left',

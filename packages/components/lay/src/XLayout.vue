@@ -76,7 +76,7 @@ interface asideType {
   position: 'absolute' | 'sticky';
   key: string; // slots name
   // 针对头部的覆盖 header and footer are covered or not by admin-layout
-  header: '0-cover' | '1-hidden' | '2-header' | '3-tab' | '4-none';
+  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
   footer: boolean; // 是否覆盖 footer
   // side: 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
   side: 'left' | 'right';
@@ -95,8 +95,8 @@ interface asideItem {
   key: string; // 侧边栏的key，slot的name会用这个key
   side: 'left' | 'right';
   // 是否覆盖 header ?
-  header: '0-cover' | '1-hidden' | '2-header' | '3-tab' | '4-none';
-  // 是否覆盖 footer ?
+  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
+  coverType: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none
   footer: boolean; // 是否覆盖 footer
   display: boolean; // 是否显示
   draggbale: boolean; // 是否可以移动
@@ -113,6 +113,13 @@ interface asideItem {
   slotTop: number;
   slotHeight: number;
 }
+
+const asideMap = new Map<string, number>();
+asideMap.set('cover', 0);
+asideMap.set('hidden', 1);
+asideMap.set('header', 2);
+asideMap.set('tab', 3);
+asideMap.set('none', 4);
 
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 // import LayoutBlock from './LayoutBlock.vue';
@@ -338,14 +345,13 @@ const mainMinHeight = computed(() => {
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 
-function asideSort(li: asideType[]) {
+function asideSort(li: asideItem[]) {
   if (li.length <= 1) {
     return;
   }
-  console.log('asideSort-----------------------------', li);
-  li.sort((a: asideType, b: asideType) => {
-    const x1 = a.header;
-    const y1 = b.header;
+  li.sort((a: asideItem, b: asideItem) => {
+    const x1 = a.coverType;
+    const y1 = b.coverType;
     if (x1 < y1) {
       return -1;
     }
@@ -359,8 +365,9 @@ function asideSort(li: asideType[]) {
 const item0: asideItem = {
   key: '',
   side: 'left',
-  header: '4-none',
+  header: 'none',
   footer: false,
+  coverType: 4,
   width: -1,
   height: -1,
   start: -1,
@@ -377,48 +384,49 @@ const item0: asideItem = {
   slotHeight: 0
 };
 // 初始化 asideList
-const asideList = computed<asideItem[]>(() => {
+
+const asideList = ref<asideItem[]>([]);
+
+onMounted(() => {
   const { asideArray } = props;
-  console.log('22ssssssssssssssssssssssssssssss', asideArray);
-  asideSort(asideArray);
-  console.log('22ssssssssssssssssssssssssssssss', asideArray);
-  console.log('22xxxxxxxxxxxxxxxxxxxxxxxxxxxx', props.asideArray);
-  console.log('22xxxxxxxxxxxxxxxxprops.asideArrayxxxxxxxxxxxx', props.asideArray);
-  const asideData = ref<asideItem[]>([]);
-  let sumL = 0;
-  let sumR = 0;
   for (let i = 0; i < asideArray.length; i += 1) {
-    asideData.value.push({
+    asideList.value.push({
       ...item0
     });
-    asideData.value[i].key = asideArray[i].key;
-    asideData.value[i].side = asideArray[i].side;
-    asideData.value[i].header = asideArray[i].header;
-    asideData.value[i].footer = asideArray[i].footer;
-    asideData.value[i].width = asideArray[i].width;
-    asideData.value[i].display = asideArray[i].display;
-    asideData.value[i].slotPosition = asideArray[i].position;
-    if (asideArray[i].side === 'left') {
+
+    asideList.value[i].key = asideArray[i].key;
+    asideList.value[i].side = asideArray[i].side;
+    asideList.value[i].header = asideArray[i].header;
+    asideList.value[i].footer = asideArray[i].footer;
+    asideList.value[i].coverType = asideMap.get(asideArray[i].header)!;
+    asideList.value[i].width = asideArray[i].width;
+    asideList.value[i].display = asideArray[i].display;
+    asideList.value[i].slotPosition = asideArray[i].position;
+    console.log('--ssssssssssssssssssssssssssssss', asideList);
+  }
+  asideSort(asideList.value);
+  let sumL = -1;
+  let sumR = -1;
+  for (let i = 0; i < asideList.value.length; i += 1) {
+    if (asideList.value[i].side === 'left') {
       // 停靠在左边
-      asideData.value[i].start = sumL;
-      asideData.value[i].end = sumL + asideArray[i].width;
-      asideData.value[i].left = sumL; // position
-      sumL += asideArray[i].width;
-    } else if (asideArray[i].side === 'right') {
+      asideList.value[i].start = sumL;
+      asideList.value[i].end = sumL + asideList.value[i].width;
+      asideList.value[i].left = sumL; // position
+      sumL += asideList.value[i].width;
+    } else if (asideList.value[i].side === 'right') {
       // 停靠在右边
-      asideData.value[i].start = sumR;
-      asideData.value[i].end = appWidth.value - sumR - asideArray[i].width;
-      asideData.value[i].right = sumR;
-      sumR += asideArray[i].width;
+      asideList.value[i].start = sumR;
+      asideList.value[i].end = appWidth.value - sumR - asideList.value[i].width;
+      asideList.value[i].right = sumR;
+      sumR += asideList.value[i].width;
     }
   }
-  console.log('ssssssssssssssssssssssssssssss', asideArray);
-  console.log('ssssssssssssssssssssssssssssss', asideData.value);
-  return asideData.value;
+  console.log('---ssssssssssssssssssssssssssssss', asideList.value);
 });
 
 // ---计算 aside sticky的 top值 通过props传给 LayoutAside.vue -------------------------------------------------------
-
+// *
 // 侧边栏aside覆盖hidden
 const hiddenTop = computed(() => {
   return coverOut.value ? coverHH.value : 0; // 当 cover出现时，top的值为cover的高度
@@ -440,7 +448,7 @@ const headerTop = computed(() => {
 // 侧边栏aside覆盖tab
 const tT = computed(() => {
   const { hPosition } = props;
-  return hPosition === 'sticky' ? hT.value + headerHH.value : headerTop.value;
+  return hPosition === 'sticky' ? hT.value + headerHH.value : hT.value;
 });
 const tabTop = computed(() => {
   if (coverOut.value) {
@@ -452,7 +460,7 @@ const tabTop = computed(() => {
 // 侧边栏aside 无覆盖
 const noneTop = computed(() => {
   const { tPosition } = props;
-  const t = tPosition === 'sticky' ? tT.value + tabHH.value : tabTop.value;
+  const t = tPosition === 'sticky' ? tT.value + tabHH.value : tT.value;
   if (coverOut.value) {
     return coverHH.value > t ? coverHH.value : t;
   }
@@ -461,29 +469,37 @@ const noneTop = computed(() => {
 
 // -----计算侧边栏sticky时的高度---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
 watch(
-  () => [y.value, sx, sy, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => [y, sy, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
+    // 【 charmi 当鼠标下滑到 y.value 超过 coverHH.value + hiddenHH.value + headerHH.value + tabHH.value时
+    // 屏幕变稳定了，所以不应该再计算高度了 】
+    // if (y.value > coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + 200) {
+    //   return;
+    // }
+    const { hiddenPosition, hPosition, tPosition } = props;
     for (let i = 0; i < asideList.value.length; i += 1) {
-      // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
-      switch (props.asideArray[i].header) {
-        case '0-cover': {
+      switch (
+        props.asideArray[i].header // 【charmi 这里为什么不是 asiadList.value 呢？ 】
+      ) {
+        case 'cover': {
           asideList.value[i].slotHeight = sy.value - 27;
           break;
         }
-        case '1-hidden': {
+        case 'hidden': {
           asideList.value[i].slotHeight = sy.value - hiddenTop.value - 27;
           break;
         }
-        case '2-header': {
-          const { hiddenPosition } = props;
+        case 'header': {
+          // const { hiddenPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const h = t0 < y.value ? t0 : y.value;
           const a = sy.value - headerTop.value - 27;
           asideList.value[i].slotHeight = hiddenPosition === 'relative' ? a - t0 + h : a;
+          console.log('--5555555555555ssssssssssssssssssssssssssssss');
           break;
         }
-        case '3-tab': {
-          const { hiddenPosition, hPosition } = props;
+        case 'tab': {
+          // const { hiddenPosition, hPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
           const h = t0 + t1 < y.value ? t0 + t1 : y.value;
@@ -491,8 +507,7 @@ watch(
           asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 + h : a;
           break;
         }
-        case '4-none': {
-          const { hiddenPosition, hPosition, tPosition } = props;
+        case 'none': {
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
           const t2 = tPosition === 'relative' ? tabHH.value : 0;
@@ -751,7 +766,7 @@ onMounted(() => {
       for (let i = 0; i < asideList.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
         switch (props.asideArray[i].header) {
-          case '0-cover': {
+          case 'cover': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
             asideList.value[i].zIndex = 8500;
@@ -759,7 +774,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case '1-hidden': {
+          case 'hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
             asideList.value[i].zIndex = 7500;
@@ -767,7 +782,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case '2-header': {
+          case 'header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
             asideList.value[i].zIndex = 6500;
@@ -775,7 +790,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case '3-tab': {
+          case 'tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
             asideList.value[i].zIndex = 5500;
@@ -783,7 +798,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case '4-none': {
+          case 'none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
             asideList.value[i].zIndex = 4000;
