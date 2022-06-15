@@ -336,6 +336,24 @@ const mainMinHeight = computed(() => {
 });
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
+
+function asideSort(li: asideType[]) {
+  if (li.length <= 1) {
+    return;
+  }
+  li.sort((a: asideType, b: asideType) => {
+    const x1 = a.header;
+    const y1 = b.header;
+    if (x1 < y1) {
+      return -1;
+    }
+    if (x1 > y1) {
+      return 1;
+    }
+    return 0;
+  });
+}
+
 const item0: asideItem = {
   key: '',
   side: 'left',
@@ -359,6 +377,7 @@ const item0: asideItem = {
 // 初始化 asideList
 const asideList = computed<asideItem[]>(() => {
   const { asideArray } = props;
+  asideSort(asideArray);
   const asideData = ref<asideItem[]>([]);
   let sumL = 0;
   let sumR = 0;
