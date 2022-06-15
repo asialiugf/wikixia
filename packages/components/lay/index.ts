@@ -35,10 +35,10 @@ export interface asideType {
   position: 'absolute' | 'sticky';
   key: string; // slots name
   // 针对头部的覆盖 header and footer are covered or not by admin-layout
-  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
+  header: '0-cover' | '1-hidden' | '2-header' | '3-tab' | '4-none';
   footer: boolean; // 是否覆盖 footer
   // side: 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
-  side: 'left' | 'right' | 'mainl' | 'mainr' | 'isolated';
+  side: 'left' | 'right';
   width: number;
   display: boolean; // 是否显示
   draggbale: boolean; // 是否可以移动

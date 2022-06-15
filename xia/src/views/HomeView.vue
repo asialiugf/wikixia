@@ -196,7 +196,7 @@ const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const asideArray = ref<asideType[]>([
   {
     position: 'sticky',
-    header: 'cover',
+    header: '0-cover',
     footer: true,
     key: 'asidea',
     side: 'left',
@@ -206,7 +206,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: 'hidden',
+    header: '1-hidden',
     footer: false,
     key: 'asideb',
     side: 'right',
@@ -216,7 +216,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: 'header',
+    header: '2-header',
     footer: true,
     key: 'asidec',
     side: 'left',
@@ -226,7 +226,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: 'tab',
+    header: '3-tab',
     footer: true,
     key: 'asided',
     side: 'right',
@@ -236,7 +236,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: 'none',
+    header: '4-none',
     footer: true,
     key: 'asidee',
     side: 'right',
@@ -246,7 +246,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: 'none',
+    header: '4-none',
     footer: true,
     key: 'asidef',
     side: 'right',
@@ -256,7 +256,7 @@ const asideArray = ref<asideType[]>([
   },
   {
     position: 'sticky',
-    header: 'none',
+    header: '4-none',
     footer: true,
     key: 'asideg',
     side: 'left',

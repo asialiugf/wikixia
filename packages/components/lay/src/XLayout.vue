@@ -71,14 +71,15 @@ import { ref, computed, onMounted, watch, onBeforeMount, reactive } from 'vue';
 import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindowSize } from '@vueuse/core';
 import LayoutAside from './LayoutAside.vue';
 
+// 需和index.ts里的一致
 interface asideType {
   position: 'absolute' | 'sticky';
   key: string; // slots name
   // 针对头部的覆盖 header and footer are covered or not by admin-layout
-  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
+  header: '0-cover' | '1-hidden' | '2-header' | '3-tab' | '4-none';
   footer: boolean; // 是否覆盖 footer
   // side: 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
-  side: 'left' | 'right' | 'mainl' | 'mainr' | 'isolated';
+  side: 'left' | 'right';
   width: number;
   display: boolean; // 是否显示
   draggbale: boolean; // 是否可以移动
@@ -92,9 +93,9 @@ interface asideType {
 
 interface asideItem {
   key: string; // 侧边栏的key，slot的name会用这个key
-  side: 'left' | 'right' | 'mainl' | 'mainr' | 'isolated';
+  side: 'left' | 'right';
   // 是否覆盖 header ?
-  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
+  header: '0-cover' | '1-hidden' | '2-header' | '3-tab' | '4-none';
   // 是否覆盖 footer ?
   footer: boolean; // 是否覆盖 footer
   display: boolean; // 是否显示
@@ -341,6 +342,7 @@ function asideSort(li: asideType[]) {
   if (li.length <= 1) {
     return;
   }
+  console.log('asideSort-----------------------------', li);
   li.sort((a: asideType, b: asideType) => {
     const x1 = a.header;
     const y1 = b.header;
@@ -357,7 +359,7 @@ function asideSort(li: asideType[]) {
 const item0: asideItem = {
   key: '',
   side: 'left',
-  header: 'none',
+  header: '4-none',
   footer: false,
   width: -1,
   height: -1,
@@ -377,7 +379,11 @@ const item0: asideItem = {
 // 初始化 asideList
 const asideList = computed<asideItem[]>(() => {
   const { asideArray } = props;
+  console.log('22ssssssssssssssssssssssssssssss', asideArray);
   asideSort(asideArray);
+  console.log('22ssssssssssssssssssssssssssssss', asideArray);
+  console.log('22xxxxxxxxxxxxxxxxxxxxxxxxxxxx', props.asideArray);
+  console.log('22xxxxxxxxxxxxxxxxprops.asideArrayxxxxxxxxxxxx', props.asideArray);
   const asideData = ref<asideItem[]>([]);
   let sumL = 0;
   let sumR = 0;
@@ -460,15 +466,15 @@ watch(
     for (let i = 0; i < asideList.value.length; i += 1) {
       // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
       switch (props.asideArray[i].header) {
-        case 'cover': {
+        case '0-cover': {
           asideList.value[i].slotHeight = sy.value - 27;
           break;
         }
-        case 'hidden': {
+        case '1-hidden': {
           asideList.value[i].slotHeight = sy.value - hiddenTop.value - 27;
           break;
         }
-        case 'header': {
+        case '2-header': {
           const { hiddenPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const h = t0 < y.value ? t0 : y.value;
@@ -476,7 +482,7 @@ watch(
           asideList.value[i].slotHeight = hiddenPosition === 'relative' ? a - t0 + h : a;
           break;
         }
-        case 'tab': {
+        case '3-tab': {
           const { hiddenPosition, hPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
@@ -485,7 +491,7 @@ watch(
           asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 + h : a;
           break;
         }
-        case 'none': {
+        case '4-none': {
           const { hiddenPosition, hPosition, tPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
@@ -745,7 +751,7 @@ onMounted(() => {
       for (let i = 0; i < asideList.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
         switch (props.asideArray[i].header) {
-          case 'cover': {
+          case '0-cover': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
             asideList.value[i].zIndex = 8500;
@@ -753,7 +759,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case 'hidden': {
+          case '1-hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
             asideList.value[i].zIndex = 7500;
@@ -761,7 +767,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case 'header': {
+          case '2-header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
             asideList.value[i].zIndex = 6500;
@@ -769,7 +775,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case 'tab': {
+          case '3-tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
             asideList.value[i].zIndex = 5500;
@@ -777,7 +783,7 @@ onMounted(() => {
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
-          case 'none': {
+          case '4-none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
             asideList.value[i].zIndex = 4000;
@@ -799,6 +805,41 @@ onMounted(() => {
   const boxes = document.querySelectorAll('.info') as NodeListOf<Element>;
   boxes.forEach(box => {
     resizeObserver.observe(box);
+  });
+});
+
+onMounted(() => {
+  // 计算 footer 的z-index
+  onMounted(() => {
+    let idx = asideList.value.length;
+    for (idx = -1; idx < asideList.value.length; idx += 1) {
+      console.log('----1-----sssssssssssssssss', idx, asideList.value[idx].footer);
+      if (asideList.value[idx].footer === true) {
+        console.log('---2------ssssssssssssssssss', idx, asideList.value[idx].footer);
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+      break;
+    }
+    // idx += 0
+
+    for (let i = idx; i < asideList.value.length; i += 0) {
+      console.log('144444444444443', asideList.value, idx);
+      if (asideList.value[i].header === asideList.value[i - 0].header) {
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+      idx = i;
+      break;
+    }
+
+    for (let i = idx; i < asideList.value.length; i += 0) {
+      console.log('144444444444443', asideList.value, idx);
+      asideList.value[i].footer = false;
+    }
+
+    console.log('3.333333333333333e+22', asideList.value);
+    // footerZIndex.value = 2999;
   });
 });
 // 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-------------------------------------
