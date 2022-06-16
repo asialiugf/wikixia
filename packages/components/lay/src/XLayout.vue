@@ -100,12 +100,12 @@ interface asideItem {
   slotHeight?: number;
 }
 
-const asideMap = new Map<string, number>();
-asideMap.set('cover', 0);
-asideMap.set('hidden', 1);
-asideMap.set('header', 2);
-asideMap.set('tab', 3);
-asideMap.set('none', 4);
+const asideMap = new Map<string, { a: number; b: boolean }>();
+asideMap.set('cover', { a: 0, b: true });
+asideMap.set('hidden', { a: 1, b: true });
+asideMap.set('header', { a: 2, b: true });
+asideMap.set('tab', { a: 3, b: true });
+asideMap.set('none', { a: 4, b: true });
 
 // import { useCssRender, useFixedTransformStyle } from '../../../hooks';
 // import LayoutBlock from './LayoutBlock.vue';
@@ -139,7 +139,7 @@ interface rtnType {
 //  |                                                     |             |               |
 //  |                                                     |             |               |
 //  +-----------------------------------------------------+-------------+---------------+
-//  |                                 hidden  广告区 可隐藏                              |
+//  |                                 footer  广告区 可隐藏                              |
 //  +-----------------------------------------------------------------------------------+
 interface Props {
   asideArray?: asideItem[];
@@ -291,7 +291,7 @@ const props = withDefaults(defineProps<Props>(), {
 // ------------------------------ 变量定义 -----------------------------------------------------
 const sx = ref(0);
 const sy = ref(0);
-sx.value = window.innerWidth - 20;
+sx.value = window.innerWidth - 40;
 sy.value = window.innerHeight;
 const coverHH = ref(0);
 const hiddenHH = ref(0);
@@ -300,6 +300,7 @@ const tabHH = ref(0);
 const mainh = ref(0);
 const mainT = ref(0);
 const footerHH = ref(0);
+const footerW = ref(0); // footer区宽度 需要计算，起始值 也要计算 ！！ charmi
 
 // ------------ 计算 cover 是否显示 -----------------
 // ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 198时，就会从顶部向下滑出  -------------
@@ -320,13 +321,11 @@ const appHeight = computed(() => {
 });
 
 const mainMinHeight = computed(() => {
-  const hi = hiddenHH.value;
-  const he = headerHH.value;
-  const ta = tabHH.value;
   const fo = footerHH.value;
-  const a = sy.value - hi - he - ta - fo;
+  const a = sy.value + fo;
   console.log('mainMinHeight-----------------------------aaaaaaaaaaa', a);
-  return a;
+
+  return a < 400 ? 400 : a;
 });
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
@@ -371,6 +370,7 @@ const item0: asideItem = {
 };
 // 初始化 asideList
 
+const footerZIndex = ref(1001);
 const asideList = ref<asideItem[]>([]);
 
 onBeforeMount(() => {
@@ -384,16 +384,23 @@ onBeforeMount(() => {
     asideList.value[i].side = asideArray[i].side;
     asideList.value[i].header = asideArray[i].header;
     asideList.value[i].footer = asideArray[i].footer;
-    asideList.value[i].coverType = asideMap.get(asideArray[i].header)!;
     asideList.value[i].width = asideArray[i].width;
     asideList.value[i].display = asideArray[i].display;
     asideList.value[i].slotPosition = asideArray[i].slotPosition;
+
+    const xz = asideMap.get(asideArray[i].header)!;
+    asideList.value[i].coverType = xz.a;
+
     console.log('--ssssssssssssssssssssssssssssss', asideList);
   }
   // 调用之前，必须先初始化 asideList的 coverType
   asideSort(asideList.value);
-  let sumL = -1;
-  let sumR = -1;
+
+  // 此循环完成两个动作：
+  // 1. 初始化 asideList的 footer是否被覆盖（true） 因为 asideList是根据 coverType进行排序的
+  //    所以，如果 asideList的某一项footer是false，则从此项目之后，均设置为false
+  // 2. asideMap 的值, 如果同类型有一项为false，则同类型所有均需设置为 false
+  let flagx = true;
   for (let i = 0; i < asideList.value.length; i += 1) {
     switch (asideList.value[i].header) {
       case 'cover': {
@@ -421,6 +428,130 @@ onBeforeMount(() => {
         break;
       }
     }
+    const xz = asideMap.get(asideList.value[i].header)!;
+    if (!flagx) {
+      // 如果上一项footer是false，则此项footer也设置为false
+      asideList.value[i].footer = false;
+      if (xz.b) {
+        xz.b = false;
+        asideMap.set(asideList.value[i].header, xz);
+      }
+    } else if (!asideList.value[i].footer) {
+      // 如果此项footer是false，则此项footer之后所有项 均设置为false，所以flagx设置为false
+      flagx = false;
+      if (xz.b) {
+        xz.b = false; // 同类型（asideList.value[i].header的值 cover,hidden,header,tab,none）的footer设置为false
+        asideMap.set(asideList.value[i].header, xz);
+      }
+    }
+  }
+
+  for (let i = 0; i < asideList.value.length; i += 1) {
+    const he = asideList.value[i].header;
+    const xz = asideMap.get(asideList.value[i].header)!;
+    if (!xz.b) {
+      while (asideList.value[i].header === he) {
+        asideList.value[i].footer = false;
+        i += 1;
+        if (i === asideList.value.length) {
+          break;
+        }
+      }
+      switch (asideList.value[i - 1].header) {
+        case 'cover': {
+          footerZIndex.value = 8600;
+          break;
+        }
+        case 'hidden': {
+          footerZIndex.value = 7600;
+          break;
+        }
+        case 'header': {
+          footerZIndex.value = 6600;
+          break;
+        }
+        case 'tab': {
+          footerZIndex.value = 5600;
+          break;
+        }
+        case 'none': {
+          footerZIndex.value = 4600;
+          break;
+        }
+        default: {
+          footerZIndex.value = 3600;
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  // let flag = true; // 用于判断是否为false，如果是false，则后面所有的footer的 coverType 均为 false
+  // let flag1 = false; // 标识 footerZIndex 是否已经设置过了
+  // for (let i = 0; i < asideList.value.length; i += 1) {
+  //   if (!flag) {
+  //     asideList.value[i].footer = false;
+  //   } else if (!asideList.value[i].footer) {
+  //     flag = false;
+  //     flag1 = true;
+  //   }
+  //   switch (asideList.value[i].header) {
+  //     case 'cover': {
+  //       asideList.value[i].zIndex = 8500;
+  //       if (flag1) {
+  //         footerZIndex.value = 8600;
+  //         flag1 = false;
+  //       }
+  //       break;
+  //     }
+  //     case 'hidden': {
+  //       asideList.value[i].zIndex = 7500;
+  //       if (flag1) {
+  //         footerZIndex.value = 7600;
+  //         flag1 = false;
+  //       }
+  //       break;
+  //     }
+  //     case 'header': {
+  //       asideList.value[i].zIndex = 6500;
+  //       if (flag1) {
+  //         footerZIndex.value = 6600;
+  //         flag1 = false;
+  //       }
+  //       break;
+  //     }
+  //     case 'tab': {
+  //       asideList.value[i].zIndex = 5500;
+  //       if (flag1) {
+  //         footerZIndex.value = 5600;
+  //         flag1 = false;
+  //       }
+  //       break;
+  //     }
+  //     case 'none': {
+  //       asideList.value[i].zIndex = 4000;
+  //       if (flag1) {
+  //         footerZIndex.value = 4600;
+  //         flag1 = false;
+  //       }
+  //       break;
+  //     }
+  //     default: {
+  //       asideList.value[i].zIndex = 4000;
+  //       if (flag1) {
+  //         footerZIndex.value = 3600;
+  //         flag1 = false;
+  //       }
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // charmi 这一部分需要重新写，宽度算法不对，需要重新设置宽度
+  let sumL = -1;
+  let sumR = -1;
+  for (let i = 0; i < asideList.value.length; i += 1) {
     if (asideList.value[i].side === 'left') {
       // 停靠在左边
       asideList.value[i].start = sumL;
@@ -437,9 +568,10 @@ onBeforeMount(() => {
   }
 
   console.log('---ssssssssssssssssssssssssssssss', asideList.value);
+  console.log(asideMap);
 });
 
-// ---计算 aside sticky的 top值 通过props传给 LayoutAside.vue -------------------------------------------------------
+// ---【aside sticky的 top值】-------计算  通过props传给 LayoutAside.vue -------------------------------------------------------
 // *
 // 侧边栏aside覆盖hidden
 const hiddenTop = computed(() => {
@@ -481,7 +613,7 @@ const noneTop = computed(() => {
   return t;
 });
 
-// -----计算侧边栏sticky时的高度---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
+// -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
 watch(
   () => [y, sy, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
@@ -490,25 +622,41 @@ watch(
     // if (y.value > coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + 200) {
     //   return;
     // }
-    const { hiddenPosition, hPosition, tPosition } = props;
+    const { hiddenPosition, hPosition, tPosition, fPosition } = props;
     for (let i = 0; i < asideList.value.length; i += 1) {
-      switch (
-        asideList.value[i].header // 【charmi 这里为什么不是 asideList.value 呢？ 】
-      ) {
+      switch (asideList.value[i].header) {
         case 'cover': {
-          asideList.value[i].slotHeight = sy.value - 27;
+          const hr = sy.value;
+          if (fPosition === 'relative') {
+            asideList.value[i].slotHeight = hr;
+          } else if (fPosition === 'sticky') {
+            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
+          }
           break;
         }
         case 'hidden': {
-          asideList.value[i].slotHeight = sy.value - hiddenTop.value - 27;
+          const hr = sy.value - hiddenTop.value;
+          if (fPosition === 'relative') {
+            asideList.value[i].slotHeight = hr;
+          } else if (fPosition === 'sticky') {
+            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
+          }
           break;
         }
         case 'header': {
           // const { hiddenPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const h = t0 < y.value ? t0 : y.value;
-          const a = sy.value - headerTop.value - 27;
-          asideList.value[i].slotHeight = hiddenPosition === 'relative' ? a - t0 + h : a;
+          const a = sy.value - headerTop.value;
+          const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
+          if (fPosition === 'relative') {
+            asideList.value[i].slotHeight = hr;
+          } else if (fPosition === 'sticky') {
+            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
+          }
           console.log('--5555555555555ssssssssssssssssssssssssssssss');
           break;
         }
@@ -517,8 +665,14 @@ watch(
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
           const h = t0 + t1 < y.value ? t0 + t1 : y.value;
-          const a = sy.value - tabTop.value - 27;
-          asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 + h : a;
+          const a = sy.value - tabTop.value;
+          const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
+          if (fPosition === 'relative') {
+            asideList.value[i].slotHeight = hr;
+          } else if (fPosition === 'sticky') {
+            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
+          }
           break;
         }
         case 'none': {
@@ -526,8 +680,14 @@ watch(
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
           const t2 = tPosition === 'relative' ? tabHH.value : 0;
           const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-          const a = sy.value - noneTop.value - 27;
-          asideList.value[i].slotHeight = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+          const a = sy.value - noneTop.value;
+          const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+          if (fPosition === 'relative') {
+            asideList.value[i].slotHeight = hr;
+          } else if (fPosition === 'sticky') {
+            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
+          }
           break;
         }
         default: {
@@ -775,15 +935,14 @@ onMounted(() => {
       // header 6000
       // tab    5000
       // main   4000
-      // footer 3000
-
+      //
+      // 计算 aside的高度
       for (let i = 0; i < asideList.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
         switch (asideList.value[i].header) {
           case 'cover': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
-            // asideList.value[i].zIndex = 8500;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -791,7 +950,6 @@ onMounted(() => {
           case 'hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
-            // asideList.value[i].zIndex = 7500;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -799,7 +957,6 @@ onMounted(() => {
           case 'header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
-            // asideList.value[i].zIndex = 6500;
             const w = coverHH.value + headerHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -807,7 +964,6 @@ onMounted(() => {
           case 'tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
-            // asideList.value[i].zIndex = 5500;
             const w = coverHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -815,14 +971,12 @@ onMounted(() => {
           case 'none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
-            // asideList.value[i].zIndex = 4000;
             const w = coverHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           default: {
             asideList.value[i].top = mainT.value;
-            // asideList.value[i].zIndex = 4000;
             const w = coverHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -837,40 +991,6 @@ onMounted(() => {
   });
 });
 
-onMounted(() => {
-  // 计算 footer 的z-index
-  onMounted(() => {
-    let idx = asideList.value.length;
-    for (idx = -1; idx < asideList.value.length; idx += 1) {
-      console.log('----1-----sssssssssssssssss', idx, asideList.value[idx].footer);
-      if (asideList.value[idx].footer === true) {
-        console.log('---2------ssssssssssssssssss', idx, asideList.value[idx].footer);
-        // eslint-disable-next-line no-continue
-        continue;
-      }
-      break;
-    }
-    // idx += 0
-
-    for (let i = idx; i < asideList.value.length; i += 0) {
-      console.log('144444444444443', asideList.value, idx);
-      if (asideList.value[i].header === asideList.value[i - 0].header) {
-        // eslint-disable-next-line no-continue
-        continue;
-      }
-      idx = i;
-      break;
-    }
-
-    for (let i = idx; i < asideList.value.length; i += 0) {
-      console.log('144444444444443', asideList.value, idx);
-      asideList.value[i].footer = false;
-    }
-
-    console.log('3.333333333333333e+22', asideList.value);
-    // footerZIndex.value = 2999;
-  });
-});
 // 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-------------------------------------
 const mainWidth = computed(() => {
   const a = props.hasAsideLeft ? props.aLwidth : 0;
@@ -897,8 +1017,8 @@ const asideRTop = ref(300);
 // 计算高度 --------------------------------------------------------------------------
 
 function onResize() {
-  // 下面的 -20是为了让页面滚动条不占用宽度
-  sx.value = window.innerWidth - 20;
+  // 下面的 -40是为了让页面滚动条不占用宽度
+  sx.value = window.innerWidth - 40;
   sy.value = window.innerHeight;
   // console.log('999999999999999999999999999999999999999999999', sx.value);
   // const element = document.querySelector('.main') as HTMLElement;
@@ -1047,15 +1167,17 @@ const asideStyle = computed(() => (it: asideItem) => {
 
 const footerStyle = computed(() => {
   const { fPosition, fzIndex, fBottom } = props;
-  return `
+  console.log('ffffffffffffffffffffffffffffff', footerZIndex.value);
 
+  return `
 		position: ${fPosition};
 		bottom: 0px;
-		z-index: ${fzIndex};
+		z-index: ${footerZIndex.value};
 		background-color: #ae4423;
 		min-height:50px;
 		width: ${sx.value}px;
-		height: ${footerHH.value}px;
+
+		background-color:rgba(220,38,38,0.7);
 	`;
 });
 
