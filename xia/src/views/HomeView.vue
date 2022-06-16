@@ -187,15 +187,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import AdminLayout from '@asialine/xia-ui/lay';
-import type { asideType } from '@asialine/xia-ui/lay';
+import type { asideItem } from '@asialine/xia-ui/lay';
 import { useTimeout } from '@vueuse/core';
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
 const tabTimeOut = useTimeout(3000); // 设置一个定时器
 const hashiddenn = useTimeout(1119000); // 设置一个定时器
-const asideArray = ref<asideType[]>([
+const asideArray = ref<asideItem[]>([
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'cover',
     footer: true,
     key: 'asidea',
@@ -205,7 +205,7 @@ const asideArray = ref<asideType[]>([
     draggbale: true
   },
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'hidden',
     footer: false,
     key: 'asideb',
@@ -215,7 +215,7 @@ const asideArray = ref<asideType[]>([
     draggbale: true
   },
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'header',
     footer: true,
     key: 'asidec',
@@ -225,7 +225,7 @@ const asideArray = ref<asideType[]>([
     draggbale: true
   },
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'tab',
     footer: true,
     key: 'asided',
@@ -235,7 +235,7 @@ const asideArray = ref<asideType[]>([
     draggbale: true
   },
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'none',
     footer: true,
     key: 'asidee',
@@ -245,7 +245,7 @@ const asideArray = ref<asideType[]>([
     draggbale: true
   },
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'none',
     footer: true,
     key: 'asidef',
@@ -255,7 +255,7 @@ const asideArray = ref<asideType[]>([
     draggbale: true
   },
   {
-    position: 'sticky',
+    slotPosition: 'sticky',
     header: 'cover',
     footer: true,
     key: 'asideg',

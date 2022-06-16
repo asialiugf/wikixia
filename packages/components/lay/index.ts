@@ -31,15 +31,26 @@ export interface LayoutProps {
   /** 动画过渡时间 */
   transitionTimingFunction?: string;
 }
-export interface asideType {
-  position: 'absolute' | 'sticky';
-  key: string; // slots name
-  // 针对头部的覆盖 header and footer are covered or not by admin-layout
+
+export interface asideItem {
+  slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
+  key: string; // 侧边栏的key，slot的name会用这个key  要唯一，不能重复
+  // 是否覆盖 header ?
   header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
   footer: boolean; // 是否覆盖 footer
-  // side: 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
-  side: 'left' | 'right';
+  side: 'left' | 'right'; // 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
+  display?: boolean; // 是否显示
+  draggbale?: boolean; // 是否可以移动
   width: number;
-  display: boolean; // 是否显示
-  draggbale: boolean; // 是否可以移动
+  height?: number;
+  start?: number;
+  end?: number;
+  top?: number | 'auto';
+  left?: number | 'auto';
+  right?: number | 'auto';
+  bottom?: number | 'auto';
+  zIndex?: number;
+  coverType?: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none 用于排序
+  slotTop?: number;
+  slotHeight?: number;
 }

@@ -71,47 +71,33 @@ import { ref, computed, onMounted, watch, onBeforeMount, reactive } from 'vue';
 import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindowSize } from '@vueuse/core';
 import LayoutAside from './LayoutAside.vue';
 
-// 需和index.ts里的一致
-interface asideType {
-  position: 'absolute' | 'sticky';
-  key: string; // slots name
-  // 针对头部的覆盖 header and footer are covered or not by admin-layout
-  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
-  footer: boolean; // 是否覆盖 footer
-  // side: 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
-  side: 'left' | 'right';
-  width: number;
-  display: boolean; // 是否显示
-  draggbale: boolean; // 是否可以移动
-}
-
 // 侧边栏列表， 接口的内容一部分是从应用程序中传过来。一部分是计算出来。
 // 侧边栏显示，分为两部分，一部分在本VUE中，position为absolute,参见 【:style="asideStyle(item)"】
 // 另一部分，在LayoutAside子组件中，position 即为interface asideItem中的position，从应用程序中传过来，
 // 需要传给子组件LayoutAside,  其值只能 为 sticky 或 absolute. sticky 表示: 侧边栏的内容会被固定在页面的某个位置，
 // absolute 表示: 但是不会被stick在屏幕中，而是固定在页面的某个位置，跟随页面的滚动条滚动。
-
+// 需和index.ts里的一致
 interface asideItem {
-  key: string; // 侧边栏的key，slot的name会用这个key
-  side: 'left' | 'right';
+  slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
+  key: string; // 侧边栏的key，slot的name会用这个key  要唯一，不能重复
   // 是否覆盖 header ?
   header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
-  coverType: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none
   footer: boolean; // 是否覆盖 footer
-  display: boolean; // 是否显示
-  draggbale: boolean; // 是否可以移动
+  side: 'left' | 'right'; // 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
+  display?: boolean; // 是否显示
+  draggbale?: boolean; // 是否可以移动
   width: number;
-  height: number;
-  start: number;
-  end: number;
-  top: number | 'auto';
-  left: number | 'auto';
-  right: number | 'auto';
-  bottom: number | 'auto';
-  zIndex: number;
-  slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
-  slotTop: number;
-  slotHeight: number;
+  height?: number;
+  start?: number;
+  end?: number;
+  top?: number | 'auto';
+  left?: number | 'auto';
+  right?: number | 'auto';
+  bottom?: number | 'auto';
+  zIndex?: number;
+  coverType?: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none 用于排序
+  slotTop?: number;
+  slotHeight?: number;
 }
 
 const asideMap = new Map<string, number>();
@@ -156,7 +142,7 @@ interface rtnType {
 //  |                                 hidden  广告区 可隐藏                              |
 //  +-----------------------------------------------------------------------------------+
 interface Props {
-  asideArray?: asideType[];
+  asideArray?: asideItem[];
 
   hasCover?: boolean;
   hasHidden?: boolean;
@@ -350,8 +336,8 @@ function asideSort(li: asideItem[]) {
     return;
   }
   li.sort((a: asideItem, b: asideItem) => {
-    const x1 = a.coverType;
-    const y1 = b.coverType;
+    const x1 = a.coverType!;
+    const y1 = b.coverType!;
     if (x1 < y1) {
       return -1;
     }
@@ -387,7 +373,7 @@ const item0: asideItem = {
 
 const asideList = ref<asideItem[]>([]);
 
-onMounted(() => {
+onBeforeMount(() => {
   const { asideArray } = props;
   for (let i = 0; i < asideArray.length; i += 1) {
     asideList.value.push({
@@ -401,13 +387,40 @@ onMounted(() => {
     asideList.value[i].coverType = asideMap.get(asideArray[i].header)!;
     asideList.value[i].width = asideArray[i].width;
     asideList.value[i].display = asideArray[i].display;
-    asideList.value[i].slotPosition = asideArray[i].position;
+    asideList.value[i].slotPosition = asideArray[i].slotPosition;
     console.log('--ssssssssssssssssssssssssssssss', asideList);
   }
+  // 调用之前，必须先初始化 asideList的 coverType
   asideSort(asideList.value);
   let sumL = -1;
   let sumR = -1;
   for (let i = 0; i < asideList.value.length; i += 1) {
+    switch (asideList.value[i].header) {
+      case 'cover': {
+        asideList.value[i].zIndex = 8500;
+        break;
+      }
+      case 'hidden': {
+        asideList.value[i].zIndex = 7500;
+        break;
+      }
+      case 'header': {
+        asideList.value[i].zIndex = 6500;
+        break;
+      }
+      case 'tab': {
+        asideList.value[i].zIndex = 5500;
+        break;
+      }
+      case 'none': {
+        asideList.value[i].zIndex = 4000;
+        break;
+      }
+      default: {
+        asideList.value[i].zIndex = 4000;
+        break;
+      }
+    }
     if (asideList.value[i].side === 'left') {
       // 停靠在左边
       asideList.value[i].start = sumL;
@@ -422,6 +435,7 @@ onMounted(() => {
       sumR += asideList.value[i].width;
     }
   }
+
   console.log('---ssssssssssssssssssssssssssssss', asideList.value);
 });
 
@@ -479,7 +493,7 @@ watch(
     const { hiddenPosition, hPosition, tPosition } = props;
     for (let i = 0; i < asideList.value.length; i += 1) {
       switch (
-        props.asideArray[i].header // 【charmi 这里为什么不是 asiadList.value 呢？ 】
+        asideList.value[i].header // 【charmi 这里为什么不是 asideList.value 呢？ 】
       ) {
         case 'cover': {
           asideList.value[i].slotHeight = sy.value - 27;
@@ -543,7 +557,7 @@ function setWidthL(rtn: rtnType): void {
     if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
       // alert(asideList.value[rtn.id].start);
       console.log('sumsmL:::::::::::::::::::::::::::::::::', asideList.value[rtn.id].start);
-      const w = tempWidth.value - rtn.pageX + asideList.value[rtn.id].start;
+      const w = tempWidth.value - rtn.pageX + asideList.value[rtn.id].start!;
       console.log('w:::::::::::::::::::::::::::::::::', w);
       asideList.value[rtn.id].width = w < 50 ? 50 : w;
       if (w >= 50) {
@@ -551,12 +565,12 @@ function setWidthL(rtn: rtnType): void {
       } else {
         asideList.value[rtn.id].left =
           typeof asideList.value[rtn.id].start === 'number'
-            ? tempWidth.value - 50 + asideList.value[rtn.id].start
+            ? tempWidth.value - 50 + asideList.value[rtn.id].start!
             : `auto`;
       }
       // 右边栏 拖动左侧
     } else if (asideList.value[rtn.id].side === 'right') {
-      const w = rtn.pageX - asideList.value[rtn.id].start;
+      const w = rtn.pageX - asideList.value[rtn.id].start!;
     }
   } else if (rtn.state === 'start') {
     console.log('55555555555555555ssssssssssssssssssssssssssssss', asideList.value);
@@ -765,11 +779,11 @@ onMounted(() => {
 
       for (let i = 0; i < asideList.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
-        switch (props.asideArray[i].header) {
+        switch (asideList.value[i].header) {
           case 'cover': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
-            asideList.value[i].zIndex = 8500;
+            // asideList.value[i].zIndex = 8500;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -777,7 +791,7 @@ onMounted(() => {
           case 'hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
-            asideList.value[i].zIndex = 7500;
+            // asideList.value[i].zIndex = 7500;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -785,7 +799,7 @@ onMounted(() => {
           case 'header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
-            asideList.value[i].zIndex = 6500;
+            // asideList.value[i].zIndex = 6500;
             const w = coverHH.value + headerHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -793,7 +807,7 @@ onMounted(() => {
           case 'tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
-            asideList.value[i].zIndex = 5500;
+            // asideList.value[i].zIndex = 5500;
             const w = coverHH.value + tabHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -801,14 +815,14 @@ onMounted(() => {
           case 'none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
-            asideList.value[i].zIndex = 4000;
+            // asideList.value[i].zIndex = 4000;
             const w = coverHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           default: {
             asideList.value[i].top = mainT.value;
-            asideList.value[i].zIndex = 4000;
+            // asideList.value[i].zIndex = 4000;
             const w = coverHH.value + mainh.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
@@ -897,7 +911,6 @@ function onResize() {
 //   sy.value = window.innerHeight;
 //   console.log('ooooooooooooooooooo', sx.value, sy.value);
 // });
-const xaa = ref(0);
 onMounted(() => {
   window.addEventListener('resize', onResize);
   onResize();
@@ -908,7 +921,6 @@ onMounted(() => {
   //   handleWidth('.resizeR', false);
   // }
 });
-
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
