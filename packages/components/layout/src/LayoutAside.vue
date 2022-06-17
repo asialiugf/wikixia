@@ -1,18 +1,16 @@
 <template>
-  <div ref="resizeLL" class="resize1 resizeLL"></div>
+  <div v-if="isRight" ref="resizeLL" class="resize1 resizeLL"></div>
   <div v-if="props.asidePosition === 'sticky'" class="zxx-scroll11" :style="asideStyle">
     <slot name="aside"></slot>
   </div>
   <slot v-if="props.asidePosition === 'absolute'" name="aside"></slot>
-  <div ref="resizeRR" class="resize1 resizeRR"></div>
+  <div v-if="isLeft" ref="resizeRR" class="resize1 resizeRR"></div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, unref, watch } from 'vue';
-import type { Ref } from 'vue';
 import { isString, useDraggable, useEventListener } from '@vueuse/core';
 import type { Position, MaybeRef } from '@vueuse/core';
-import { assertBindExpression } from '@babel/types';
 
 interface asideProps {
   id: number; // 用于标识 aside 的 id. emit返回给父组件时, 父组件会用到
@@ -20,6 +18,8 @@ interface asideProps {
   asideWidth: number;
   asideHeight: number;
   asidePosition?: 'absolute' | 'sticky';
+  isLeft?: boolean;
+  isRight?: boolean;
 }
 
 const props = withDefaults(defineProps<asideProps>(), {
@@ -27,7 +27,9 @@ const props = withDefaults(defineProps<asideProps>(), {
   asideTop: 0,
   asideWidth: 0,
   asideHeight: 0,
-  asidePosition: 'absolute'
+  asidePosition: 'absolute',
+  isLeft: true,
+  isRight: false
 });
 
 // ---------------------------------拖动改变宽度-----------------------------------------

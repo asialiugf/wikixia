@@ -19,13 +19,14 @@
       <div>
         -------------------------------------winSize.width: {{ winSize.width }}<br />
         -------------------------------------winSize.height: {{ winSize.height }}<br />
-        -----------------------------------------sx: {{ sx }}<br />
-        -----------------------------------------sy: {{ sy }}<br />
+
         -----------------------------------------asideW: {{ asideW.width }}<br />
         -----------------------------------------asideW: {{ asideW.height }}<br />
+        -----------------------------------------xxasideW: {{ xxyy.xx }}<br />
+        -----------------------------------------yyasideW: {{ xxyy.yy }}<br />
       </div>
       <slot name="tab">
-        - sx:sy==={{ appWidth }}=={{ appHeight }}===={{ mainT }}======== {{ sx }} - {{ sy }} -- main height:
+        - sx:sy==={{ appWidth }}=={{ appHeight }}===={{ mainT }}======== {{ sx }} - {{ winSize.height }} -- main height:
         {{ mainh }} -- footero {{ footero }}
         <div v-if="props.headerTimeout">来了！</div>
       </slot>
@@ -44,6 +45,11 @@
       <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div>
     </main>
 
+    <!--
+			  :is-left="item.side === 'left'"    //  aside如果是放在左侧，则左侧可拖动的div就可以不要了。
+        :is-right="item.side === 'right'"
+				-->
+
     <component :is="'aside'" v-for="(item, index) of asideList" :key="index" :style="asideStyle(item)">
       <layout-aside
         v-if="item.display"
@@ -52,6 +58,8 @@
         :aside-top="item.slotTop"
         :aside-height="item.slotHeight"
         :aside-width="item.width"
+        :is-left="item.side === 'left'"
+        :is-right="item.side === 'right'"
         @update:width-l="setWidthL"
         @update:width-r="setWidthR"
       >
@@ -78,38 +86,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onBeforeMount, reactive } from 'vue';
 import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindowSize } from '@vueuse/core';
+import type { asideItem } from '@asialine/xia-ui/layout';
 import { useAside } from '../../Composables/useAside';
+import { useFooter } from '../../Composables/useFooter';
+import { item0, asideSort } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
 
-// 侧边栏列表， 接口的内容一部分是从应用程序中传过来。一部分是计算出来。
-// 侧边栏显示，分为两部分，一部分在本VUE中，position为absolute,参见 【:style="asideStyle(item)"】
-// 另一部分，在LayoutAside子组件中，position 即为interface asideItem中的position，从应用程序中传过来，
-// 需要传给子组件LayoutAside,  其值只能 为 sticky 或 absolute. sticky 表示: 侧边栏的内容会被固定在页面的某个位置，
-// absolute 表示: 但是不会被stick在屏幕中，而是固定在页面的某个位置，跟随页面的滚动条滚动。
-// 需和index.ts里的一致
-interface asideItem {
-  slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
-  key: string; // 侧边栏的key，slot的name会用这个key  要唯一，不能重复
-  // 是否覆盖 header ?
-  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none';
-  footer: boolean; // 是否覆盖 footer
-  side: 'left' | 'right'; // 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
-  display?: boolean; // 是否显示
-  draggbale?: boolean; // 是否可以移动
-  width: number;
-  height?: number;
-  start?: number;
-  end?: number;
-  top?: number | 'auto';
-  left?: number | 'auto';
-  right?: number | 'auto';
-  bottom?: number | 'auto';
-  zIndex?: number;
-  coverType?: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none 用于排序
-  slotTop?: number;
-  slotHeight?: number;
-}
-
+// {a: 0, b: true}
 const asideMap = new Map<string, { a: number; b: boolean }>();
 asideMap.set('cover', { a: 0, b: true });
 asideMap.set('hidden', { a: 1, b: true });
@@ -299,10 +282,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
-const sx = ref(0);
-const sy = ref(0);
-sx.value = window.innerWidth - 40;
-sy.value = window.innerHeight;
+const winSize = useWindowSize();
+const asideW = useAside();
+const sx = computed(() => {
+  return winSize.width.value - 40;
+});
+
+const xxyy = useFooter({ x: sx, y: winSize.height }); // test
+
 const coverHH = ref(0);
 const hiddenHH = ref(0);
 const headerHH = ref(0);
@@ -313,7 +300,7 @@ const footerHH = ref(0);
 const footerW = ref(0); // footer区宽度 需要计算，起始值 也要计算 ！！ charmi
 
 // ------------ 计算 cover 是否显示 -----------------
-// ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 198时，就会从顶部向下滑出  -------------
+// ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 400 时，就会从顶部向下滑出  -------------
 // ------------- coverOut 会传给 边栏子组件 每个边栏子组件都会用到 ------------
 // y.value的值最好要大于 hiddenHH.value + headerHH.value + tabHH.value，否则会出现跳动
 const { x, y } = useWindowScroll();
@@ -323,62 +310,18 @@ const coverOut = computed(() => {
 });
 
 const appWidth = computed(() => {
-  return sx.value;
+  return winSize.width.value;
 });
 
 const appHeight = computed(() => {
-  return sy.value;
+  return winSize.height.value;
 });
 
 const mainMinHeight = computed(() => {
-  const fo = footerHH.value;
-  const a = sy.value + fo;
-  console.log('mainMinHeight-----------------------------aaaaaaaaaaa', a);
-
-  return a < 400 ? 400 : a;
+  return winSize.height.value < 500 ? 500 : winSize.height.value;
 });
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
-
-function asideSort(li: asideItem[]) {
-  if (li.length <= 1) {
-    return;
-  }
-  li.sort((a: asideItem, b: asideItem) => {
-    const x1 = a.coverType!;
-    const y1 = b.coverType!;
-    if (x1 < y1) {
-      return -1;
-    }
-    if (x1 > y1) {
-      return 1;
-    }
-    return 0;
-  });
-}
-
-const item0: asideItem = {
-  key: '',
-  side: 'left',
-  header: 'none',
-  footer: false,
-  coverType: 4,
-  width: -1,
-  height: -1,
-  start: -1,
-  end: -1,
-  display: true,
-  top: -1,
-  left: 'auto',
-  right: 'auto',
-  bottom: 'auto',
-  zIndex: -1,
-  draggbale: true,
-  slotPosition: 'absolute',
-  slotTop: 0,
-  slotHeight: 0
-};
-// 初始化 asideList
 
 const footerZIndex = ref(1001);
 const asideList = ref<asideItem[]>([]);
@@ -625,7 +568,7 @@ const noneTop = computed(() => {
 
 // -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
 watch(
-  () => [y, sy, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => [y, winSize.height, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
     // 【 charmi 当鼠标下滑到 y.value 超过 coverHH.value + hiddenHH.value + headerHH.value + tabHH.value时
     // 屏幕变稳定了，所以不应该再计算高度了 】
@@ -636,7 +579,7 @@ watch(
     for (let i = 0; i < asideList.value.length; i += 1) {
       switch (asideList.value[i].header) {
         case 'cover': {
-          const hr = sy.value;
+          const hr = winSize.height.value;
           if (fPosition === 'relative') {
             asideList.value[i].slotHeight = hr;
           } else if (fPosition === 'sticky') {
@@ -646,7 +589,7 @@ watch(
           break;
         }
         case 'hidden': {
-          const hr = sy.value - hiddenTop.value;
+          const hr = winSize.height.value - hiddenTop.value;
           if (fPosition === 'relative') {
             asideList.value[i].slotHeight = hr;
           } else if (fPosition === 'sticky') {
@@ -659,7 +602,7 @@ watch(
           // const { hiddenPosition } = props;
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const h = t0 < y.value ? t0 : y.value;
-          const a = sy.value - headerTop.value;
+          const a = winSize.height.value - headerTop.value;
           const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
           if (fPosition === 'relative') {
             asideList.value[i].slotHeight = hr;
@@ -675,7 +618,7 @@ watch(
           const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
           const h = t0 + t1 < y.value ? t0 + t1 : y.value;
-          const a = sy.value - tabTop.value;
+          const a = winSize.height.value - tabTop.value;
           const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
           if (fPosition === 'relative') {
             asideList.value[i].slotHeight = hr;
@@ -690,7 +633,7 @@ watch(
           const t1 = hPosition === 'relative' ? headerHH.value : 0;
           const t2 = tPosition === 'relative' ? tabHH.value : 0;
           const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-          const a = sy.value - noneTop.value;
+          const a = winSize.height.value - noneTop.value;
           const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
           if (fPosition === 'relative') {
             asideList.value[i].slotHeight = hr;
@@ -905,7 +848,7 @@ const headerHeight = computed(() => {
 // 下面的asideList.value[i].slotHeight，是指侧边栏第二级的高度。供LayoutAside.vue用
 //
 //  侧边栏的两级div配置：
-//  +-----------------+ <= asideList.value[i].height     position:absolute;
+//  +-----------------+ <= asideList.value[i].height     position: absolute;
 //  |+---------------+| <= asideList.value[i].slotHeight position: sticky ;
 //  ||               ||
 //  ||      slot     ||
@@ -933,7 +876,7 @@ onMounted(() => {
         tabHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-main') {
         mainh.value = entry.contentRect.height;
-        // mainh.value = entry.contentRect.height < sy.value ? sy.value : entry.contentRect.height;
+        // mainh.value = entry.contentRect.height < winSize.height.value ? winSize.height.value : entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-footer') {
         footerHH.value = entry.contentRect.height;
       }
@@ -1023,26 +966,22 @@ const asideRTop = ref(300);
 
 // 计算高度 --------------------------------------------------------------------------
 
-const winSize = useWindowSize();
-const asideW = useAside();
-function onResize() {
-  // 下面的 -40是为了让页面滚动条不占用宽度
-  sx.value = window.innerWidth - 40;
-  sy.value = window.innerHeight;
-  // console.log('999999999999999999999999999999999999999999999', sx.value);
-  // const element = document.querySelector('.main') as HTMLElement;
-  // mainh.value = element.offsetHeight < sy.value ? sy.value : element.offsetHeight;
-  // console.log('ttttttttttttttttttttttttt', mainh.value);
-}
+// function onResize() {
+//   // 下面的 -40是为了让页面滚动条不占用宽度
+//   sx.value = window.innerWidth - 40;
+//   winSize.height.value = window.innerHeight;
+//   // console.log('999999999999999999999999999999999999999999999', sx.value);
+//   // const element = document.querySelector('.main') as HTMLElement;
+//   // mainh.value = element.offsetHeight < winSize.height.value ? winSize.height.value : element.offsetHeight;
+//   // console.log('ttttttttttttttttttttttttt', mainh.value);
+// }
 
 // onBeforeMount(() => {
 //   sx.value = window.innerWidth - 20;
-//   sy.value = window.innerHeight;
-//   console.log('ooooooooooooooooooo', sx.value, sy.value);
+//   winSize.height.value = window.innerHeight;
+//   console.log('ooooooooooooooooooo', sx.value, winSize.height.value);
 // });
 onMounted(() => {
-  window.addEventListener('resize', onResize);
-  onResize();
   if (props.hasAsideLeft) {
     handleWidth('.resizeL', true);
   }

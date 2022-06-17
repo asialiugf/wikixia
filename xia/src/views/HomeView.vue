@@ -210,8 +210,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AdminLayout from '@asialine/xia-ui/lay';
-import type { asideItem } from '@asialine/xia-ui/lay';
+import AdminLayout from '@asialine/xia-ui/layout';
+import type { asideItem } from '@asialine/xia-ui/layout';
 import { useTimeout } from '@vueuse/core';
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器

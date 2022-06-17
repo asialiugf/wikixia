@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { XLay } from '@asialine/xia-ui/layout';
+import { XLay } from '@asialine/xia-ui/layout0';
 type Mode = 'vertical' | 'horizontal';
 const mode = ref<Mode>('vertical');
 const modeList: Mode[] = ['vertical', 'horizontal'];

@@ -1,54 +1,55 @@
 import { withInstall } from '@asialine/utils/with-install';
-import LayDemo from './src/LayDemo.vue';
-import LayMain from './src/LayMain.vue';
-import LayOne from './src/LayOne.vue';
+import Layout from './src/Layout.vue';
+// import type { asideType } from './src/XLayout.vue';
+// import asideType from './src/XLayout.vue';
 
-const XLayout = withInstall(LayDemo);
-export { XLayout };
-export default XLayout;
-
-const XLay = withInstall(LayMain);
-export { XLay };
-
-const XLayOne = withInstall(LayOne);
-export { XLayOne };
+const YLayout = withInstall(Layout);
+export { YLayout };
+export default YLayout;
+// export type { asideType };
 
 // 两种导出方式
 //-----------------------------------------------------------------------
 
 export interface LayoutProps {
-  /** 布局模式 */
-  mode?: 'vertical' | 'horizontal';
+  /** 开启fixed布局 */
+  position: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
+  top?: number | 'auto';
+  left?: number | 'auto';
+  right?: number | 'auto';
+  bottom?: number | 'auto';
+  /** fixed布局的层级 */
+  zIndex?: number;
   /** 最小宽度 */
-  minWidth?: number;
-  /** 头部可见 */
-  headerVisible?: boolean;
-  /** 头部高度 */
-  headerHeight?: number;
-  /** 标签可见 */
-  tabVisible?: boolean;
-  /** 标签页高度 */
-  tabHeight?: number;
-  /** 固定头部和标签 */
-  fixedHeaderAndTab?: boolean;
-  /** 给主体添加禁止溢出 */
-  addMainOverflowHidden?: boolean;
-  /** 底部可见 */
-  footerVisible?: boolean;
-  /** 底部高度 */
-  footerHeight?: number;
-  /** 固定底部 */
-  fixedFooter?: boolean;
-  /** 侧边可见 */
-  siderVisible?: boolean;
-  /** 侧边栏高度 */
-  siderWidth?: number;
-  /** 侧边栏折叠状态的高度 */
-  siderCollapsedWidth?: number;
-  /** 侧边栏折叠状态 */
-  siderCollapse?: boolean;
+  width?: number;
+  /** 高度 */
+  height?: number;
+  /** 左侧内边距 */
+  paddingLeft?: number;
   /** 动画过渡时间 */
   transitionDuration?: number;
-  /** 动画过渡速度曲线 */
+  /** 动画过渡时间 */
   transitionTimingFunction?: string;
+}
+
+export interface asideItem {
+  slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
+  key: string; // 侧边栏的key，slot的name会用这个key  要唯一，不能重复
+  header: 'cover' | 'hidden' | 'header' | 'tab' | 'none'; // 是否覆盖 header ?
+  footer: boolean; // 是否覆盖 footer
+  side: 'left' | 'right'; // 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
+  display?: boolean; // 是否显示
+  draggbale?: boolean; // 是否可以移动
+  width: number;
+  height?: number;
+  start?: number;
+  end?: number;
+  top?: number | 'auto';
+  left?: number | 'auto';
+  right?: number | 'auto';
+  bottom?: number | 'auto';
+  zIndex?: number;
+  coverType?: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none 用于排序
+  slotTop?: number;
+  slotHeight?: number;
 }

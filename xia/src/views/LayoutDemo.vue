@@ -67,7 +67,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AdminLayout from '@asialine/xia-ui/layout';
+import AdminLayout from '@asialine/xia-ui/layout0';
 type Mode = 'vertical' | 'horizontal';
 const mode = ref<Mode>('vertical');
 const modeList: Mode[] = ['vertical', 'horizontal'];
