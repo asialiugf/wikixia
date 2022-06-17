@@ -225,7 +225,7 @@ const asideArray = ref<asideItem[]>([
     key: 'asidea',
     side: 'left',
     width: 100,
-    display: true,
+    display: false,
     draggbale: true
   },
   {

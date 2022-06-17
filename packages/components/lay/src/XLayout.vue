@@ -16,6 +16,14 @@
       <div>{{ x }} --- {{ y }}</div>
     </header>
     <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab info" :style="tabStyle">
+      <div>
+        -------------------------------------winSize.width: {{ winSize.width }}<br />
+        -------------------------------------winSize.height: {{ winSize.height }}<br />
+        -----------------------------------------sx: {{ sx }}<br />
+        -----------------------------------------sy: {{ sy }}<br />
+        -----------------------------------------asideW: {{ asideW.width }}<br />
+        -----------------------------------------asideW: {{ asideW.height }}<br />
+      </div>
       <slot name="tab">
         - sx:sy==={{ appWidth }}=={{ appHeight }}===={{ mainT }}======== {{ sx }} - {{ sy }} -- main height:
         {{ mainh }} -- footero {{ footero }}
@@ -38,6 +46,7 @@
 
     <component :is="'aside'" v-for="(item, index) of asideList" :key="index" :style="asideStyle(item)">
       <layout-aside
+        v-if="item.display"
         :id="index"
         :aside-position="item.slotPosition"
         :aside-top="item.slotTop"
@@ -69,6 +78,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, onBeforeMount, reactive } from 'vue';
 import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindowSize } from '@vueuse/core';
+import { useAside } from '../../Composables/useAside';
 import LayoutAside from './LayoutAside.vue';
 
 // 侧边栏列表， 接口的内容一部分是从应用程序中传过来。一部分是计算出来。
@@ -573,12 +583,12 @@ onBeforeMount(() => {
 
 // ---【aside sticky的 top值】-------计算  通过props传给 LayoutAside.vue -------------------------------------------------------
 // *
-// 侧边栏aside覆盖hidden
+// 侧边栏aside覆盖 hidden
 const hiddenTop = computed(() => {
   return coverOut.value ? coverHH.value : 0; // 当 cover出现时，top的值为cover的高度
 });
 
-// 侧边栏aside覆盖header
+// 侧边栏aside覆盖 header
 const hT = computed(() => {
   const { hiddenPosition } = props;
   return hiddenPosition === 'sticky' ? hiddenHH.value : 0;
@@ -591,7 +601,7 @@ const headerTop = computed(() => {
   return hT.value;
 });
 
-// 侧边栏aside覆盖tab
+// 侧边栏aside覆盖 tab
 const tT = computed(() => {
   const { hPosition } = props;
   return hPosition === 'sticky' ? hT.value + headerHH.value : hT.value;
@@ -603,7 +613,7 @@ const tabTop = computed(() => {
   return tT.value;
 });
 
-// 侧边栏aside 无覆盖
+// 侧边栏aside 无覆盖 none
 const noneTop = computed(() => {
   const { tPosition } = props;
   const t = tPosition === 'sticky' ? tT.value + tabHH.value : tT.value;
@@ -976,9 +986,6 @@ onMounted(() => {
             break;
           }
           default: {
-            asideList.value[i].top = mainT.value;
-            const w = coverHH.value + mainh.value;
-            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
         }
@@ -1016,6 +1023,8 @@ const asideRTop = ref(300);
 
 // 计算高度 --------------------------------------------------------------------------
 
+const winSize = useWindowSize();
+const asideW = useAside();
 function onResize() {
   // 下面的 -40是为了让页面滚动条不占用宽度
   sx.value = window.innerWidth - 40;
@@ -1165,18 +1174,18 @@ const asideStyle = computed(() => (it: asideItem) => {
 	`;
 });
 
+// width left right 要重新计算 charmi
 const footerStyle = computed(() => {
-  const { fPosition, fzIndex, fBottom } = props;
-  console.log('ffffffffffffffffffffffffffffff', footerZIndex.value);
-
+  const { fPosition } = props;
   return `
 		position: ${fPosition};
+		left: 0px;
+		right: 0px;
 		bottom: 0px;
 		z-index: ${footerZIndex.value};
 		background-color: #ae4423;
 		min-height:50px;
 		width: ${sx.value}px;
-
 		background-color:rgba(220,38,38,0.7);
 	`;
 });
