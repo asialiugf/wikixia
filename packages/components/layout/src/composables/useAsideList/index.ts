@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import type { Ref } from 'vue';
 import { tryOnMounted, useEventListener, defaultWindow } from '@vueuse/core';
 import type { ConfigurableWindow } from '@vueuse/core';
-import type { asideItem } from '@asialine/xia-ui/layout';
+import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 
 // 侧边栏列表， 接口的内容一部分是从应用程序中传过来。一部分是计算出来。
 // 侧边栏显示，分为两部分，一部分在本VUE中，position为absolute,参见 【:style="asideStyle(item)"】
@@ -99,7 +99,7 @@ export const item0: asideItem = {
   height: -1,
   start: -1,
   end: -1,
-  display: true,
+  display: 2,
   top: -1,
   left: 'auto',
   right: 'auto',
@@ -113,7 +113,14 @@ export const item0: asideItem = {
 
 export function asideDisplay(list: Ref<asideItem[]>, i: number) {
   // eslint-disable-next-line no-param-reassign
-  list.value[i].display = !list.value[i].display;
+  // list.value[i].display = 2; // 显示 charmi !!
+  // 将一个aside改成可以显示时，要计算宽度，是否有可以显示的空间，否则，会让别的aside显示不了。 charmi
+
+  if (list.value[i].display === 2) {
+    list.value[i].display = 0;
+  } else {
+    list.value[i].display = 2;
+  }
 }
 
 export function asideSwitch({ list, m, n, sy }: { list: Ref<asideItem[]>; m: number; n: number; sy: number }) {
@@ -148,12 +155,14 @@ export function asideSwitch({ list, m, n, sy }: { list: Ref<asideItem[]>; m: num
   }
 }
 
-export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>) {
-  let sumL = -1;
-  let sumR = -1;
+export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: Ref<barsType>) {
+  let sumL = 0;
+  let sumR = 0;
+  console.log('11--00--00--00--00--  asideWidth', bars.value.main.left);
+
   for (let i = 0; i < list.value.length; i += 1) {
     // eslint-disable-next-line no-continue
-    if (!list.value[i].display) continue;
+    if (list.value[i].display !== 2) continue;
     if (list.value[i].side === 'left') {
       // 停靠在左边
       list.value[i].start = sumL;
@@ -168,6 +177,33 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>) {
       sumR += list.value[i].width;
     }
   }
+  // --------窗口变窄后，有些 aside就不显示了，改为 1  反之，改为2 显示出来----------------
+  sumL = 0;
+  for (let i = 0; i < list.value.length; i += 1) {
+    // eslint-disable-next-line no-continue
+    if (list.value[i].display === 0) continue;
+    sumL += list.value[i].width;
+    if (winWidth.value - sumL < 600) {
+      for (let j = i; j < list.value.length; j += 1) {
+        if (list.value[j].display === 2) {
+          list.value[j].display = 1;
+        }
+      }
+      break;
+    } else if (list.value[i].display === 1) {
+      list.value[i].display = 2;
+    }
+  }
+  // --------------------------------------------------------------
+  sumL = 0;
+  for (let i = 0; i < list.value.length; i += 1) {
+    if (list.value[i].display === 2) {
+      sumL += list.value[i].width;
+    }
+  }
+  bars.value.main.width = winWidth.value - sumL; // main的宽度
+  // console.log('33-22-11--00--00--00--00--  bars.value.main.width', bars.value.main.width);
+  bars.value.main.left = 100;
 }
 
 export function useAsideList(asideArray: asideItem[]) {

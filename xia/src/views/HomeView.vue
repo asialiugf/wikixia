@@ -13,7 +13,7 @@
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'sticky'"
+    :fPosition="'relative'"
     :hTop="top0"
     :tHeight="'auto'"
     :tzIndex="1021"
@@ -125,7 +125,7 @@
             >开始阅读。
           </p>
         </div>
-        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
+        <li v-for="n in 110" :key="n">adfsafd {{ n }} <br /></li>
       </ul>
     </template>
     <template #asideL>
@@ -224,8 +224,8 @@ const asideArray = ref<asideItem[]>([
     footer: false,
     key: 'asidea',
     side: 'left',
-    width: 100,
-    display: true,
+    width: 120,
+    display: 2,
     draggbale: true
   },
   {
@@ -234,8 +234,8 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideb',
     side: 'right',
-    width: 100,
-    display: true,
+    width: 135,
+    display: 2,
     draggbale: true
   },
   {
@@ -244,8 +244,8 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidec',
     side: 'left',
-    width: 100,
-    display: true,
+    width: 140,
+    display: 2,
     draggbale: true
   },
   {
@@ -255,7 +255,7 @@ const asideArray = ref<asideItem[]>([
     key: 'asided',
     side: 'right',
     width: 100,
-    display: true,
+    display: 0,
     draggbale: true
   },
   {
@@ -265,7 +265,7 @@ const asideArray = ref<asideItem[]>([
     key: 'asidee',
     side: 'right',
     width: 100,
-    display: true,
+    display: 2,
     draggbale: true
   },
   {
@@ -275,7 +275,7 @@ const asideArray = ref<asideItem[]>([
     key: 'asidef',
     side: 'right',
     width: 100,
-    display: true,
+    display: 0,
     draggbale: true
   },
   {
@@ -285,7 +285,7 @@ const asideArray = ref<asideItem[]>([
     key: 'asideg',
     side: 'left',
     width: 100,
-    display: true,
+    display: 2,
     draggbale: true
   },
   {
@@ -295,7 +295,7 @@ const asideArray = ref<asideItem[]>([
     key: 'asideg',
     side: 'right',
     width: 100,
-    display: true,
+    display: 0,
     draggbale: true
   }
 ]);
