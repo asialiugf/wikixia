@@ -13,7 +13,7 @@ export function useFooter(
   }
 ) {
   const xx = computed(() => opt.x.value + 1);
-  const yy = ref(0);
+  const yy = opt.y.value;
   return { xx, yy };
 }
 

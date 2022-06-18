@@ -50,7 +50,13 @@
         :is-right="item.side === 'right'"
 				-->
 
-    <component :is="'aside'" v-for="(item, index) of asideList" :key="index" :style="asideStyle(item)">
+    <component
+      :is="'aside'"
+      v-for="(item, index) of asideList"
+      :key="index"
+      :style="asideStyle(item)"
+      :class="item.key"
+    >
       <layout-aside
         v-if="item.display"
         :id="index"
@@ -89,7 +95,7 @@ import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindow
 import type { asideItem } from '@asialine/xia-ui/layout';
 import { useAside } from '../../Composables/useAside';
 import { useFooter } from '../../Composables/useFooter';
-import { item0, asideSort } from './composables/useAsideList';
+import { item0, asideSort, asideDisplay, asideSwitch, asideWidth } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
 
 // {a: 0, b: true}
@@ -502,24 +508,8 @@ onBeforeMount(() => {
   // }
 
   // charmi 这一部分需要重新写，宽度算法不对，需要重新设置宽度
-  let sumL = -1;
-  let sumR = -1;
-  for (let i = 0; i < asideList.value.length; i += 1) {
-    if (asideList.value[i].side === 'left') {
-      // 停靠在左边
-      asideList.value[i].start = sumL;
-      asideList.value[i].end = sumL + asideList.value[i].width;
-      asideList.value[i].left = sumL; // position
-      sumL += asideList.value[i].width;
-    } else if (asideList.value[i].side === 'right') {
-      // 停靠在右边
-      asideList.value[i].start = sumR;
-      asideList.value[i].end = appWidth.value - sumR - asideList.value[i].width;
-      asideList.value[i].right = sumR;
-      sumR += asideList.value[i].width;
-    }
-  }
 
+  asideWidth(asideList, winSize.width);
   console.log('---ssssssssssssssssssssssssssssss', asideList.value);
   console.log(asideMap);
 });
@@ -660,57 +650,30 @@ const rtnWidthR = ref(0);
 const lorr = ref('');
 const myid = ref(0);
 
-const startX = ref<number | 'auto'>(0);
+const startX = ref<number>(0);
 const tempWidth = ref<number>(0);
-
 function setWidthL(rtn: rtnType): void {
   // sideWidth.value = rtn.width;
   if (rtn.state === 'move') {
-    // 左边栏 拖动左侧
-    if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
-      // alert(asideList.value[rtn.id].start);
-      console.log('sumsmL:::::::::::::::::::::::::::::::::', asideList.value[rtn.id].start);
-      const w = tempWidth.value - rtn.pageX + asideList.value[rtn.id].start!;
-      console.log('w:::::::::::::::::::::::::::::::::', w);
-      asideList.value[rtn.id].width = w < 50 ? 50 : w;
-      if (w >= 50) {
-        asideList.value[rtn.id].left = rtn.pageX;
-      } else {
-        asideList.value[rtn.id].left =
-          typeof asideList.value[rtn.id].start === 'number'
-            ? tempWidth.value - 50 + asideList.value[rtn.id].start!
-            : `auto`;
-      }
-      // 右边栏 拖动左侧
-    } else if (asideList.value[rtn.id].side === 'right') {
-      const w = rtn.pageX - asideList.value[rtn.id].start!;
-    }
+    const tt = tempWidth.value + startX.value - rtn.pageX;
+    asideList.value[rtn.id].width = tt < 50 ? 50 : tt;
   } else if (rtn.state === 'start') {
-    console.log('55555555555555555ssssssssssssssssssssssssssssss', asideList.value);
-    if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
-      // asideList.value[rtn.id].start = asideList.value[rtn.id].left;
-      tempWidth.value = asideList.value[rtn.id].width;
-    } else {
-      asideList.value[rtn.id].start = rtn.pageX;
-    }
+    startX.value = rtn.pageX;
+    tempWidth.value = asideList.value[rtn.id].width;
   } else if (rtn.state === 'end') {
-    if (asideList.value[rtn.id].side === 'left' && rtn.id > 0) {
-      asideList.value[rtn.id].left = rtn.pageX;
-    } else {
-    }
+    // need to save
   }
 }
 function setWidthR(rtn: rtnType): void {
-  // sideWidth.value = rtn.width;
-  sideStart.value -= 0;
-  // rtnWidthR.value = rtn.width;
-  // lorr.value = rtn.lr;
-  myid.value = rtn.id;
-  console.log('from sub aside: ============', rtn);
-  // asideList.value[rtn.id].width = rtn.width;
-  // asideList.value[rtn.id].width = rtn.width;
-  // asideList.value[rtn.id].right = rtn.left - rtn.right + asideList.value[rtn.id].start;
-  // asideList.value[rtn.id].start += rtn.left - rtn.right;
+  if (rtn.state === 'move') {
+    const tt = tempWidth.value + rtn.pageX - startX.value;
+    asideList.value[rtn.id].width = tt < 50 ? 50 : tt;
+  } else if (rtn.state === 'start') {
+    startX.value = rtn.pageX;
+    tempWidth.value = asideList.value[rtn.id].width;
+  } else if (rtn.state === 'end') {
+    // need to save
+  }
 }
 
 // interface myTF {
@@ -976,11 +939,40 @@ const asideRTop = ref(300);
 //   // console.log('ttttttttttttttttttttttttt', mainh.value);
 // }
 
-// onBeforeMount(() => {
-//   sx.value = window.innerWidth - 20;
-//   winSize.height.value = window.innerHeight;
-//   console.log('ooooooooooooooooooo', sx.value, winSize.height.value);
-// });
+setTimeout(() => {
+  asideDisplay(asideList, 1);
+}, 6000);
+setTimeout(() => {
+  asideDisplay(asideList, 1);
+}, 2000);
+setTimeout(() => {
+  asideDisplay(asideList, 1);
+  asideList.value[3].width = 300;
+}, 4000);
+setTimeout(() => {
+  asideDisplay(asideList, 1);
+  asideList.value[7].width = 240;
+}, 5000);
+setTimeout(() => {
+  asideDisplay(asideList, 1);
+}, 3000);
+setTimeout(() => {
+  asideDisplay(asideList, 1);
+}, 7000);
+
+setTimeout(() => {
+  asideSwitch({ list: asideList, m: 1, n: 0, sy: winSize.width.value });
+}, 3000);
+
+// 可以观察自己的属性 ---------------------------------------------------------------
+watch(
+  () => [asideList, winSize.width],
+  () => {
+    asideWidth(asideList, winSize.width);
+  },
+  { immediate: true, deep: true }
+);
+
 onMounted(() => {
   if (props.hasAsideLeft) {
     handleWidth('.resizeL', true);
@@ -1106,7 +1098,7 @@ const asideStyle = computed(() => (it: asideItem) => {
 		left: ${it.left}px;
 		right: ${it.right}px;
 		bottom: auto;
-		width: ${it.width}px;
+		width: ${it.display ? it.width : 0}px;
     height: ${it.height}px;
 		z-index:  ${it.zIndex};
 		background-color: #f1f1f1;

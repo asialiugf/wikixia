@@ -219,13 +219,13 @@ const tabTimeOut = useTimeout(3000); // 设置一个定时器
 const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
-    slotPosition: 'absolute',
+    slotPosition: 'sticky',
     header: 'cover',
     footer: false,
     key: 'asidea',
     side: 'left',
     width: 100,
-    display: false,
+    display: true,
     draggbale: true
   },
   {
@@ -283,7 +283,7 @@ const asideArray = ref<asideItem[]>([
     header: 'cover',
     footer: true,
     key: 'asideg',
-    side: 'right',
+    side: 'left',
     width: 100,
     display: true,
     draggbale: true

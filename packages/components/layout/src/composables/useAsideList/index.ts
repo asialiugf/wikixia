@@ -1,4 +1,6 @@
+/* eslint-disable no-param-reassign */
 import { ref } from 'vue';
+import type { Ref } from 'vue';
 import { tryOnMounted, useEventListener, defaultWindow } from '@vueuse/core';
 import type { ConfigurableWindow } from '@vueuse/core';
 import type { asideItem } from '@asialine/xia-ui/layout';
@@ -71,9 +73,9 @@ asideMap.set('tab', { a: 3, b: true });
 asideMap.set('none', { a: 4, b: true });
 
 export function asideSort(li: asideItem[]) {
-  if (li.length <= 1) {
-    return;
-  }
+  // if (li.length <= 1) {
+  //   return;
+  // }
   li.sort((a: asideItem, b: asideItem) => {
     const x1 = a.coverType!;
     const y1 = b.coverType!;
@@ -108,3 +110,62 @@ export const item0: asideItem = {
   slotTop: 0,
   slotHeight: 0
 };
+
+export function asideDisplay(list: Ref<asideItem[]>, i: number) {
+  // eslint-disable-next-line no-param-reassign
+  list.value[i].display = !list.value[i].display;
+}
+
+export function asideSwitch({ list, m, n, sy }: { list: Ref<asideItem[]>; m: number; n: number; sy: number }) {
+  // console.log('--00--00--00--00--', list.value);
+
+  if (list.value[m].coverType === list.value[n].coverType) {
+    // const tmp = list.value[m];
+    // list.value[m] = list.value[n];
+    // list.value[n] = tmp;
+
+    // [list.value[m], list.value[n]] = [list.value[n], list.value[m]];
+
+    list.value.splice(m, 1, list.value.splice(n, 1, list.value[m])[0]);
+    let sumL = -1;
+    let sumR = -1;
+    for (let i = 0; i < list.value.length; i += 1) {
+      if (list.value[i].side === 'left') {
+        // 停靠在左边
+        list.value[i].start = sumL;
+        list.value[i].end = sumL + list.value[i].width;
+        list.value[i].left = sumL; // position
+        sumL += list.value[i].width;
+      } else if (list.value[i].side === 'right') {
+        // 停靠在右边
+        list.value[i].start = sumR;
+        list.value[i].end = sy - sumR - list.value[i].width;
+        list.value[i].right = sumR;
+        sumR += list.value[i].width;
+      }
+    }
+    console.log('--00--00--00--00--', list.value);
+  }
+}
+
+export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>) {
+  let sumL = -1;
+  let sumR = -1;
+  for (let i = 0; i < list.value.length; i += 1) {
+    // eslint-disable-next-line no-continue
+    if (!list.value[i].display) continue;
+    if (list.value[i].side === 'left') {
+      // 停靠在左边
+      list.value[i].start = sumL;
+      list.value[i].end = sumL + list.value[i].width;
+      list.value[i].left = sumL; // position
+      sumL += list.value[i].width;
+    } else if (list.value[i].side === 'right') {
+      // 停靠在右边
+      list.value[i].start = sumR;
+      list.value[i].end = winWidth.value - sumR - list.value[i].width;
+      list.value[i].right = sumR;
+      sumR += list.value[i].width;
+    }
+  }
+}
