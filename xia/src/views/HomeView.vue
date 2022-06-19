@@ -13,7 +13,7 @@
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'relative'"
+    :fPosition="'sticky'"
     :hTop="top0"
     :tHeight="'auto'"
     :tzIndex="1021"
@@ -215,12 +215,12 @@ import type { asideItem } from '@asialine/xia-ui/layout';
 import { useTimeout } from '@vueuse/core';
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
-const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const tabTimeOut = useTimeout(113000); // 设置一个定时器
 const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
-    header: 'cover',
+    header: 'header',
     footer: true,
     key: 'asidea',
     side: 'left',
@@ -230,7 +230,7 @@ const asideArray = ref<asideItem[]>([
   },
   {
     slotPosition: 'sticky',
-    header: 'hidden',
+    header: 'header',
     footer: true,
     key: 'asideb',
     side: 'right',
@@ -280,17 +280,17 @@ const asideArray = ref<asideItem[]>([
   },
   {
     slotPosition: 'sticky',
-    header: 'cover',
+    header: 'header',
     footer: true,
     key: 'asideg',
     side: 'left',
-    width: 350,
+    width: 150,
     display: 2,
     draggbale: true
   },
   {
     slotPosition: 'sticky',
-    header: 'hidden',
+    header: 'header',
     footer: true,
     key: 'asideg',
     side: 'right',
@@ -328,11 +328,11 @@ function setWidthR(width: number) {
 
 .zxx-scroll {
   position: sticky;
-  top: 20px;
+  top: 30px;
   bottom: 100px;
   display: block;
   width: 350px;
-  height: 200px;
+  height: 100px;
   /* padding: 0.5em 1em; */
   /* margin: 5em auto; */
   border: solid deepskyblue;

@@ -63,15 +63,19 @@
       >
         <template #aside>
           <slot :name="`${item.key}`"> 无法无天 </slot>
-          <div>## id : {{ myid }}</div>
-          <div>## L?R : {{ lorr }}</div>
-          <div>## {{ rtnWidthL }}</div>
-          <div>###################################################### {{ rtnWidthR }}</div>
+          <div>## id : {{}}</div>
+          <div>## L?R : {{}}</div>
+          <div>## {{}}</div>
+          <div>###################################################### {{}}</div>
         </template>
       </layout-aside>
     </component>
 
-    <footer v-if="props.hasFooter" id="xia-layout-footer" class="footer info" :style="footerStyle">
+    <footer v-show="props.hasFooter" id="xia-layout-footer" class="footer info" :style="footerStyle">
+      <div v-show="props.fPosition === 'sticky'" ref="resizeF" class="resize1 f-resize"></div>
+      <!-- <div v-if="props.fPosition === 'sticky'" class="zxx-scroll11" :style="asideStyle">
+        <slot name="footer"></slot>
+      </div> -->
       <slot name="footer"></slot>
     </footer>
   </div>
@@ -83,8 +87,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { isString, useWindowScroll, useWindowSize } from '@vueuse/core';
+import { isString, useDraggable, useWindowScroll, useWindowSize } from '@vueuse/core';
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
+import type { Position } from '@vueuse/core';
 import { useAside } from '../../Composables/useAside';
 import { asideDisplay, asideSwitch, asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
@@ -145,6 +150,8 @@ interface Props {
   // hasTabInfo: boolean;
   // hasMainInfo: boolean;
   // hasFooterInfo: boolean;
+
+  isFooterZoom?: boolean;
 
   headerTimeout?: boolean;
 
@@ -216,6 +223,8 @@ const props = withDefaults(defineProps<Props>(), {
   hasAsideRight: false,
   hasMinimap: true,
   hasFooter: true,
+
+  isFooterZoom: true,
 
   headerTimeout: false,
   /* 顶部隐藏的广告区 */
@@ -459,10 +468,6 @@ watch(
 );
 
 // ---------------------------------拖动改变宽度-----------------------------------------
-const rtnWidthL = ref(0);
-const rtnWidthR = ref(0);
-const lorr = ref('');
-const myid = ref(0);
 
 const startX = ref<number>(0);
 const tempWidth = ref<number>(0);
@@ -695,36 +700,36 @@ const mainWidth = computed(() => {
 const asideLTop = ref(300);
 
 // 测试代码 --------------------------------------------------------------------------
-setTimeout(() => {
-  asideDisplay(asideList, 1);
-}, 6000);
-setTimeout(() => {
-  asideDisplay(asideList, 1);
-}, 2000);
-setTimeout(() => {
-  asideDisplay(asideList, 1);
-  asideList.value[3].width = 300;
-}, 4000);
-setTimeout(() => {
-  asideDisplay(asideList, 1);
-  asideList.value[7].width = 240;
-}, 5000);
-setTimeout(() => {
-  asideDisplay(asideList, 1);
-}, 3000);
-setTimeout(() => {
-  asideDisplay(asideList, 1);
-}, 7000);
+// setTimeout(() => {
+//   asideDisplay(asideList, 1);
+// }, 6000);
+// setTimeout(() => {
+//   asideDisplay(asideList, 1);
+// }, 2000);
+// setTimeout(() => {
+//   asideDisplay(asideList, 1);
+//   asideList.value[3].width = 300;
+// }, 4000);
+// setTimeout(() => {
+//   asideDisplay(asideList, 1);
+//   asideList.value[7].width = 240;
+// }, 5000);
+// setTimeout(() => {
+//   asideDisplay(asideList, 1);
+// }, 3000);
+// setTimeout(() => {
+//   asideDisplay(asideList, 1);
+// }, 7000);
 
-setTimeout(() => {
-  asideSwitch({ list: asideList, m: 1, n: 0, sy: winSize.width.value });
-}, 3000);
+// setTimeout(() => {
+//   asideSwitch({ list: asideList, m: 1, n: 0, sy: winSize.width.value });
+// }, 3000);
 
 // 可以观察自己的属性 ---------------------------------------------------------------
 watch(
   () => [asideList, winSize.width],
   () => {
-    asideWidth(asideList, winSize.width, bars);
+    asideWidth(asideList, sx, bars); // charmi  sx要处理
   },
   { immediate: true, deep: true }
 );
@@ -733,10 +738,30 @@ onMounted(() => {
   if (props.hasAsideLeft) {
     handleWidth('.resizeL', true);
   }
-  // if (props.hasAsideRight) {
-  //   handleWidth('.resizeR', false);
-  // }
 });
+
+// 底部可以拖动的高度 ---------------------------------------------------------------
+const startY = ref<number>(0);
+const tempHeight = ref<number>(0);
+const footerHeight = ref<number>(0);
+// const tempMain = ref<number>(0);
+const resizeF = ref<HTMLElement | null>(null);
+useDraggable(resizeF, {
+  onStart: (position: Position, event: PointerEvent) => {
+    startY.value = event.pageY;
+    tempHeight.value = footerHH.value;
+  },
+  onMove: (position: Position, event: PointerEvent) => {
+    // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
+    const aaa = startY.value - event.pageY;
+    footerHeight.value = tempHeight.value + aaa;
+  },
+  onEnd: (position: Position, event: PointerEvent) => {
+    // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
+  },
+  preventDefault: true
+});
+
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
@@ -820,7 +845,7 @@ const mainStyle = computed(() => {
 		top: 0px;
 		left: ${bars.value.main.left}px;
 		width: ${bars.value.main.width}px;
-		z-index: 1001;
+		z-index: 4000;
 		min-height: ${mainMinHeight.value}px;
 		background-color: #f1f1f1;
 	`;
@@ -849,7 +874,7 @@ const asideStyle = computed(() => (it: asideItem) => {
 		bottom: auto;
 		width: ${it.display === 2 ? it.width : 0}px;
     height: ${it.height}px;
-		z-index:  ${it.zIndex};
+		z-index:  5000;
 		background-color: #f1f1f1;
 	`;
 });
@@ -863,10 +888,12 @@ const footerStyle = computed(() => {
 		width: ${bars.value.footer.width}px;
 		right: 0px;
 		bottom: 0px;
-		z-index: ${footerZIndex.value};
+		z-index: 9000;
 		background-color: #ae4423;
 		min-height:50px;
+		height: ${footerHeight.value}px;
 		background-color:rgba(220,38,38,0.7);
+		overflow: hidden;
 	`;
 });
 
@@ -1027,4 +1054,22 @@ const asideZhedie = computed(() => {
     transform: scale(1);
   }
 } */
+
+.resize1 {
+  width: 100%;
+  height: 4px;
+  position: relative;
+  top: 0px;
+  cursor: ns-resize;
+  z-index: 9999;
+}
+.f-resize {
+  top: -0px;
+  background-color: rgb(0, 169, 6);
+}
+
+.f-resize:hover {
+  background-color: hsl(244, 100%, 50%);
+  /* transition: all 0.5s; */
+}
 </style>

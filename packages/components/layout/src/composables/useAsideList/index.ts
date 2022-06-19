@@ -95,16 +95,16 @@ export const item0: asideItem = {
   header: 'none',
   footer: false,
   coverType: 4,
-  width: -1,
-  height: -1,
-  start: -1,
-  end: -1,
+  width: 0,
+  height: 0,
+  start: 0,
+  end: 0,
   display: 2,
-  top: -1,
+  top: 0,
   left: 'auto',
   right: 'auto',
   bottom: 'auto',
-  zIndex: -1,
+  zIndex: 9000,
   draggbale: true,
   slotPosition: 'absolute',
   slotTop: 0,
@@ -270,6 +270,7 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   bars.value.header.width = winWidth.value - bars.value.header.width;
   bars.value.tab.width = winWidth.value - bars.value.tab.width;
   bars.value.main.width = winWidth.value - bars.value.main.width; // main的宽度
+
   bars.value.footer.width = winWidth.value - bars.value.footer.width;
   // console.log('33-22-11--00--00--00--00--  bars.value.main.width', footer.width);
   // bars.value.main.left = 100;
@@ -277,7 +278,7 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
 
 export function useAsideList(asideArray: asideItem[]) {
   const asideList = ref<asideItem[]>([]);
-  const footerZIndex = ref(0);
+  const footerZIndex = ref(9000);
 
   for (let i = 0; i < asideArray.length; i += 1) {
     asideList.value.push({
@@ -306,33 +307,33 @@ export function useAsideList(asideArray: asideItem[]) {
   // 2. asideMap 的值, 如果同类型有一项为false，则同类型所有均需设置为 false
   let flagx = true;
   for (let i = 0; i < asideList.value.length; i += 1) {
-    switch (asideList.value[i].header) {
-      case 'cover': {
-        asideList.value[i].zIndex = 8500;
-        break;
-      }
-      case 'hidden': {
-        asideList.value[i].zIndex = 7500;
-        break;
-      }
-      case 'header': {
-        asideList.value[i].zIndex = 6500;
-        break;
-      }
-      case 'tab': {
-        asideList.value[i].zIndex = 5500;
-        break;
-      }
-      case 'none': {
-        asideList.value[i].zIndex = 4000;
-        break;
-      }
-      default: {
-        asideList.value[i].zIndex = 4000;
-        break;
-      }
-    }
-    const xz = asideMap.get(asideList.value[i].header)!;
+    // switch (asideList.value[i].header) {
+    //   case 'cover': {
+    //     asideList.value[i].zIndex = 8500;
+    //     break;
+    //   }
+    //   case 'hidden': {
+    //     asideList.value[i].zIndex = 7500;
+    //     break;
+    //   }
+    //   case 'header': {
+    //     asideList.value[i].zIndex = 6500;
+    //     break;
+    //   }
+    //   case 'tab': {
+    //     asideList.value[i].zIndex = 5500;
+    //     break;
+    //   }
+    //   case 'none': {
+    //     asideList.value[i].zIndex = 4500;
+    //     break;
+    //   }
+    //   default: {
+    //     asideList.value[i].zIndex = 4500;
+    //     break;
+    //   }
+    // }
+    const xz = asideMap.get(asideList.value[i].header)!; // 取出 asideMap的值
     if (!flagx) {
       // 如果上一项footer是false，则此项footer也设置为false
       asideList.value[i].footer = false;
@@ -361,32 +362,32 @@ export function useAsideList(asideArray: asideItem[]) {
           break;
         }
       }
-      switch (asideList.value[i - 1].header) {
-        case 'cover': {
-          footerZIndex.value = 8600;
-          break;
-        }
-        case 'hidden': {
-          footerZIndex.value = 7600;
-          break;
-        }
-        case 'header': {
-          footerZIndex.value = 6600;
-          break;
-        }
-        case 'tab': {
-          footerZIndex.value = 5600;
-          break;
-        }
-        case 'none': {
-          footerZIndex.value = 4600;
-          break;
-        }
-        default: {
-          footerZIndex.value = 3600;
-          break;
-        }
-      }
+      // switch (asideList.value[i - 1].header) {
+      //   case 'cover': {
+      //     footerZIndex.value = 8600;
+      //     break;
+      //   }
+      //   case 'hidden': {
+      //     footerZIndex.value = 7600;
+      //     break;
+      //   }
+      //   case 'header': {
+      //     footerZIndex.value = 6600;
+      //     break;
+      //   }
+      //   case 'tab': {
+      //     footerZIndex.value = 5600;
+      //     break;
+      //   }
+      //   case 'none': {
+      //     footerZIndex.value = 4600;
+      //     break;
+      //   }
+      //   default: {
+      //     footerZIndex.value = 4600;
+      //     break;
+      //   }
+      // }
       break;
     }
   }
