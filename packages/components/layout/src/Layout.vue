@@ -815,21 +815,13 @@ const tabStyle = computed(() => {
 });
 
 const mainStyle = computed(() => {
-  const { tTop, aLwidth, tRight } = props;
-  // console.log(
-  //   'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa mainHH.value',
-  //   mainMinHeight.value
-  // );
   return `
-
 		position: relative;
 		top: 0px;
 		left: ${bars.value.main.left}px;
 		width: ${bars.value.main.width}px;
-		right: ${tRight}px;
 		z-index: 1001;
 		min-height: ${mainMinHeight.value}px;
-
 		background-color: #f1f1f1;
 	`;
 });
