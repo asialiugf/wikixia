@@ -957,7 +957,8 @@ const footerStyle = computed(() => {
   const { fPosition } = props;
   return `
 		position: ${fPosition};
-		left: 0px;
+		left: ${bars.value.footer.left}px;
+		width: ${bars.value.footer.width}px;
 		right: 0px;
 		bottom: 0px;
 		z-index: ${footerZIndex.value};

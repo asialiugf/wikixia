@@ -212,6 +212,13 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   for (let i = 0; i < list.value.length; i += 1) {
     if (list.value[i].display === 2) {
       sumL += list.value[i].width;
+      if (list.value[i].footer) {
+        if (list.value[i].side === 'left') {
+          bars.value.footer.left += list.value[i].width;
+        }
+        bars.value.footer.width += list.value[i].width;
+      }
+
       switch (list.value[i].header) {
         case 'cover': {
           if (list.value[i].side === 'left') {
@@ -268,6 +275,7 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   bars.value.header.width = winWidth.value - bars.value.header.width;
   bars.value.tab.width = winWidth.value - bars.value.tab.width;
   bars.value.main.width = winWidth.value - bars.value.main.width; // main的宽度
+  bars.value.footer.width = winWidth.value - bars.value.footer.width;
   console.log('33-22-11--00--00--00--00--  bars.value.main.width', bars.value);
   // bars.value.main.left = 100;
 }
