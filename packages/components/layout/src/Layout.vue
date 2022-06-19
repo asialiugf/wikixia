@@ -19,15 +19,12 @@
       <div>
         -------------------------------------winSize.width: {{ winSize.width }}<br />
         -------------------------------------winSize.height: {{ winSize.height }}<br />
-
         -----------------------------------------asideW: {{ asideW.width }}<br />
         -----------------------------------------asideW: {{ asideW.height }}<br />
-        -----------------------------------------xxasideW: {{ xxyy.xx }}<br />
-        -----------------------------------------yyasideW: {{ xxyy.yy }}<br />
       </div>
       <slot name="tab">
-        - sx:sy==={{ appWidth }}=={{ appHeight }}===={{ mainT }}======== {{ sx }} - {{ winSize.height }} -- main height:
-        {{ mainh }} -- footero {{ footero }}
+        - sx:sy==={{ appWidth }}=={{ appHeight }}=========== {{ sx }} - {{ winSize.height }} -- main height:
+        {{ mainHH }} --
         <div v-if="props.headerTimeout">来了！</div>
       </slot>
     </div>
@@ -44,11 +41,6 @@
       <slot name="main"></slot>
       <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div>
     </main>
-
-    <!--
-			  :is-left="item.side === 'left'"    //  aside如果是放在左侧，则左侧可拖动的div就可以不要了。
-        :is-right="item.side === 'right'"
-				-->
 
     <component
       :is="'aside'"
@@ -90,12 +82,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onBeforeMount, reactive } from 'vue';
-import { isString, useWindowScroll, useElementSize, useResizeObserver, useWindowSize } from '@vueuse/core';
+import { ref, computed, onMounted, watch } from 'vue';
+import { isString, useWindowScroll, useWindowSize } from '@vueuse/core';
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 import { useAside } from '../../Composables/useAside';
-import { useFooter } from '../../Composables/useFooter';
-import { item0, asideSort, asideDisplay, asideSwitch, asideWidth, useAsideList } from './composables/useAsideList';
+import { asideDisplay, asideSwitch, asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
 
 // {a: 0, b: true}
@@ -110,9 +101,6 @@ asideMap.set('none', { a: 4, b: true });
 // import LayoutBlock from './LayoutBlock.vue';
 // :parent-width="nameSiteMapping.get(item.key)"
 //   :parent-left="item.start"
-
-const sideWidth = ref(200);
-const sideStart = ref(300);
 
 interface rtnType {
   state: 'start' | 'move' | 'end';
@@ -294,16 +282,14 @@ const sx = computed(() => {
   return winSize.width.value - 40;
 });
 
-const xxyy = useFooter({ x: sx, y: winSize.height }); // test
+// const xxyy = useFooter({ x: sx, y: winSize.height }); // test
 
 const coverHH = ref(0);
 const hiddenHH = ref(0);
 const headerHH = ref(0);
 const tabHH = ref(0);
-const mainh = ref(0);
-const mainT = ref(0);
+const mainHH = ref(0);
 const footerHH = ref(0);
-const footerW = ref(0); // footer区宽度 需要计算，起始值 也要计算 ！！ charmi
 
 // ------------ 计算 cover 是否显示 -----------------
 // ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 400 时，就会从顶部向下滑出  -------------
@@ -329,30 +315,17 @@ const mainMinHeight = computed(() => {
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 
-// interface barsType {
-//   cover: { left: number; width: number };
-//   hidden: { left: number; width: number };
-//   header: { left: number; width: number };
-//   tab: { left: number; width: number };
-//   main: { left: number; width: number };
-//   footer: { left: number; width: number };
-// }
-
 const { asideList, footerZIndex } = useAsideList(props.asideArray);
 const bars = ref<barsType>({
-  cover: { left: 0, width: winSize.width.value },
-  hidden: { left: 0, width: winSize.width.value },
-  header: { left: 0, width: winSize.width.value },
-  tab: { left: 0, width: winSize.width.value },
-  main: { left: 0, width: winSize.width.value },
-  footer: { left: 0, width: winSize.width.value }
+  cover: { left: 0, width: 0 },
+  hidden: { left: 0, width: 0 },
+  header: { left: 0, width: 0 },
+  tab: { left: 0, width: 0 },
+  main: { left: 0, width: 0 },
+  footer: { left: 0, width: 0 }
 });
 
-console.log('1-1-1-1-1-1-1-1-1-1-', bars);
-
-// const { cover, hidden, header, tab, main, footer } = bars;
-
-asideWidth(asideList, winSize.width, bars);
+// asideWidth(asideList, winSize.width, bars);
 
 // ---【aside sticky的 top值】-------计算  通过props传给 LayoutAside.vue -------------------------------------------------------
 // *
@@ -485,6 +458,7 @@ watch(
   }
 );
 
+// ---------------------------------拖动改变宽度-----------------------------------------
 const rtnWidthL = ref(0);
 const rtnWidthR = ref(0);
 const lorr = ref('');
@@ -522,29 +496,8 @@ function setWidthR(rtn: rtnType): void {
   }
 }
 
-// interface myTF {
-//   isA: boolean;
-//   isB: boolean;
-// }
-
-// const myTFx = computed<myTF>(() => {
-//   const { hasCover, hasHidden, hasHeader, hasTab } = props;
-//   return { isA: hasCover, isB: hasHidden || hasHeader || hasTab };
-// });
-
-// const commonProps = computed(() => {
-//   const { transitionDuration, transitionTimingFunction } = props;
-//   return {
-//     transitionDuration,
-//     transitionTimingFunction
-//   };
-// });
-
 const widthL = computed(() => {
   return props.aLwidth;
-});
-const widthR = computed(() => {
-  return props.aRwidth;
 });
 
 // ---------------------------------拖动改变宽度-----------------------------------------
@@ -608,35 +561,8 @@ function changeWidth() {
 }
 // -------------------------------- resize处理 -------------------------------------------
 
-// const layouth = ref(0);
-const footero = ref(0);
-
-const eleOb = ref<ResizeObserverEntry>();
-
-const tt = computed(() => {
-  return mainT.value;
-});
-
-interface allHeight {
-  header: number;
-  tab: number;
-  footer: number;
-}
-
-const allHeightV: allHeight = {
-  header: 0,
-  tab: 0,
-  footer: 0
-};
-
 // type Auto = number | 'auto';
 // const headerHeight = ref<Auto>(0);
-
-const info1 = ref(null);
-const { height } = useElementSize(info1);
-const headerHeight = computed(() => {
-  return height.value;
-});
 
 // ResizeObserver 可以监听元素的变化，比如元素的高度变化，宽度变化，位置变化等等。
 // ResizeObserver 监听所有 class 含有 .info的元素变化，并且记录其高度
@@ -674,7 +600,7 @@ onMounted(() => {
   const resizeObserver = new ResizeObserver(entries => {
     entries.forEach(entry => {
       // console.log('11111obobobobobobobobobobob', entry);
-      eleOb.value = entry;
+
       if (entry.target.id === 'xia-layout-cover') {
         coverHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-hidden') {
@@ -684,12 +610,11 @@ onMounted(() => {
       } else if (entry.target.id === 'xia-layout-tab') {
         tabHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-main') {
-        mainh.value = entry.contentRect.height;
+        mainHH.value = entry.contentRect.height;
         // mainh.value = entry.contentRect.height < winSize.height.value ? winSize.height.value : entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-footer') {
         footerHH.value = entry.contentRect.height;
       }
-      mainT.value = hiddenHH.value + headerHH.value + tabHH.value;
 
       // z-index :
       // cover 8000
@@ -705,35 +630,35 @@ onMounted(() => {
           case 'cover': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
-            const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
+            const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
-            const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainh.value;
+            const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
-            const w = coverHH.value + headerHH.value + tabHH.value + mainh.value;
+            const w = coverHH.value + headerHH.value + tabHH.value + mainHH.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
-            const w = coverHH.value + tabHH.value + mainh.value;
+            const w = coverHH.value + tabHH.value + mainHH.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
-            const w = coverHH.value + mainh.value;
+            const w = coverHH.value + mainHH.value;
             asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
@@ -768,22 +693,7 @@ const mainWidth = computed(() => {
 
 // 计算高度 --------------------------------------------------------------------------
 const asideLTop = ref(300);
-const asideRTop = ref(300);
-// const headerHeight = ref(0);
 
-// 计算高度 --------------------------------------------------------------------------
-
-// 计算高度 --------------------------------------------------------------------------
-
-// function onResize() {
-//   // 下面的 -40是为了让页面滚动条不占用宽度
-//   sx.value = window.innerWidth - 40;
-//   winSize.height.value = window.innerHeight;
-//   // console.log('999999999999999999999999999999999999999999999', sx.value);
-//   // const element = document.querySelector('.main') as HTMLElement;
-//   // mainh.value = element.offsetHeight < winSize.height.value ? winSize.height.value : element.offsetHeight;
-//   // console.log('ttttttttttttttttttttttttt', mainh.value);
-// }
 // 测试代码 --------------------------------------------------------------------------
 setTimeout(() => {
   asideDisplay(asideList, 1);
@@ -907,7 +817,7 @@ const tabStyle = computed(() => {
 const mainStyle = computed(() => {
   const { tTop, aLwidth, tRight } = props;
   // console.log(
-  //   'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa mainh.value',
+  //   'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa mainHH.value',
   //   mainMinHeight.value
   // );
   return `
@@ -964,7 +874,6 @@ const footerStyle = computed(() => {
 		z-index: ${footerZIndex.value};
 		background-color: #ae4423;
 		min-height:50px;
-		width: ${sx.value}px;
 		background-color:rgba(220,38,38,0.7);
 	`;
 });
@@ -978,7 +887,7 @@ const ministyle = computed(() => {
 	right:0px;
 	bottom:0px;
 	background-color: #886655;
-	height:${mainh.value}px;
+	height:${mainHH.value}px;
 	`;
 });
 

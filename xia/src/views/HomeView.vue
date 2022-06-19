@@ -224,7 +224,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidea',
     side: 'left',
-    width: 120,
+    width: 260,
     display: 2,
     draggbale: true
   },
@@ -234,7 +234,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideb',
     side: 'right',
-    width: 135,
+    width: 100,
     display: 2,
     draggbale: true
   },
@@ -254,8 +254,8 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asided',
     side: 'right',
-    width: 100,
-    display: 0,
+    width: 200,
+    display: 2,
     draggbale: true
   },
   {
@@ -264,7 +264,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidee',
     side: 'right',
-    width: 100,
+    width: 250,
     display: 2,
     draggbale: true
   },
@@ -274,8 +274,8 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidef',
     side: 'right',
-    width: 100,
-    display: 0,
+    width: 300,
+    display: 2,
     draggbale: true
   },
   {
@@ -284,7 +284,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'left',
-    width: 100,
+    width: 350,
     display: 2,
     draggbale: true
   },
@@ -294,8 +294,8 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'right',
-    width: 100,
-    display: 0,
+    width: 380,
+    display: 2,
     draggbale: true
   }
 ]);

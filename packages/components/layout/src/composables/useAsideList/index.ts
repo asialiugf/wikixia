@@ -156,6 +156,7 @@ export function asideSwitch({ list, m, n, sy }: { list: Ref<asideItem[]>; m: num
 }
 
 export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: Ref<barsType>) {
+  console.log('aa--ss--ii--dd--ee--00--00--00--00--', list.value);
   let sumL = 0;
   let sumR = 0;
   console.log('11--00--00--00--00--  asideWidth', bars.value.main.left);
@@ -196,18 +197,12 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   }
   // --------------------------------------------------------------
   sumL = 0;
-  bars.value.cover.left = 0;
-  bars.value.cover.width = 0;
-  bars.value.hidden.left = 0;
-  bars.value.hidden.width = 0;
-  bars.value.header.left = 0;
-  bars.value.header.width = 0;
-  bars.value.tab.left = 0;
-  bars.value.tab.width = 0;
-  bars.value.main.left = 0;
-  bars.value.main.width = 0;
-  bars.value.footer.left = 0;
-  bars.value.footer.width = 0;
+  bars.value.cover = { left: 0, width: 0 };
+  bars.value.hidden = { left: 0, width: 0 };
+  bars.value.header = { left: 0, width: 0 };
+  bars.value.tab = { left: 0, width: 0 };
+  bars.value.main = { left: 0, width: 0 };
+  bars.value.footer = { left: 0, width: 0 };
 
   for (let i = 0; i < list.value.length; i += 1) {
     if (list.value[i].display === 2) {
@@ -276,7 +271,7 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   bars.value.tab.width = winWidth.value - bars.value.tab.width;
   bars.value.main.width = winWidth.value - bars.value.main.width; // main的宽度
   bars.value.footer.width = winWidth.value - bars.value.footer.width;
-  console.log('33-22-11--00--00--00--00--  bars.value.main.width', bars.value);
+  // console.log('33-22-11--00--00--00--00--  bars.value.main.width', footer.width);
   // bars.value.main.left = 100;
 }
 

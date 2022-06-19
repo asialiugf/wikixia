@@ -8,9 +8,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, unref, watch } from 'vue';
-import { isString, useDraggable, useEventListener } from '@vueuse/core';
-import type { Position, MaybeRef } from '@vueuse/core';
+import { computed, ref } from 'vue';
+import { isString, useDraggable } from '@vueuse/core';
+import type { Position } from '@vueuse/core';
 
 interface asideProps {
   id: number; // 用于标识 aside 的 id. emit返回给父组件时, 父组件会用到
@@ -43,24 +43,16 @@ interface rtnType {
 }
 
 interface Emits {
-  (e: 'update:widthL', asideWidthL: rtnType): void;
-  (e: 'update:widthR', asideWidthR: rtnType): void;
+  (e: 'update:widthL', L: rtnType): void;
+  (e: 'update:widthR', R: rtnType): void;
 }
 const emit = defineEmits<Emits>();
 
-// const asideR = computed<rtnType>(() => {
-//   const { asideWidth, id } = props;
-//   return { width: asideWidth, id };
-// });
-
 // *****************************************************************************
-const styleL = ref('');
-const styleR = ref('');
-const posL = ref(0);
-const posR = ref(0);
+
 const resizeLL = ref<HTMLElement | null>(null);
 const resizeRR = ref<HTMLElement | null>(null);
-const xR = useDraggable(resizeRR, {
+useDraggable(resizeRR, {
   onStart: (position: Position, event: PointerEvent) => {
     emit('update:widthR', { state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX });
   },
@@ -74,7 +66,7 @@ const xR = useDraggable(resizeRR, {
 });
 
 // 值得佩服！！
-const xL = useDraggable(resizeLL, {
+useDraggable(resizeLL, {
   onStart: (position: Position, event: PointerEvent) => {
     emit('update:widthL', { state: 'start', id: props.id, side: 'left', pos: position.x, pageX: event.pageX });
   },
@@ -85,53 +77,6 @@ const xL = useDraggable(resizeLL, {
     emit('update:widthL', { state: 'end', id: props.id, side: 'left', pos: position.x, pageX: event.pageX });
   },
   preventDefault: true
-});
-// 这里 watch xl 不行， 必须watch xl.x
-// watch(xL.x, () => {
-//   const left = isString(props.asideLeft) ? 0 : props.asideLeft;
-//   const right = isString(props.asideRight) ? 0 : props.asideRight;
-//   let width = 0;
-//   if (left === 0) {
-//     console.log('left === 0');
-//     width = posL.value + props.asideWidth - xL.x.value < 50 ? 50 : posL.value + props.asideWidth - xL.x.value + 14;
-//   } else {
-//     console.log('left ! 0  ========', left, posL.value);
-//     width = left + props.asideWidth - xL.x.value < 50 ? 50 : left + props.asideWidth - xL.x.value + 14;
-//   }
-//   // styleL.value = `left: ${asideL.value.width}px; `;
-//   emit('update:widthL', { width: props.asideWidth, id: props.id, lr: 'l', left: xL.x.value, right: 0 });
-// });
-// watch(xR.x, () => {
-//   // const width = xR.x.value - props.asideRight < 50 ? 50 : xR.x.value - props.asideRight + 14;
-//   // const width =
-//   //   posL.value + props.asideWidth - xL.x.value < 50 ? 50 : posL.value + props.asideWidth - xL.x.value + 14;
-//   console.log('yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', xR.x.value, posR);
-//   emit('update:widthR', { width: props.asideWidth, id: props.id, lr: 'l', right: xR.x.value, left: posR.value });
-// });
-// *****************************************************************************
-
-// const element = ref<HTMLDivElement>();
-// const element2 = ref<HTMLDivElement>();
-// useEventListener(element, 'mousedown', e => {
-//   console.log(e);
-// });
-// useEventListener(element2, 'mousedown', e => {
-//   useEventListener(element2, 'mousemove', e1 => {
-//     console.log(e1);
-//   });
-//   console.log(e);
-// });
-
-function handleWidth(className: string, isLeft: boolean): void {}
-// -------------------------------- 折叠图标处理 ------------------------------------------
-function changeWidth() {
-  // props.asideWidth.value = 0;
-}
-// -------------------------------- resize处理 ------------------------------------------
-
-onMounted(() => {
-  handleWidth('.resizeLL', true);
-  handleWidth('.resizeRR', false);
 });
 
 // layout页面的样式
