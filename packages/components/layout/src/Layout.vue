@@ -847,8 +847,8 @@ const coverStyle = computed(() => {
   return `
 		position: sticky;
 		top: 0px;
-		left: 0px;
-		width: ${sx.value}px;
+		left: ${bars.value.cover.left}px;
+		width: ${bars.value.cover.width}px;
 		min-height:140px;
 		height: 48px;
 		z-index: 8000;
@@ -859,10 +859,10 @@ const coverStyle = computed(() => {
 const hiddenStyle = computed(() => {
   const { hiddenPosition } = props;
   return `
-		width: ${sx.value}px;
 		position: ${hiddenPosition};
 		top: 0px;
-		left: 0px;
+		left: ${bars.value.hidden.left}px;
+		width: ${bars.value.hidden.width}px;
 		min-height:50px;
 		z-index: 7000;
 		background-color: #ae55ee;
@@ -876,11 +876,11 @@ const headerStyle = computed(() => {
   const t = hiddenPosition === 'sticky' ? hiddenHH.value : 0;
   const h = hPosition === 'sticky' ? t : 0;
   return `
-		width: ${sx.value}px;
 		position: ${hPosition};
 		min-height: ${hMinHeight}px;
 		top: ${h}px;
-		left: 0px;
+		left: ${bars.value.header.left}px;
+		width: ${bars.value.header.width}px;
 		z-index: 6000;
 		background-color: #e2e2e2;
 	`;
@@ -893,12 +893,12 @@ const tabStyle = computed(() => {
   const t = hPosition === 'sticky' ? m + headerHH.value : m;
   const h = tPosition === 'sticky' ? t : 0;
   return `
-		width: ${sx.value}px;
 		height: ${height1};
 		min-height: ${tMinHeight}px;
 		position: ${tPosition};
 		top: ${h}px;
-		left: 0px;
+		left: ${bars.value.tab.left}px;
+		width: ${bars.value.tab.width}px;
 		z-index: 5000;
 		background-color: #ae4423;
 	`;
@@ -911,10 +911,11 @@ const mainStyle = computed(() => {
   //   mainMinHeight.value
   // );
   return `
-		width: ${mainWidth.value}px;
+
 		position: relative;
 		top: 0px;
-		left: ${aLwidth + 10}px;
+		left: ${bars.value.main.left}px;
+		width: ${bars.value.main.width}px;
 		right: ${tRight}px;
 		z-index: 1001;
 		min-height: ${mainMinHeight.value}px;

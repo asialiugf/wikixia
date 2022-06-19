@@ -196,14 +196,80 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   }
   // --------------------------------------------------------------
   sumL = 0;
+  bars.value.cover.left = 0;
+  bars.value.cover.width = 0;
+  bars.value.hidden.left = 0;
+  bars.value.hidden.width = 0;
+  bars.value.header.left = 0;
+  bars.value.header.width = 0;
+  bars.value.tab.left = 0;
+  bars.value.tab.width = 0;
+  bars.value.main.left = 0;
+  bars.value.main.width = 0;
+  bars.value.footer.left = 0;
+  bars.value.footer.width = 0;
+
   for (let i = 0; i < list.value.length; i += 1) {
     if (list.value[i].display === 2) {
       sumL += list.value[i].width;
+      switch (list.value[i].header) {
+        case 'cover': {
+          if (list.value[i].side === 'left') {
+            bars.value.cover.left += list.value[i].width;
+          }
+          bars.value.cover.width += list.value[i].width;
+          break;
+        }
+        case 'hidden': {
+          if (list.value[i].side === 'left') {
+            bars.value.hidden.left += list.value[i].width;
+          }
+          bars.value.hidden.width += list.value[i].width;
+          break;
+        }
+        case 'header': {
+          if (list.value[i].side === 'left') {
+            bars.value.header.left += list.value[i].width;
+          }
+          bars.value.header.width += list.value[i].width;
+          break;
+        }
+        case 'tab': {
+          if (list.value[i].side === 'left') {
+            bars.value.tab.left += list.value[i].width;
+          }
+          bars.value.tab.width += list.value[i].width;
+          break;
+        }
+        case 'none': {
+          if (list.value[i].side === 'left') {
+            bars.value.main.left += list.value[i].width;
+          }
+          bars.value.main.width += list.value[i].width;
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     }
   }
-  bars.value.main.width = winWidth.value - sumL; // main的宽度
-  // console.log('33-22-11--00--00--00--00--  bars.value.main.width', bars.value.main.width);
-  bars.value.main.left = 100;
+  bars.value.hidden.left += bars.value.cover.left;
+  bars.value.hidden.width += bars.value.cover.width;
+  bars.value.header.left += bars.value.hidden.left;
+  bars.value.header.width += bars.value.hidden.width;
+  bars.value.tab.left += bars.value.header.left;
+  bars.value.tab.width += bars.value.header.width;
+  bars.value.main.left += bars.value.tab.left;
+  bars.value.main.width += bars.value.tab.width;
+
+  bars.value.cover.width = winWidth.value - bars.value.cover.width;
+  bars.value.hidden.width = winWidth.value - bars.value.hidden.width;
+  bars.value.header.width = winWidth.value - bars.value.header.width;
+  bars.value.tab.width = winWidth.value - bars.value.tab.width;
+  bars.value.main.width = winWidth.value - bars.value.main.width; // main的宽度
+  console.log('33-22-11--00--00--00--00--  bars.value.main.width', bars.value);
+  // bars.value.main.left = 100;
 }
 
 export function useAsideList(asideArray: asideItem[]) {
