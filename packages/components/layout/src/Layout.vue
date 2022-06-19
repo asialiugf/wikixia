@@ -845,7 +845,7 @@ const mainStyle = computed(() => {
 		top: 0px;
 		left: ${bars.value.main.left}px;
 		width: ${bars.value.main.width}px;
-		z-index: 4000;
+		z-index: 1000;
 		min-height: ${mainMinHeight.value}px;
 		background-color: #f1f1f1;
 	`;
@@ -874,7 +874,7 @@ const asideStyle = computed(() => (it: asideItem) => {
 		bottom: auto;
 		width: ${it.display === 2 ? it.width : 0}px;
     height: ${it.height}px;
-		z-index:  5000;
+		z-index:  ${it.zIndex};
 		background-color: #f1f1f1;
 	`;
 });
