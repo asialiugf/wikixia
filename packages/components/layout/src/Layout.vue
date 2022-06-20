@@ -197,7 +197,7 @@ interface Props {
   aRheight?: number | 'auto';
   aRpaddingLeft?: number | 'auto';
   /* Footer */
-  fPosition?: 'relative' | 'sticky' | 'absolute' | 'fixed';
+  fPosition?: 'relative' | 'sticky';
   fTop?: number | 'auto';
   fLeft?: number | 'auto';
   fRight?: number | 'auto';
@@ -272,7 +272,7 @@ const props = withDefaults(defineProps<Props>(), {
   aRheight: 148,
   aRpaddingLeft: 0,
   /* Footer */
-  fPosition: 'sticky',
+  fPosition: 'relative',
   fTop: 'auto',
   fLeft: 'auto',
   fRight: 'auto',
@@ -745,8 +745,9 @@ onMounted(() => {
 // 底部可以拖动的高度 ---------------------------------------------------------------
 const startY = ref<number>(0);
 const tempHeight = ref<number>(0);
-const footerHeight = ref<number>(0);
+
 type Auto = number | 'auto';
+const footerHeight = ref<Auto>('auto');
 const mainHeight = ref<Auto>('auto');
 const resizeF = ref<HTMLElement | null>(null);
 useDraggable(resizeF, {
@@ -889,6 +890,7 @@ const asideStyle = computed(() => (it: asideItem) => {
 // width left right 要重新计算 charmi
 const footerStyle = computed(() => {
   const { fPosition } = props;
+  const footerHei = isString(footerHeight.value) ? footerHeight.value : `${footerHeight.value}px`;
   return `
 		position: ${fPosition};
 		left: ${bars.value.footer.left}px;
@@ -898,7 +900,7 @@ const footerStyle = computed(() => {
 		z-index: 9000;
 		background-color: #ae4423;
 		min-height:50px;
-		height: ${footerHeight.value}px;
+		height: ${footerHei};
 		background-color:rgba(220,38,38,0.7);
     overflow: hidden;
 	`;

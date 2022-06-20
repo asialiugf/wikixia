@@ -13,7 +13,7 @@
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'sticky'"
+    :fPosition="'relative'"
     :hTop="top0"
     :tHeight="'auto'"
     :tzIndex="1021"
