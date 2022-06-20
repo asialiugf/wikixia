@@ -1,15 +1,15 @@
 <template>
-  <div v-if="isRight" ref="resizeLL" class="resize1 resizeLL"></div>
-  <div v-if="props.asidePosition === 'sticky'" class="zxx-scroll11" :style="asideStyle">
+  <div v-if="isRight" ref="resizeLL" class="xia-aside-resize resizeLL"></div>
+  <div v-if="props.asidePosition === 'sticky'" :style="asideStyle">
     <slot name="aside"></slot>
   </div>
   <slot v-if="props.asidePosition === 'absolute'" name="aside"></slot>
-  <div v-if="isLeft" ref="resizeRR" class="resize1 resizeRR"></div>
+  <div v-if="isLeft" ref="resizeRR" class="xia-aside-resize resizeRR"></div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { isString, useDraggable } from '@vueuse/core';
+import { useDraggable } from '@vueuse/core';
 import type { Position } from '@vueuse/core';
 
 interface asideProps {
@@ -33,7 +33,6 @@ const props = withDefaults(defineProps<asideProps>(), {
 });
 
 // ---------------------------------拖动改变宽度-----------------------------------------
-
 interface rtnType {
   state: 'start' | 'move' | 'end';
   id: number;
@@ -82,8 +81,7 @@ useDraggable(resizeLL, {
 // layout页面的样式
 // 这个样式，只给sticky使用， 属于子DIV样式
 const asideStyle = computed(() => {
-  const { asideTop, asideWidth, asideHeight, asidePosition } = props;
-  // console.log('sssssssssssssiiiiiiiiiiiiiiii', asidePosition, asideTop, asideWidth, asideHeight);
+  const { asideTop, asideWidth, asideHeight } = props;
   return `
 	  position: sticky;
 	  top: ${asideTop}px;
@@ -92,12 +90,13 @@ const asideStyle = computed(() => {
 	  width: ${asideWidth}px;
 		height: ${asideHeight}px;
 		overflow: scroll;
+
 `;
 });
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++ end
 </script>
 <style scoped>
-.resize1 {
+.xia-aside-resize {
   width: 4px;
   height: 100%;
   position: absolute;
@@ -157,17 +156,5 @@ const asideStyle = computed(() => {
 
 .xia-layout-aside:hover::-webkit-scrollbar-thumb {
   background: rgba(144, 147, 153, 0.3);
-}
-
-.zxx-scroll11 {
-  display: block;
-
-  /* padding: 0.5em 1em; */
-  /* margin: 5em auto; */
-  border: solid rgb(255, 106, 47);
-  overflow: auto;
-  overscroll-behavior: contain;
-  -ms-scroll-chaining: contain;
-  white-space: normal;
 }
 </style>

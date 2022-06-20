@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 const LayoutTest = () => import('../views/LayoutTest.vue');
-
+const Layoutfirst = () => import('../views/LayoutFirst.vue');
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -14,6 +14,11 @@ const router = createRouter({
       path: '/layout',
       name: 'layout',
       component: LayoutTest
+    },
+    {
+      path: '/layfirst',
+      name: 'layfirst',
+      component: Layoutfirst
     },
     {
       path: '/about',

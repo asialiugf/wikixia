@@ -76,18 +76,13 @@
       <slot name="footer"></slot>
     </footer>
   </div>
-
-  <!-- <div style="position: absolute; top: 0px; left: 350px; height: 1000px; z-index: 9988">
-    <div style="position: sticky; top: 200px; width: 200px; height: 200px; background-color: #ee0066"></div>
-  </div> -->
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { isString, useDraggable, useMouse, useWindowScroll, useWindowSize, debouncedWatch } from '@vueuse/core';
+import { isString, useDraggable, useWindowScroll, useWindowSize, debouncedWatch } from '@vueuse/core';
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 import type { Position } from '@vueuse/core';
-import debounce from 'lodash-es/debounce';
 import { useAside } from '../../Composables/useAside';
 import { asideDisplay, asideSwitch, asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
@@ -325,7 +320,7 @@ const mainMinHeight = computed(() => {
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 
-const { asideList, footerZIndex } = useAsideList(props.asideArray);
+const { asideList } = useAsideList(props.asideArray);
 const bars = ref<barsType>({
   cover: { left: 0, width: 0 },
   hidden: { left: 0, width: 0 },
@@ -337,8 +332,8 @@ const bars = ref<barsType>({
 
 // asideWidth(asideList, winSize.width, bars);
 
-// ---【aside sticky的 top值】-------计算  通过props传给 LayoutAside.vue -------------------------------------------------------
-// *
+// ---【aside sticky的 top值】-------计算  通过props传给 LayoutAside.vue ------
+// *************************************************************************
 // 侧边栏aside覆盖 hidden
 const hiddenTop = computed(() => {
   return coverOut.value ? coverHH.value : 0; // 当 cover出现时，top的值为cover的高度
@@ -378,97 +373,116 @@ const noneTop = computed(() => {
   }
   return t;
 });
+// *************************************************************************
 
-// -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
-debouncedWatch(
-  () => [y, winSize.height, coverHH, hiddenHH, headerHH, tabHH, footerHH],
-  () => {
-    // 【 charmi 当鼠标下滑到 y.value 超过 coverHH.value + hiddenHH.value + headerHH.value + tabHH.value时
-    // 屏幕变稳定了，所以不应该再计算高度了 】
-    // if (y.value > coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + 200) {
-    //   return;
-    // }
-    const { hiddenPosition, hPosition, tPosition, fPosition } = props;
-    for (let i = 0; i < asideList.value.length; i += 1) {
-      switch (asideList.value[i].header) {
-        case 'cover': {
-          const hr = winSize.height.value;
-          if (fPosition === 'relative') {
-            asideList.value[i].slotHeight = hr;
-          } else if (fPosition === 'sticky') {
-            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
-            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
-          }
-          break;
+// -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------
+const asideHeighCalc = () => {
+  const { hiddenPosition, hPosition, tPosition, fPosition } = props;
+  for (let i = 0; i < asideList.value.length; i += 1) {
+    switch (asideList.value[i].header) {
+      case 'cover': {
+        const hr = winSize.height.value;
+        if (fPosition === 'relative') {
+          asideList.value[i].slotHeight = hr;
+        } else if (fPosition === 'sticky') {
+          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+          asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
-        case 'hidden': {
-          const hr = winSize.height.value - hiddenTop.value;
-          if (fPosition === 'relative') {
-            asideList.value[i].slotHeight = hr;
-          } else if (fPosition === 'sticky') {
-            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
-            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
-          }
-          break;
+        break;
+      }
+      case 'hidden': {
+        const hr = winSize.height.value - hiddenTop.value;
+        if (fPosition === 'relative') {
+          asideList.value[i].slotHeight = hr;
+        } else if (fPosition === 'sticky') {
+          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+          asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
-        case 'header': {
-          // const { hiddenPosition } = props;
-          const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-          const h = t0 < y.value ? t0 : y.value;
-          const a = winSize.height.value - headerTop.value;
-          const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
-          if (fPosition === 'relative') {
-            asideList.value[i].slotHeight = hr;
-          } else if (fPosition === 'sticky') {
-            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
-            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
-          }
-          console.log('--5555555555555ssssssssssssssssssssssssssssss');
-          break;
+        break;
+      }
+      case 'header': {
+        // const { hiddenPosition } = props;
+        const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+        const h = t0 < y.value ? t0 : y.value;
+        const a = winSize.height.value - headerTop.value;
+        const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
+        if (fPosition === 'relative') {
+          asideList.value[i].slotHeight = hr;
+        } else if (fPosition === 'sticky') {
+          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+          asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
-        case 'tab': {
-          // const { hiddenPosition, hPosition } = props;
-          const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-          const t1 = hPosition === 'relative' ? headerHH.value : 0;
-          const h = t0 + t1 < y.value ? t0 + t1 : y.value;
-          const a = winSize.height.value - tabTop.value;
-          const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
-          if (fPosition === 'relative') {
-            asideList.value[i].slotHeight = hr;
-          } else if (fPosition === 'sticky') {
-            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
-            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
-          }
-          break;
+        console.log('--5555555555555ssssssssssssssssssssssssssssss');
+        break;
+      }
+      case 'tab': {
+        // const { hiddenPosition, hPosition } = props;
+        const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+        const t1 = hPosition === 'relative' ? headerHH.value : 0;
+        const h = t0 + t1 < y.value ? t0 + t1 : y.value;
+        const a = winSize.height.value - tabTop.value;
+        const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
+        if (fPosition === 'relative') {
+          asideList.value[i].slotHeight = hr;
+        } else if (fPosition === 'sticky') {
+          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+          asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
-        case 'none': {
-          const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-          const t1 = hPosition === 'relative' ? headerHH.value : 0;
-          const t2 = tPosition === 'relative' ? tabHH.value : 0;
-          const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-          const a = winSize.height.value - noneTop.value;
-          const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
-          if (fPosition === 'relative') {
-            asideList.value[i].slotHeight = hr;
-          } else if (fPosition === 'sticky') {
-            const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
-            asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
-          }
-          break;
+        break;
+      }
+      case 'none': {
+        const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+        const t1 = hPosition === 'relative' ? headerHH.value : 0;
+        const t2 = tPosition === 'relative' ? tabHH.value : 0;
+        const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
+        const a = winSize.height.value - noneTop.value;
+        const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+        if (fPosition === 'relative') {
+          asideList.value[i].slotHeight = hr;
+        } else if (fPosition === 'sticky') {
+          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+          asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
-        default: {
-          break;
-        }
+        break;
+      }
+      default: {
+        break;
       }
     }
+  }
+};
+
+const ttmm = computed(() => {
+  return coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + 100;
+});
+
+debouncedWatch(
+  () => [winSize.height, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => {
+    asideHeighCalc();
   },
   {
     immediate: true,
     deep: true,
-    debounce: 0
+    debounce: 300
   }
 );
-
+debouncedWatch(
+  () => [y],
+  () => {
+    // 【 charmi 当鼠标下滑到 y.value 超过 coverHH.value + hiddenHH.value + headerHH.value + tabHH.value时
+    // 屏幕变稳定了，所以不应该再计算高度了 】
+    if (y.value > ttmm.value && y.value < mainHH.value - footerHH.value) {
+      return;
+    }
+    asideHeighCalc();
+  },
+  {
+    immediate: true,
+    deep: true,
+    debounce: 300
+  }
+);
 // ---------------------------------拖动改变宽度-----------------------------------------
 
 const startX = ref<number>(0);
@@ -485,7 +499,7 @@ function setWidthL(rtn: rtnType): void {
     tempWidth.value = asideList.value[rtn.id].width;
     tempMain.value = bars.value.main.width;
   } else if (rtn.state === 'end') {
-    // need to save
+    // need to save charmi
   }
 }
 function setWidthR(rtn: rtnType): void {
@@ -775,7 +789,7 @@ const layoutStyle = computed(() => {
     margin: 0px;
     width: ${sx.value}px;
     position: relative;
-		background-color: #ddeeaa
+		background-color: #ddeeaa;
   `;
 });
 

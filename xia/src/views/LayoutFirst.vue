@@ -194,7 +194,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'header',
     footer: true,
     key: 'asideb',
