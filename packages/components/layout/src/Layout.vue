@@ -3,7 +3,7 @@
     <Transition>
       <div v-show="coverOut" id="xia-layout-cover" class="xia-layout-cover info" :style="coverStyle">
         <slot name="cover"></slot>
-        <div>{{ x }} --- {{ y }}</div>
+        <div>----------------scroll {{ x }} --- {{ y }} ----- newXY: -- newXY.x newXY.y</div>
       </div>
     </Transition>
     <Transition name="xia-layout-hidden">
@@ -72,10 +72,7 @@
     </component>
 
     <footer v-show="props.hasFooter" id="xia-layout-footer" class="footer info" :style="footerStyle">
-      <div v-show="props.fPosition === 'sticky'" ref="resizeF" class="resize1 f-resize"></div>
-      <!-- <div v-if="props.fPosition === 'sticky'" class="zxx-scroll11" :style="asideStyle">
-        <slot name="footer"></slot>
-      </div> -->
+      <div v-show="props.fPosition === 'sticky'" ref="resizeF" class="f-resize"></div>
       <slot name="footer"></slot>
     </footer>
   </div>
@@ -87,9 +84,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { isString, useDraggable, useWindowScroll, useWindowSize } from '@vueuse/core';
+import { isString, useDraggable, useMouse, useWindowScroll, useWindowSize, debouncedWatch } from '@vueuse/core';
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 import type { Position } from '@vueuse/core';
+import debounce from 'lodash-es/debounce';
 import { useAside } from '../../Composables/useAside';
 import { asideDisplay, asideSwitch, asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
@@ -151,7 +149,7 @@ interface Props {
   // hasMainInfo: boolean;
   // hasFooterInfo: boolean;
 
-  isFooterZoom?: boolean;
+  // isFooterZoom?: boolean;
 
   headerTimeout?: boolean;
 
@@ -199,7 +197,7 @@ interface Props {
   aRheight?: number | 'auto';
   aRpaddingLeft?: number | 'auto';
   /* Footer */
-  fPosition?: 'relative' | 'sticky';
+  fPosition?: 'relative' | 'sticky' | 'absolute' | 'fixed';
   fTop?: number | 'auto';
   fLeft?: number | 'auto';
   fRight?: number | 'auto';
@@ -224,7 +222,7 @@ const props = withDefaults(defineProps<Props>(), {
   hasMinimap: true,
   hasFooter: true,
 
-  isFooterZoom: true,
+  // isFooterZoom: true,
 
   headerTimeout: false,
   /* 顶部隐藏的广告区 */
@@ -305,6 +303,9 @@ const footerHH = ref(0);
 // ------------- coverOut 会传给 边栏子组件 每个边栏子组件都会用到 ------------
 // y.value的值最好要大于 hiddenHH.value + headerHH.value + tabHH.value，否则会出现跳动
 const { x, y } = useWindowScroll();
+// const newXY = useWindowScroll({ eventFilter: debounceFilter(100) });
+// const update = debounce(useWindowScroll(), 100);
+
 const coverOut = computed(() => {
   const { hasCover } = props;
   return hasCover && y.value > 400;
@@ -379,7 +380,7 @@ const noneTop = computed(() => {
 });
 
 // -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------------------------------------------------
-watch(
+debouncedWatch(
   () => [y, winSize.height, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
     // 【 charmi 当鼠标下滑到 y.value 超过 coverHH.value + hiddenHH.value + headerHH.value + tabHH.value时
@@ -463,7 +464,8 @@ watch(
   },
   {
     immediate: true,
-    deep: true
+    deep: true,
+    debounce: 0
   }
 );
 
@@ -619,8 +621,8 @@ onMounted(() => {
         // mainh.value = entry.contentRect.height < winSize.height.value ? winSize.height.value : entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-footer') {
         footerHH.value = entry.contentRect.height;
+        // console.log('ooooooooooo ========== ooooooooooo', footerHH.value);
       }
-
       // z-index :
       // cover 8000
       // hidden 7000
@@ -744,12 +746,14 @@ onMounted(() => {
 const startY = ref<number>(0);
 const tempHeight = ref<number>(0);
 const footerHeight = ref<number>(0);
-// const tempMain = ref<number>(0);
+type Auto = number | 'auto';
+const mainHeight = ref<Auto>('auto');
 const resizeF = ref<HTMLElement | null>(null);
 useDraggable(resizeF, {
   onStart: (position: Position, event: PointerEvent) => {
     startY.value = event.pageY;
     tempHeight.value = footerHH.value;
+    mainHeight.value = mainHH.value + footerHH.value; // 滚动条在最底部时，向下拉缩小底部区域高度时会抖动，防止抖动
   },
   onMove: (position: Position, event: PointerEvent) => {
     // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
@@ -758,6 +762,7 @@ useDraggable(resizeF, {
   },
   onEnd: (position: Position, event: PointerEvent) => {
     // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
+    mainHeight.value = 'auto'; // charmi 还可以修改成不跳动
   },
   preventDefault: true
 });
@@ -840,6 +845,7 @@ const tabStyle = computed(() => {
 });
 
 const mainStyle = computed(() => {
+  const mainHei = isString(mainHeight.value) ? mainHeight.value : `${mainHeight.value}px`;
   return `
 		position: relative;
 		top: 0px;
@@ -847,6 +853,7 @@ const mainStyle = computed(() => {
 		width: ${bars.value.main.width}px;
 		z-index: 1000;
 		min-height: ${mainMinHeight.value}px;
+		height:${mainHei};
 		background-color: #f1f1f1;
 	`;
 });
@@ -893,7 +900,7 @@ const footerStyle = computed(() => {
 		min-height:50px;
 		height: ${footerHeight.value}px;
 		background-color:rgba(220,38,38,0.7);
-		overflow: hidden;
+    overflow: hidden;
 	`;
 });
 
@@ -1055,21 +1062,18 @@ const asideZhedie = computed(() => {
   }
 } */
 
-.resize1 {
+.f-resize {
+  position: absolute;
   width: 100%;
-  height: 4px;
-  position: relative;
-  top: 0px;
+  height: 6px;
   cursor: ns-resize;
   z-index: 9999;
-}
-.f-resize {
-  top: -0px;
-  background-color: rgb(0, 169, 6);
+  top: -3px;
+  background-color: rgba(220, 38, 38, 0);
 }
 
 .f-resize:hover {
-  background-color: hsl(244, 100%, 50%);
-  /* transition: all 0.5s; */
+  background-color: hsl(213, 100%, 50%);
+  transition: all 0.5s;
 }
 </style>

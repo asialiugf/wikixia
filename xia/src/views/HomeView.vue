@@ -153,7 +153,7 @@
       </ul>
     </template>
     <template #asidea>
-      跟绝大多数的小说不同，在这部小说里面，
+      rrrrr跟绝大多数的小说不同，在这部小说里面，
       直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
@@ -261,7 +261,7 @@ const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
     header: 'none',
-    footer: true,
+    footer: false,
     key: 'asidee',
     side: 'right',
     width: 250,

@@ -106,20 +106,20 @@ const asideStyle = computed(() => {
   z-index: 5001;
 }
 .resizeLL {
-  left: -0px;
+  left: 0px;
   background-color: rgb(0, 169, 6);
 }
 .resizeRR {
-  right: -0px;
+  right: 0px;
   background-color: rgb(11, 88, 255);
 }
 .resizeLL:hover {
   background-color: hsl(20, 100%, 45%);
-  /* transition: all 0.5s; */
+  transition: all 0.5s;
 }
 .resizeRR:hover {
   background-color: hsl(309, 100%, 59%);
-  /* transition: all 0.5s; */
+  transition: all 0.5s;
 }
 
 .xia-layout-aside::-webkit-scrollbar {
