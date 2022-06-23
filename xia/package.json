@@ -12,15 +12,19 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
-	"eslintConfig": {
+  "eslintConfig": {
     "rules": {
       "no-console": "off"
     }
   },
   "dependencies": {
+    "@asialine/editor": "workspace:^0.0.3",
+    "@vue/compiler-sfc": "^3.2.37",
+    "am-editor-vue": "^0.0.3",
     "pinia": "^2.0.14",
     "vue": "^3.2.36",
-    "vue-router": "^4.0.15"
+    "vue-router": "^4.0.15",
+    "webpack": "^5.73.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.3",
