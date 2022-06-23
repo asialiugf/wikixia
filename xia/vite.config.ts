@@ -5,6 +5,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import dts from 'vite-plugin-dts';
 import unocss from 'unocss/vite';
 import { presetUno, presetAttributify, presetIcons } from 'unocss';
+import { resolve } from 'path';
 
 export default {
   resolve: {
@@ -13,7 +14,8 @@ export default {
     }
   },
   plugins: [
-    vue({ script: { refSugar: true } }),
+    // vue({ script: { refSugar: true } }),
+    vue({ reactivityTransform: resolve(__dirname, 'src') }),
     vueJsx(),
     unocss({
       presets: [presetUno(), presetAttributify(), presetIcons()]

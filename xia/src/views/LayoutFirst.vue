@@ -157,10 +157,10 @@ import type { asideItem } from '@asialine/xia-ui/layout';
 import { useTimeout } from '@vueuse/core';
 import LayoutHeader from '../components/layout/LayoutHeader.vue';
 // import Editor, { ChangeInterface, ChangePayload, EditorInstance } from '@asialine/editor';
-import Editor from '../../../packages/editor/src/components/Editor';
+import Editor from '@asialine/editor';
 import type { ChangePayload, EditorInstance } from '../../../packages/editor/src/components/Editor/src/types';
 import type { ChangeInterface } from '@aomao/engine';
-import '../../../packages/editor/dist/style.css';
+// import '../../../packages/editor/dist/style.css';
 const editor = ref<EditorInstance | null>(null);
 const content = ref('<h1>Hello Editor</h1>');
 

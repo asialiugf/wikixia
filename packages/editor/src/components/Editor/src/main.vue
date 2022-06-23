@@ -187,15 +187,15 @@ onUnmounted(() => {
 
 .editor-content {
   position: relative;
-  width: v-bind(styles.width);
-  height: v-bind(styles.height);
-  margin: v-bind(styles.margin);
-  padding: v-bind(styles.padding);
-  background: v-bind(styles.background);
-  box-shadow: v-bind(styles.boxShadow);
-  border: v-bind(styles.border);
-  overflow-y: v-bind(styles.overflowY);
-  min-height: v-bind(styles.minHeight);
+  width: v-bind('styles.width');
+  height: v-bind('styles.height');
+  margin: v-bind('styles.margin');
+  padding: v-bind('styles.padding');
+  background: v-bind('styles.background');
+  box-shadow: v-bind('styles.boxShadow');
+  border: v-bind('styles.border');
+  overflow-y: v-bind('styles.overflowY');
+  min-height: v-bind('styles.minHeight');
 }
 
 .editor-mobile .editor-content {
@@ -206,11 +206,11 @@ onUnmounted(() => {
 
 .editor-content .am-engine {
   padding: 40px 60px 60px;
-  font-family: v-bind(styles.fontFamily);
+  font-family: v-bind('styles.fontFamily');
 }
 
 .editor-mobile .editor-content .am-engine {
   padding: 18px 0 0 0;
-  font-family: v-bind(styles.fontFamily);
+  font-family: v-bind('styles.fontFamily');
 }
 </style>

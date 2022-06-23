@@ -6,6 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/red-axe/am-editor-vue.git"
   },
+	"main":"index.js",
   "files": [
     "dist",
     "lib",
