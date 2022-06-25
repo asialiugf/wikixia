@@ -1,5 +1,5 @@
 <template>
-  <AmToolbar v-if="engine" :engine="engine" :items="toolbarItems" />
+  <AmToolbar style="position: sticky; top: 200px" v-if="engine" :engine="engine" :items="toolbarItems" />
   <div :class="['editor-wrapper', { 'editor-mobile': isMobile }]">
     <div class="editor-container text-left">
       <div class="editor-content">

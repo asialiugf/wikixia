@@ -169,7 +169,8 @@ const content = ref('<h1>Hello Editor</h1>');
 
 const style = ref({
   padding: '0',
-  background: '#fff'
+  background: '#fff',
+  width: '100%'
 });
 
 const onChange = ({ html, json }: ChangePayload) => {
