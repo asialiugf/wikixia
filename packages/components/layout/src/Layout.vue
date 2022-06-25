@@ -39,7 +39,7 @@
 
     <main id="xia-layout-main" class="main info" :style="mainStyle">
       <slot name="main"></slot>
-      <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div>
+      <!-- <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div> -->
     </main>
 
     <component
