@@ -1,59 +1,54 @@
-# xia
+# am-editor-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+[am-editor](https://github.com/red-axe/am-editor) for Vue3.
 
-## Recommended IDE Setup
+## Usage
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.vscode-typescript-vue-plugin).
+```bash
+yarn add am-editor-vue
 
-## Type Support for `.vue` Imports in TS
+# or npm
+npm i am-editor-vue
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+# or pnpm
+pnpm add am-editor-vue
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+# or Rush
+rush add -p am-editor-vue
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
 ```
 
-### Compile and Hot-Reload for Development
+## Vue
 
-```sh
-npm run dev
-```
+```Vue
 
-### Type-Check, Compile and Minify for Production
+<script setup lang="ts" name="OfficeMig">
+import { ref } from 'vue'
+import Editor, { ChangeInterface, ChangePayload, EditorInstance } from 'am-editor-vue'
+import 'editor/dist/style.css'
 
-```sh
-npm run build
-```
+const editor = ref<EditorInstance | null>(null)
+const content = ref('<h1>Hello Editor</h1>')
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+const style = ref({
+  padding: '0',
+  background: '#fff',
+})
 
-```sh
-npm run test:unit
-```
+const onChange = ({html, json}: ChangePayload) => {
+  console.log('html content: ', html)
+  console.log('json content: ', json)
+}
 
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
+</script>
 
-```sh
-npm run build
-npm run test:e2e # or `npm run test:e2e:ci` for headless testing
-```
+<template>
+  <Editor
+    ref="editor"
+    v-model="content"
+    @change="onChange"
+    :styleOption="style"
+  />
+</template>
 
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```

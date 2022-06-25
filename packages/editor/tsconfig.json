@@ -9,7 +9,7 @@
     "outDir": "./dist/out-tsc/",
     "experimentalDecorators": true,
     "noImplicitReturns": true,
-    "declaration": false,
+    "declaration": true,
     "emitDeclarationOnly": true,
     "declarationDir": "./dist",
     "suppressImplicitAnyIndexErrors": true,
