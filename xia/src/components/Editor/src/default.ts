@@ -12,7 +12,7 @@ export const getDefaultStyle = () => ({
   overflowY: 'auto',
   boxShadow: 'rgba(158, 161, 165, 0.4) 0px 2px 12px 0px',
   minHeight: 'calc(100vh - 36px)',
-  fontFamily: 'SimSun, 宋体, "Songti SC", NSimSun, STSong, serif'
+  fontFamily: '"Microsoft YaHei", 微软雅黑, "PingFang SC", SimHei, STHeiti, sans-serif'
 });
 
 export const defaultPCToolbarItems: GroupItemProps[] = [

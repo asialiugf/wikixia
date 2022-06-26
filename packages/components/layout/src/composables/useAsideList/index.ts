@@ -270,6 +270,7 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   bars.value.header.width = winWidth.value - bars.value.header.width;
   bars.value.tab.width = winWidth.value - bars.value.tab.width;
   bars.value.main.width = winWidth.value - bars.value.main.width; // main的宽度
+  // charmi  是否可以放在 onEnd 最后计算 Layout.vue 503行
 
   bars.value.footer.width = winWidth.value - bars.value.footer.width;
   // console.log('33-22-11--00--00--00--00--  bars.value.main.width', footer.width);

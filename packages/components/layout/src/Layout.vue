@@ -3,7 +3,9 @@
     <Transition>
       <div v-show="coverOut" id="xia-layout-cover" class="xia-layout-cover info" :style="coverStyle">
         <slot name="cover"></slot>
-        <div>----------------scroll {{ x }} --- {{ y }} ----- newXY: -- newXY.x newXY.y</div>
+        <div>
+          ----------------scroll {{ x }} --- {{ y }} ----- mainHH {{ mainHH }}: -- footerHH {{ footerHH }}.x newXY.y
+        </div>
       </div>
     </Transition>
     <Transition name="xia-layout-hidden">
@@ -456,18 +458,19 @@ const ttmm = computed(() => {
   return coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + 100;
 });
 
-debouncedWatch(
+// debouncedWatch(
+watch(
   () => [winSize.height, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
     asideHeighCalc();
   },
   {
     immediate: true,
-    deep: true,
-    debounce: 300
+    deep: true
+    // debounce: 300
   }
 );
-debouncedWatch(
+watch(
   () => [y],
   () => {
     // 【 charmi 当鼠标下滑到 y.value 超过 coverHH.value + hiddenHH.value + headerHH.value + tabHH.value时
@@ -479,8 +482,8 @@ debouncedWatch(
   },
   {
     immediate: true,
-    deep: true,
-    debounce: 300
+    deep: true
+    // debounce: 300
   }
 );
 // ---------------------------------拖动改变宽度-----------------------------------------
@@ -500,6 +503,7 @@ function setWidthL(rtn: rtnType): void {
     tempMain.value = bars.value.main.width;
   } else if (rtn.state === 'end') {
     // need to save charmi
+    // 在这里最后改变main的宽度
   }
 }
 function setWidthR(rtn: rtnType): void {
@@ -620,8 +624,6 @@ onMounted(() => {
   // 只有 entries[0]有内容，虽然是观察多个，但是一个一个返回的。
   const resizeObserver = new ResizeObserver(entries => {
     entries.forEach(entry => {
-      // console.log('11111obobobobobobobobobobob', entry);
-
       if (entry.target.id === 'xia-layout-cover') {
         coverHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-hidden') {
@@ -771,9 +773,7 @@ useDraggable(resizeF, {
     mainHeight.value = mainHH.value + footerHH.value; // 滚动条在最底部时，向下拉缩小底部区域高度时会抖动，防止抖动
   },
   onMove: (position: Position, event: PointerEvent) => {
-    // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
-    const aaa = startY.value - event.pageY;
-    footerHeight.value = tempHeight.value + aaa;
+    footerHeight.value = tempHeight.value + startY.value - event.pageY;
   },
   onEnd: (position: Position, event: PointerEvent) => {
     // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
