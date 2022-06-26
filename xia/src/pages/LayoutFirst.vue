@@ -156,8 +156,8 @@ import type { asideItem } from '@asialine/xia-ui/layout';
 import { useTimeout } from '@vueuse/core';
 import LayoutHeader from '../components/layout/LayoutHeader.vue';
 
-import Editor from '../components/Editor'; // 能运行, 但是不能显示标题
-import type { ChangePayload, EditorInstance } from '../components/Editor/src/types'; // 能运行, 但是不能显示标题
+import Editor from '../components/Editor';
+import type { ChangePayload, EditorInstance } from '../components/Editor';
 // import type { ChangeInterface } from '@aomao/engine';
 
 // import Editor from '@asialine/editor';

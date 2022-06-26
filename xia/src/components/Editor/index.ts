@@ -6,3 +6,4 @@ Comp.install = function (Vue: App) {
 };
 
 export default Comp;
+export * from './src/types';
