@@ -278,6 +278,8 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
 }
 
 export function useAsideList(asideArray: asideItem[]) {
+  console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT', asideArray);
+
   const asideList = ref<asideItem[]>([]);
   const footerZIndex = ref(9000);
 
@@ -394,7 +396,7 @@ export function useAsideList(asideArray: asideItem[]) {
   }
 
   // asideWidth(asideList, winSize.width);
-  console.log('---ssssssssssssssssssssssssssssss', asideList.value);
+  console.log('--tttttttttttttttttttt-ssssssssssssssssssssssssssssss', asideList.value);
   console.log(asideMap);
 
   return { asideList, footerZIndex };

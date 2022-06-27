@@ -2,7 +2,7 @@
   <admin-layout
     @update:widthL="setWidthL"
     @update:widthR="setWidthR"
-    :has-cover="true"
+    :has-cover="false"
     :has-hidden="!hashiddenn"
     :has-header="true"
     :has-tab="true"
@@ -13,7 +13,7 @@
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'sticky'"
+    :fPosition="'relative'"
     :hTop="top0"
     :tHeight="'auto'"
     :tTop="top1"
@@ -67,30 +67,8 @@
       </div>
     </template>
     <template #main>
-      <ul class="example-2">
-        <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
-        <div class="zxx-scroll">
-          <p>
-            最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
-              href="https://www.zhangxinxu.com/life/category/light-novel/"
-              >轻小说</a
-            >，题目是“身为前端开发的我成为了一个渔民”。
-          </p>
-          <p>
-            Some articles claim that the solution to this is to make sure that the ancestor or parent element has a
-            specified height. However, that's not what you want to do (right?), because you don't want to set a fixed
-            height on the sticky element's ancestor or parent elemen。
-          </p>
-          <p>这部连载轻小说采用月更方式，利用碎片时间完成，每次更新5000~6000字之间，预计两年完结。</p>
-          <p>
-            欢迎大家支持，如果觉得写的还不错啊，可以疯狂安利给周围小伙伴，目前已经有了两次更新，可以<a
-              href="https://www.zhangxinxu.com/life/fisher-1/"
-              >点击这里</a
-            >开始阅读。
-          </p>
-        </div>
-        <li v-for="n in 110" :key="n">adfsafd {{ n }} <br /></li>
-      </ul>
+      <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
+      <li v-for="n in 130" :key="n">adfsafd {{ n }} <br /></li>
     </template>
     <template #asideL>
       <ul class="example-2">
@@ -178,6 +156,29 @@ import AdminLayout from '@asialine/xia-ui/layout';
 import type { asideItem } from '@asialine/xia-ui/layout';
 import { useTimeout } from '@vueuse/core';
 import LayoutHeader from '../components/layout/LayoutHeader.vue';
+
+import Editor from '../components/Editor';
+import type { ChangePayload, EditorInstance } from '../components/Editor';
+// import type { ChangeInterface } from '@aomao/engine';
+
+// import Editor from '@asialine/editor'; // charmi
+// import type { ChangePayload, EditorInstance } from '@asialine/editor';
+// import '../../../packages/editor/dist/style.css';
+
+const editor = ref<EditorInstance | null>(null);
+const content = ref('<h1>Hello Editor</h1>');
+
+const style = ref({
+  padding: '0',
+  background: '#fff',
+  width: '100%',
+  height: 'auto'
+});
+
+const onChange = ({ html, json }: ChangePayload) => {
+  console.log('html content: ', html);
+  console.log('json content: ', json);
+};
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
 const tabTimeOut = useTimeout(113000); // 设置一个定时器
@@ -306,11 +307,14 @@ function setWidthR(width: number) {
   -ms-scroll-chaining: contain;
   white-space: normal;
 }
-.example-2 {
-  white-space: nowrap;
-  /* height: 3000px; */
-}
+
 ul li {
+  padding: 0;
+  margin: 0;
+}
+ul {
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
 </style>

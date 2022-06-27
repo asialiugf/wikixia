@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 // import Editor from '~/components/Editor';
 import Editor from '../components/Editor';
-import { ChangePayload, EditorInstance } from '../components/Editor/src/types';
+import { ChangePayload, EditorInstance } from '../components/Editor';
 import { ChangeInterface } from '@aomao/engine';
 // import '../../dist/style.css';
 const editor = ref<EditorInstance | null>(null);

@@ -15,19 +15,7 @@ export default () => {
     },
     plugins: [
       Vue(),
-      // cjs2esmVitePlugin(),
-      // https://github.com/vbenjs/vite-plugin-vue-setup-extend
-      VueSetupExtend(),
-      // https://github.com/hannoeru/vite-plugin-pages
-      Pages({
-        pagesDir: [{ dir: 'src/pages', baseRoute: '' }],
-        extensions: ['vue', 'md']
-      }),
 
-      // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
-      Layouts({
-        layoutsDirs: 'src/layouts'
-      }),
       // https://github.com/antfu/vite-plugin-windicss
       WindiCSS({
         safelist: markdownWrapperClasses

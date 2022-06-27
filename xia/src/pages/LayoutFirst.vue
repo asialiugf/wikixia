@@ -13,7 +13,7 @@
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'sticky'"
+    :fPosition="'fixed'"
     :hTop="top0"
     :tHeight="'auto'"
     :tTop="top1"
@@ -169,8 +169,8 @@ const content = ref('<h1>Hello Editor</h1>');
 
 const style = ref({
   padding: '0',
-  background: '#fff',
-  width: '100%',
+  background: '#fef',
+  width: '80%',
   height: 'auto'
 });
 
@@ -180,29 +180,9 @@ const onChange = ({ html, json }: ChangePayload) => {
 };
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
-const tabTimeOut = useTimeout(113000); // 设置一个定时器
-const hashiddenn = useTimeout(1119000); // 设置一个定时器
+const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const hashiddenn = useTimeout(9000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: false,
-    key: 'asidea',
-    side: 'left',
-    width: 260,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
-    key: 'asideb',
-    side: 'right',
-    width: 100,
-    display: 2,
-    draggbale: true
-  },
   {
     slotPosition: 'sticky',
     header: 'header',

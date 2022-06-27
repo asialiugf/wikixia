@@ -52,7 +52,6 @@
     <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
       <slot name="main"></slot>
       <!-- <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div> -->
-      <div :style="mainLastStyle"></div>
     </main>
 
     <component
@@ -399,7 +398,7 @@ const asideHeighCalc = () => {
         const hr = winSize.height.value;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
+        } else if (fPosition === 'sticky') {
           const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
@@ -409,7 +408,7 @@ const asideHeighCalc = () => {
         const hr = winSize.height.value - hiddenTop.value;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
+        } else if (fPosition === 'sticky') {
           const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
@@ -423,7 +422,7 @@ const asideHeighCalc = () => {
         const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
+        } else if (fPosition === 'sticky') {
           const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
@@ -439,7 +438,7 @@ const asideHeighCalc = () => {
         const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
+        } else if (fPosition === 'sticky') {
           const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
@@ -454,7 +453,7 @@ const asideHeighCalc = () => {
         const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
+        } else if (fPosition === 'sticky') {
           const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
@@ -667,40 +666,35 @@ onMounted(() => {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
-            asideList.value[i].height = w;
+            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
             const w = coverHH.value + headerHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
             const w = coverHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           case 'none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
             const w = coverHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
             break;
           }
           default: {
@@ -795,13 +789,9 @@ useDraggable(resizeF, {
   },
   onEnd: (position: Position, event: PointerEvent) => {
     // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
-    // mainHeight.value = 'auto'; // charmi 还可以修改成不跳动
+    mainHeight.value = 'auto'; // charmi 还可以修改成不跳动
   },
   preventDefault: true
-});
-
-const mainLastHH = computed(() => {
-  return winSize.height.value - noneTop.value - 50;
 });
 
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
@@ -892,13 +882,6 @@ const mainStyle = computed(() => {
 		height:${mainHei};
 		min-height: ${mainMinHeight.value}px;
 		background-color: #f1f1f1;
-	`;
-});
-
-const mainLastStyle = computed(() => {
-  return `
-		position: relative;
-		height:${mainLastHH.value}px;
 	`;
 });
 
