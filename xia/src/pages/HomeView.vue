@@ -187,7 +187,7 @@ const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
     header: 'header',
-    footer: false,
+    footer: true,
     key: 'asidea',
     side: 'left',
     width: 260,

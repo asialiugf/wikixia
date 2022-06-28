@@ -667,40 +667,57 @@ onMounted(() => {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = 0;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
+
             // asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
-            asideList.value[i].height = w;
+            if (props.fPosition === 'fixed') {
+              asideList.value[i].height = w;
+            } else {
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            }
             break;
           }
           case 'hidden': {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            if (props.fPosition === 'fixed') {
+              asideList.value[i].height = w;
+            } else {
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            }
             break;
           }
           case 'header': {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
             const w = coverHH.value + headerHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            if (props.fPosition === 'fixed') {
+              asideList.value[i].height = w;
+            } else {
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            }
             break;
           }
           case 'tab': {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
             const w = coverHH.value + tabHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            if (props.fPosition === 'fixed') {
+              asideList.value[i].height = w;
+            } else {
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            }
             break;
           }
           case 'none': {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
             const w = coverHH.value + mainHH.value;
-            // asideList.value[i].height = asideList.value[i].footer ? w : w;
-            asideList.value[i].height = w;
+            if (props.fPosition === 'fixed') {
+              asideList.value[i].height = w;
+            } else {
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+            }
             break;
           }
           default: {
