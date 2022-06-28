@@ -88,6 +88,12 @@
       <div v-show="props.fPosition === 'fixed'" ref="resizeF" class="f-resize"></div>
       <slot name="footer"></slot>
     </footer>
+
+    <Transition name="xia-layout-hidden">
+      <div v-show="props.hasFooterAd" id="xia-footer-ad" class="" :style="footerAdStyle">
+        <slot name="footerAd">这里是底部广告区</slot>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -152,6 +158,8 @@ interface Props {
   hasMinimap?: boolean;
   hasFooter?: boolean;
 
+  hasFooterAd?: boolean;
+
   // 暂时不需要以下属性 用于广告？
   // hasTabInfo: boolean;
   // hasMainInfo: boolean;
@@ -213,6 +221,7 @@ interface Props {
   fzIndex?: number | 'auto';
   fWidth?: number | 'auto';
   fHeight?: number | 'auto';
+  footerAdHeight?: number; // 必须给出,不能是auto
 
   mWidth: number;
   // myFooter: footerType;
@@ -229,6 +238,8 @@ const props = withDefaults(defineProps<Props>(), {
   hasAsideRight: false,
   hasMinimap: true,
   hasFooter: true,
+
+  hasFooterAd: true,
 
   // isFooterZoom: true,
 
@@ -287,7 +298,8 @@ const props = withDefaults(defineProps<Props>(), {
   fBottom: 0,
   fzIndex: 1001,
   fWidth: 1200,
-  fHeight: 148
+  fHeight: 148,
+  footerAdHeight: 40
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
@@ -320,16 +332,22 @@ const coverOut = computed(() => {
 });
 
 const appWidth = computed(() => {
-  return winSize.width.value;
+  return winSize.width.value - 40;
+});
+
+// 底部广告区域高度
+const footerAdHH = computed(() => {
+  const { hasFooterAd, footerAdHeight } = props;
+  return hasFooterAd ? footerAdHeight : 0;
 });
 
 const appHeight = computed(() => {
-  return winSize.height.value;
+  return winSize.height.value - footerAdHH.value;
 });
 
 const mainMinHeight = computed(() => {
-  // return winSize.height.value < 500 ? 500 : winSize.height.value;
-  return winSize.height.value < 500 ? 100 : 100;
+  // return appHeight.value < 500 ? 500 : appHeight.value;
+  return appHeight.value < 500 ? 100 : 100;
 });
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
@@ -396,7 +414,7 @@ const asideHeighCalc = () => {
   for (let i = 0; i < asideList.value.length; i += 1) {
     switch (asideList.value[i].header) {
       case 'cover': {
-        const hr = winSize.height.value;
+        const hr = appHeight.value;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
         } else if (fPosition === 'fixed') {
@@ -406,7 +424,7 @@ const asideHeighCalc = () => {
         break;
       }
       case 'hidden': {
-        const hr = winSize.height.value - hiddenTop.value;
+        const hr = appHeight.value - hiddenTop.value;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
         } else if (fPosition === 'fixed') {
@@ -419,7 +437,7 @@ const asideHeighCalc = () => {
         // const { hiddenPosition } = props;
         const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
         const h = t0 < y.value ? t0 : y.value;
-        const a = winSize.height.value - headerTop.value;
+        const a = appHeight.value - headerTop.value;
         const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
@@ -435,7 +453,7 @@ const asideHeighCalc = () => {
         const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
         const t1 = hPosition === 'relative' ? headerHH.value : 0;
         const h = t0 + t1 < y.value ? t0 + t1 : y.value;
-        const a = winSize.height.value - tabTop.value;
+        const a = appHeight.value - tabTop.value;
         const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
@@ -450,7 +468,7 @@ const asideHeighCalc = () => {
         const t1 = hPosition === 'relative' ? headerHH.value : 0;
         const t2 = tPosition === 'relative' ? tabHH.value : 0;
         const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-        const a = winSize.height.value - noneTop.value;
+        const a = appHeight.value - noneTop.value;
         const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
         if (fPosition === 'relative') {
           asideList.value[i].slotHeight = hr;
@@ -473,7 +491,7 @@ const ttmm = computed(() => {
 
 // debouncedWatch(
 watch(
-  () => [winSize.height, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => [appHeight, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
     asideHeighCalc();
   },
@@ -647,7 +665,7 @@ onMounted(() => {
         tabHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-main') {
         mainHH.value = entry.contentRect.height;
-        // mainh.value = entry.contentRect.height < winSize.height.value ? winSize.height.value : entry.contentRect.height;
+        // mainh.value = entry.contentRect.height < appHeight.value ? appHeight.value : entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-footer') {
         footerHH.value = entry.contentRect.height;
         // console.log('ooooooooooo ========== ooooooooooo', footerHH.value);
@@ -817,8 +835,10 @@ useDraggable(resizeF, {
   preventDefault: true
 });
 
+// mainLastHH 用于在main区内部 新加一个div,使main区变高,以免被底部区域遮挡
 const mainLastHH = computed(() => {
-  return winSize.height.value - noneTop.value - 50;
+  const temp = winSize.height.value - noneTop.value - 50;
+  return temp < 0 ? 0 : temp;
 });
 
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
@@ -956,13 +976,25 @@ const footerStyle = computed(() => {
 		left: ${bars.value.footer.left}px;
 		width: ${bars.value.footer.width}px;
 		right: 0px;
-		bottom: 0px;
+		bottom: ${footerAdHH.value}px;
 		z-index: 9000;
 		background-color: #ae4423;
 		min-height:50px;
 		height: ${footerHei};
 		background-color:rgba(220,38,38,0.7);
     overflow: hidden;
+	`;
+});
+
+const footerAdStyle = computed(() => {
+  return `
+		position: fixed;
+		bottom: 0px;
+		width: ${appWidth.value}px;
+		height: ${footerAdHH.value}px;
+
+		z-index: 9999;
+		background-color: #ae55ee;
 	`;
 });
 
