@@ -3,9 +3,6 @@
     <Transition>
       <div v-show="coverOut" id="xia-layout-cover" class="xia-layout-cover xia-layout-info" :style="coverStyle">
         <slot name="cover"></slot>
-        <div>
-          ----------------scroll {{ x }} --- {{ y }} ----- mainHH {{ mainHH }}: -- footerHH {{ footerHH }}.x newXY.y
-        </div>
       </div>
     </Transition>
     <Transition name="xia-layout-hidden">
@@ -25,20 +22,9 @@
       :style="headerStyle"
     >
       <slot name="header"></slot>
-      <div>{{ x }} --- {{ y }}</div>
     </header>
     <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab xia-layout-info" :style="tabStyle">
-      <div>
-        -------------------------------------winSize.width: {{ winSize.width }}<br />
-        -------------------------------------winSize.height: {{ winSize.height }}<br />
-        -----------------------------------------asideW: {{ asideW.width }}<br />
-        -----------------------------------------asideW: {{ asideW.height }}<br />
-      </div>
-      <slot name="tab">
-        - sx:sy==={{ appWidth }}=={{ appHeight }}=========== {{ sx }} - {{ winSize.height }} -- main height:
-        {{ mainHH }} --
-        <div v-if="props.headerTimeout">来了！</div>
-      </slot>
+      <slot name="tab"> </slot>
     </div>
 
     <aside v-if="props.hasAsideLeft" class="asideL" :style="asideLStyle">
@@ -51,8 +37,9 @@
 
     <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
       <slot name="main"></slot>
-      <!-- <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div> -->
-      <div :style="mainLastStyle"><slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 </slot></div>
+      <div :style="mainLastStyle">
+        <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
+      </div>
     </main>
 
     <component
@@ -75,11 +62,8 @@
         @update:width-r="setWidthR"
       >
         <template #aside>
-          <slot :name="`${item.key}`"> 无法无天 </slot>
-          <div>## id : {{}}</div>
-          <div>## L?R : {{}}</div>
-          <div>## {{}}</div>
-          <div>###################################################### {{}}</div>
+          <slot :name="`${item.key}`"> slot-name: {{ item.key }}无天 </slot>
+          <div>###################################</div>
         </template>
       </layout-aside>
     </component>
@@ -90,7 +74,7 @@
     </footer>
 
     <Transition name="xia-layout-hidden">
-      <div v-show="props.hasFooterAd" id="xia-footer-ad" class="" :style="footerAdStyle">
+      <div v-show="props.hasFooterAd" id="xia-layout-footer-ad" class="xia-layout-info" :style="footerAdStyle">
         <slot name="footerAd">这里是底部广告区</slot>
       </div>
     </Transition>
@@ -103,21 +87,8 @@ import { isString, useDraggable, useWindowScroll, useWindowSize, debouncedWatch 
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 import type { Position } from '@vueuse/core';
 import { useAside } from '../../Composables/useAside';
-import { asideDisplay, asideSwitch, asideWidth, useAsideList } from './composables/useAsideList';
+import { asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
-
-// {a: 0, b: true}
-const asideMap = new Map<string, { a: number; b: boolean }>();
-asideMap.set('cover', { a: 0, b: true });
-asideMap.set('hidden', { a: 1, b: true });
-asideMap.set('header', { a: 2, b: true });
-asideMap.set('tab', { a: 3, b: true });
-asideMap.set('none', { a: 4, b: true });
-
-// import { useCssRender, useFixedTransformStyle } from '../../../hooks';
-// import LayoutBlock from './LayoutBlock.vue';
-// :parent-width="nameSiteMapping.get(item.key)"
-//   :parent-left="item.start"
 
 interface rtnType {
   state: 'start' | 'move' | 'end';
@@ -159,13 +130,6 @@ interface Props {
   hasFooter?: boolean;
 
   hasFooterAd?: boolean;
-
-  // 暂时不需要以下属性 用于广告？
-  // hasTabInfo: boolean;
-  // hasMainInfo: boolean;
-  // hasFooterInfo: boolean;
-
-  // isFooterZoom?: boolean;
 
   headerTimeout?: boolean;
 
@@ -255,7 +219,7 @@ const props = withDefaults(defineProps<Props>(), {
   hzIndex: 1001,
   hWidth: 1200,
   hHeight: 'auto',
-  hMinHeight: 50,
+  hMinHeight: 100,
   hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
@@ -299,15 +263,11 @@ const props = withDefaults(defineProps<Props>(), {
   fzIndex: 1001,
   fWidth: 1200,
   fHeight: 148,
-  footerAdHeight: 30
+  footerAdHeight: 150
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
 const winSize = useWindowSize();
-const asideW = useAside();
-const sx = computed(() => {
-  return winSize.width.value - 40;
-});
 
 // const xxyy = useFooter({ x: sx, y: winSize.height }); // test
 
@@ -318,21 +278,22 @@ const tabHH = ref(0);
 const mainHH = ref(0);
 const footerHH = ref(0);
 
+// const appWidth = ref(0); // 整个应用的宽度,取自 footerAD的宽度
+const appWidth = computed(() => {
+  return winSize.width.value - 17;
+});
+
 // ------------ 计算 cover 是否显示 -----------------
 // ------------- cover 是指 隐藏的header，当鼠标向下移动超过下面的 400 时，就会从顶部向下滑出  -------------
 // ------------- coverOut 会传给 边栏子组件 每个边栏子组件都会用到 ------------
 // y.value的值最好要大于 hiddenHH.value + headerHH.value + tabHH.value，否则会出现跳动
-const { x, y } = useWindowScroll();
+const { y } = useWindowScroll();
 // const newXY = useWindowScroll({ eventFilter: debounceFilter(100) });
 // const update = debounce(useWindowScroll(), 100);
 
 const coverOut = computed(() => {
   const { hasCover } = props;
   return hasCover && y.value > 400;
-});
-
-const appWidth = computed(() => {
-  return winSize.width.value - 40;
 });
 
 // 底部广告区域高度
@@ -408,7 +369,7 @@ const noneTop = computed(() => {
 });
 // *************************************************************************
 
-// -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue -------------
+// -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue
 const asideHeighCalc = () => {
   const { hiddenPosition, hPosition, tPosition, fPosition } = props;
   for (let i = 0; i < asideList.value.length; i += 1) {
@@ -491,7 +452,7 @@ const ttmm = computed(() => {
 
 // debouncedWatch(
 watch(
-  () => [appHeight, coverHH, hiddenHH, headerHH, tabHH, footerHH],
+  () => [appWidth, appHeight, coverHH, hiddenHH, headerHH, tabHH, footerHH],
   () => {
     asideHeighCalc();
   },
@@ -670,6 +631,7 @@ onMounted(() => {
         footerHH.value = entry.contentRect.height;
         // console.log('ooooooooooo ========== ooooooooooo', footerHH.value);
       }
+      asideWidthL.value = entry.contentRect.width;
       // z-index :
       // cover 8000
       // hidden 7000
@@ -752,12 +714,12 @@ onMounted(() => {
 });
 
 // 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-------------------------------------
-const mainWidth = computed(() => {
-  const a = props.hasAsideLeft ? props.aLwidth : 0;
-  const b = props.hasAsideRight ? props.aRwidth : 0;
-  const c = sx.value - a - b - 20;
-  return c < 600 ? 600 : c;
-});
+// const mainWidth = computed(() => {
+//   const a = props.hasAsideLeft ? props.aLwidth : 0;
+//   const b = props.hasAsideRight ? props.aRwidth : 0;
+//   const c = sx.value - a - b - 20;
+//   return c < 600 ? 600 : c;
+// });
 
 // const lWidth = computed(() => {
 //   return sx.value;
@@ -798,9 +760,9 @@ const asideLTop = ref(300);
 
 // 可以观察自己的属性 ---------------------------------------------------------------
 watch(
-  () => [asideList, winSize.width],
+  () => [asideList, appWidth],
   () => {
-    asideWidth(asideList, sx, bars); // charmi  sx要处理
+    asideWidth(asideList, appWidth, bars); // charmi  sx要处理
   },
   { immediate: true, deep: true }
 );
@@ -838,9 +800,9 @@ useDraggable(resizeF, {
 // mainLastHH 用于在main区内部 新加一个div,使main区变高,以免被底部区域遮挡
 // 下面 -50,表示 main区域不被顶部区域遮挡的高度，如果是0，则向下滚动到底时, main区域会被顶部区域全部遮挡
 const mainLastHH = computed(() => {
-  const temp = winSize.height.value - noneTop.value - 50;
-  const x1 = temp < 0 ? 0 : temp;
-  return props.fPosition === 'fixed' ? x1 : x1 - footerHH.value;
+  const temp = winSize.height.value - noneTop.value;
+  const x1 = temp < 50 ? 50 : temp;
+  return props.fPosition === 'fixed' ? x1 - 50 : x1;
 });
 
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
@@ -848,8 +810,9 @@ const mainLastHH = computed(() => {
 const layoutStyle = computed(() => {
   return `
     margin: 0px;
-    width: ${sx.value}px;
+    width: ${appWidth.value}px;
     position: relative;
+		scrollbar-gutter: stable;
 		background-color: #3d3e3a;
   `;
 });
@@ -919,14 +882,14 @@ const tabStyle = computed(() => {
 });
 
 const mainStyle = computed(() => {
-  const mainHei = isString(mainHeight.value) ? mainHeight.value : `${mainHeight.value}px`;
+  // const mainHei = isString(mainHeight.value) ? mainHeight.value : `${mainHeight.value}px`;
   return `
 		position: relative;
 		top: 0px;
 		left: ${bars.value.main.left}px;
 		width: ${bars.value.main.width}px;
 		z-index: 1000;
-		height:${mainHei};
+		height:auto;
 		min-height: ${mainMinHeight.value}px;
 		background-color: #f1f1f1;
 	`;
@@ -992,26 +955,12 @@ const footerAdStyle = computed(() => {
   return `
 		position: fixed;
 		bottom: 0px;
-		width: ${appWidth.value}px;
+		width: 100%;
 		height: ${footerAdHH.value}px;
-
 		z-index: 9999;
 		background-color: #ae55ee;
 	`;
 });
-
-// 文章的minimap样式
-// const ministyle = computed(() => {
-//   return `
-// 	position: absolute;
-// 	width:${mainWidth.value / 10}px;
-// 	top:0px;
-// 	right:0px;
-// 	bottom:0px;
-// 	background-color: #886655;
-// 	height:${mainHH.value}px;
-// 	`;
-// });
 
 // --------------------- 左侧折叠图标样式
 const asideZhedie = computed(() => {

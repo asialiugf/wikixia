@@ -89,7 +89,7 @@ const asideStyle = computed(() => {
 		bottom: 0px;
 	  width: ${asideWidth}px;
 		height: ${asideHeight}px;
-		overflow: scroll;
+		overflow: auto;
 
 `;
 });

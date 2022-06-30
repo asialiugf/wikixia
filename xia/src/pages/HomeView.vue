@@ -67,8 +67,8 @@
       </div>
     </template>
     <template #main>
+      <li v-for="n in 2" :key="n">adfsafd {{ n }} <br /></li>
       <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
-      <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
     </template>
     <template #asideL>
       <ul class="example-2">
@@ -100,7 +100,21 @@
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>p jfd 为什么不地 不好{{}}</div>
     </template>
+
+    <template #asidee>
+      rrrrr跟绝大多数的小说不同，在这部小说里面，
+      直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>p jfd 为什么不地 不好{{}}</div>
+    </template>
+
     <template #asideb>
       <ul class="example-2">
         <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
@@ -218,7 +232,7 @@ const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
     header: 'tab',
-    footer: true,
+    footer: false,
     key: 'asided',
     side: 'right',
     width: 100,
