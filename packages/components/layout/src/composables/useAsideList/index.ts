@@ -65,6 +65,7 @@ import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 // }
 
 // {a: 0, b: true}
+// a: 是上面的 coverType, b: 用于表示这种类型的是否覆盖footer.
 const asideMap = new Map<string, { a: number; b: boolean }>();
 asideMap.set('cover', { a: 0, b: true });
 asideMap.set('hidden', { a: 1, b: true });
@@ -151,15 +152,15 @@ export function asideSwitch({ list, m, n, sy }: { list: Ref<asideItem[]>; m: num
         sumR += list.value[i].width;
       }
     }
-    console.log('--00--00--00--00--', list.value);
+    // console.log('--00--00--00--00--', list.value);
   }
 }
 
 export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: Ref<barsType>) {
-  console.log('aa--ss--ii--dd--ee--00--00--00--00--', list.value);
+  console.log('enter into  asideWidth() --00--00--00--00--', list.value);
+  console.log('enter into  asideWidth() --00--00--00--00--', bars.value);
   let sumL = 0;
   let sumR = 0;
-  console.log('11--00--00--00--00--  asideWidth', bars.value.main.left);
 
   for (let i = 0; i < list.value.length; i += 1) {
     // eslint-disable-next-line no-continue
@@ -273,12 +274,18 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   // charmi  是否可以放在 onEnd 最后计算 Layout.vue 503行
 
   bars.value.footer.width = winWidth.value - bars.value.footer.width;
-  // console.log('33-22-11--00--00--00--00--  bars.value.main.width', footer.width);
+  console.log('33-22-11--00--00--00--00--  bars.value.main.width', bars.value);
   // bars.value.main.left = 100;
 }
 
 export function useAsideList(asideArray: asideItem[]) {
-  console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT', asideArray);
+  // asideArray 需要在这个函数里面设置，因为在这个函数外部，设置 asideArray, 会造成 不同页面切换, asideArray
+  // 会使用前一个页面的值，而不是最新的值.
+  asideMap.set('cover', { a: 0, b: true });
+  asideMap.set('hidden', { a: 1, b: true });
+  asideMap.set('header', { a: 2, b: true });
+  asideMap.set('tab', { a: 3, b: true });
+  asideMap.set('none', { a: 4, b: true });
 
   const asideList = ref<asideItem[]>([]);
   const footerZIndex = ref(9000);
@@ -299,7 +306,8 @@ export function useAsideList(asideArray: asideItem[]) {
     const xz = asideMap.get(asideArray[i].header)!;
     asideList.value[i].coverType = xz.a;
 
-    console.log('--ssssssssssssssssssssssssssssss', asideList);
+    // const kk = JSON.stringify(asideList.value);
+    // console.log('json -------------------------------------------------------', kk);
   }
   // 调用之前，必须先初始化 asideList的 coverType
   asideSort(asideList.value);
@@ -336,6 +344,7 @@ export function useAsideList(asideArray: asideItem[]) {
         break;
       }
     }
+
     const xz = asideMap.get(asideList.value[i].header)!; // 取出 asideMap的值
     if (!flagx) {
       // 如果上一项footer是false，则此项footer也设置为false
@@ -396,8 +405,10 @@ export function useAsideList(asideArray: asideItem[]) {
   }
 
   // asideWidth(asideList, winSize.width);
-  console.log('--tttttttttttttttttttt-ssssssssssssssssssssssssssssss', asideList.value);
+  console.log('useAsideList() end  -ssssssssssssssssssssssssssssss', asideList.value);
   console.log(asideMap);
+  const kk = JSON.stringify(asideList.value);
+  console.log('json end -------------------------------------------------------', kk);
 
   return { asideList, footerZIndex };
 }

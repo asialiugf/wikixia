@@ -52,7 +52,7 @@
     <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
       <slot name="main"></slot>
       <!-- <div v-if="props.hasMinimap" class="minimap" :style="ministyle"></div> -->
-      <div :style="mainLastStyle"></div>
+      <div :style="mainLastStyle"><slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 </slot></div>
     </main>
 
     <component
@@ -213,7 +213,7 @@ interface Props {
   aRheight?: number | 'auto';
   aRpaddingLeft?: number | 'auto';
   /* Footer */
-  fPosition?: 'relative' | 'sticky' | 'fixed' | 'absolute';
+  fPosition?: 'relative' | 'fixed';
   fTop?: number | 'auto';
   fLeft?: number | 'auto';
   fRight?: number | 'auto';
@@ -299,7 +299,7 @@ const props = withDefaults(defineProps<Props>(), {
   fzIndex: 1001,
   fWidth: 1200,
   fHeight: 148,
-  footerAdHeight: 40
+  footerAdHeight: 30
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
@@ -445,7 +445,7 @@ const asideHeighCalc = () => {
           const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
-        console.log('--5555555555555ssssssssssssssssssssssssssssss');
+        // console.log('--5555555555555ssssssssssssssssssssssssssssss');
         break;
       }
       case 'tab': {
@@ -690,7 +690,7 @@ onMounted(() => {
             if (props.fPosition === 'fixed') {
               asideList.value[i].height = w;
             } else {
-              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
             break;
           }
@@ -701,7 +701,7 @@ onMounted(() => {
             if (props.fPosition === 'fixed') {
               asideList.value[i].height = w;
             } else {
-              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
             break;
           }
@@ -712,7 +712,7 @@ onMounted(() => {
             if (props.fPosition === 'fixed') {
               asideList.value[i].height = w;
             } else {
-              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
             break;
           }
@@ -723,7 +723,7 @@ onMounted(() => {
             if (props.fPosition === 'fixed') {
               asideList.value[i].height = w;
             } else {
-              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
             break;
           }
@@ -734,7 +734,7 @@ onMounted(() => {
             if (props.fPosition === 'fixed') {
               asideList.value[i].height = w;
             } else {
-              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
+              asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
             break;
           }
@@ -836,9 +836,11 @@ useDraggable(resizeF, {
 });
 
 // mainLastHH 用于在main区内部 新加一个div,使main区变高,以免被底部区域遮挡
+// 下面 -50,表示 main区域不被顶部区域遮挡的高度，如果是0，则向下滚动到底时, main区域会被顶部区域全部遮挡
 const mainLastHH = computed(() => {
   const temp = winSize.height.value - noneTop.value - 50;
-  return temp < 0 ? 0 : temp;
+  const x1 = temp < 0 ? 0 : temp;
+  return props.fPosition === 'fixed' ? x1 : x1 - footerHH.value;
 });
 
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
@@ -853,8 +855,6 @@ const layoutStyle = computed(() => {
 });
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++ begin
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++ end
 
 const coverStyle = computed(() => {
   // const { hPosition } = props;
@@ -936,6 +936,8 @@ const mainLastStyle = computed(() => {
   return `
 		position: relative;
 		height:${mainLastHH.value}px;
+		overlow: hidden;
+		z-index: 1000;
 	`;
 });
 
@@ -959,7 +961,7 @@ const asideStyle = computed(() => (it: asideItem) => {
 		top: ${it.top}px;
 		left: ${it.left}px;
 		right: ${it.right}px;
-		bottom: auto;
+		bottom: 0px;
 		width: ${it.display === 2 ? it.width : 0}px;
     height: ${it.height}px;
 		z-index:  ${it.zIndex};

@@ -68,7 +68,7 @@
     </template>
     <template #main>
       <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
-      <li v-for="n in 130" :key="n">adfsafd {{ n }} <br /></li>
+      <li v-for="n in 10" :key="n">adfsafd {{ n }} <br /></li>
     </template>
     <template #asideL>
       <ul class="example-2">
@@ -128,7 +128,7 @@
       </ul>
     </template>
     <template #footer>
-      <div v-if="!tabTimeOut" class="zxx-scroll">
+      <div v-if="!footerTimeOut" class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -181,8 +181,9 @@ const onChange = ({ html, json }: ChangePayload) => {
 };
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
-const tabTimeOut = useTimeout(113000); // 设置一个定时器
-const hashiddenn = useTimeout(1119000); // 设置一个定时器
+const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const hashiddenn = useTimeout(9000); // 设置一个定时器
+const footerTimeOut = useTimeout(11113000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
@@ -190,7 +191,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidea',
     side: 'left',
-    width: 260,
+    width: 60,
     display: 2,
     draggbale: true
   },
@@ -210,7 +211,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidec',
     side: 'left',
-    width: 140,
+    width: 100,
     display: 2,
     draggbale: true
   },
@@ -220,7 +221,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asided',
     side: 'right',
-    width: 200,
+    width: 100,
     display: 2,
     draggbale: true
   },
@@ -230,7 +231,7 @@ const asideArray = ref<asideItem[]>([
     footer: false,
     key: 'asidee',
     side: 'right',
-    width: 250,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -240,7 +241,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidef',
     side: 'right',
-    width: 300,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -250,7 +251,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'left',
-    width: 150,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -260,7 +261,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'right',
-    width: 380,
+    width: 80,
     display: 2,
     draggbale: true
   }

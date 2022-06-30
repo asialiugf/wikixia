@@ -186,10 +186,10 @@ const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
     header: 'header',
-    footer: false,
+    footer: true,
     key: 'asidec',
     side: 'left',
-    width: 140,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -199,7 +199,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asided',
     side: 'right',
-    width: 200,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -209,7 +209,7 @@ const asideArray = ref<asideItem[]>([
     footer: false,
     key: 'asidee',
     side: 'right',
-    width: 250,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -219,7 +219,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asidef',
     side: 'right',
-    width: 300,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -229,7 +229,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'left',
-    width: 150,
+    width: 50,
     display: 2,
     draggbale: true
   },
@@ -239,7 +239,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'right',
-    width: 380,
+    width: 50,
     display: 2,
     draggbale: true
   }
