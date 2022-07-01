@@ -86,6 +86,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { isString, useDraggable, useWindowScroll, useWindowSize, debouncedWatch } from '@vueuse/core';
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 import type { Position } from '@vueuse/core';
+import { collapseTransitionLight } from 'naive-ui/lib/collapse-transition/styles';
 import { useAside } from '../../Composables/useAside';
 import { asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
@@ -278,7 +279,7 @@ const tabHH = ref(0);
 const mainHH = ref(0);
 const footerHH = ref(0);
 
-// const appWidth = ref(0); // 整个应用的宽度,取自 footerAD的宽度
+// const appWidth = ref(0); // 整个应用的宽度
 const appWidth = computed(() => {
   return winSize.width.value - 17;
 });
@@ -549,17 +550,17 @@ function handleWidth(className: string, isLeft: boolean): boolean {
   const element = document.querySelector(className) as HTMLElement;
   element.onmousedown = e => {
     e.preventDefault(); // 阻止默认事件发生
-    const startX = e.clientX;
+    const startX1 = e.clientX;
     const w = isLeft ? props.aLwidth : props.aRwidth;
-    xxx.value = startX;
+    xxx.value = startX1;
     document.onmousemove = e1 => {
       const endX = e1.clientX;
       // const len = w + endX - startX;
       if (isLeft) {
-        const len = w + endX - startX;
+        const len = w + endX - startX1;
         asideWidthL.value = len < props.aLMinWidth ? props.aLMinWidth : len;
       } else {
-        const len = w + startX - endX;
+        const len = w + startX1 - endX;
         asideWidthR.value = len < props.aRMinWidth ? props.aRMinWidth : len;
       }
 

@@ -1,6 +1,6 @@
 <template>
   <div v-if="isRight" ref="resizeLL" class="xia-aside-resize resizeLL"></div>
-  <div v-if="props.asidePosition === 'sticky'" :style="asideStyle">
+  <div v-if="props.asidePosition === 'sticky'" class="xia-layout-aside" :style="asideStyle">
     <slot name="aside"></slot>
   </div>
   <slot v-if="props.asidePosition === 'absolute'" name="aside"></slot>
@@ -78,26 +78,33 @@ useDraggable(resizeLL, {
   preventDefault: true
 });
 
+/** aside的可拖拉线的宽度 */
+const ww = 6;
+const ww1 = `${ww}px`;
 // layout页面的样式
 // 这个样式，只给sticky使用， 属于子DIV样式
+// 		overflow-x:hidden;
+// 		overflow-y:auto;
 const asideStyle = computed(() => {
   const { asideTop, asideWidth, asideHeight } = props;
+  const marginL = props.isLeft ? 0 : ww;
+  const marginR = props.isRight ? 0 : ww;
   return `
 	  position: sticky;
 	  top: ${asideTop}px;
-		left: 0px;
 		bottom: 0px;
-	  width: ${asideWidth}px;
+	  width: ${asideWidth - ww}px;
 		height: ${asideHeight}px;
 		overflow: auto;
-
+    margin-right: ${marginR}px;
+		margin-left: ${marginL}px;
 `;
 });
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++ end
 </script>
 <style scoped>
 .xia-aside-resize {
-  width: 4px;
+  width: v-bind('ww1');
   height: 100%;
   position: absolute;
   top: 0px;
@@ -120,41 +127,50 @@ const asideStyle = computed(() => {
   background-color: hsl(309, 100%, 59%);
   transition: all 0.5s;
 }
-
-.xia-layout-aside::-webkit-scrollbar {
-  /*滚动条整体样式*/
-  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
-  height: 8px;
-  display: none;
+.xia-layout-aside {
+  scrollbar-color: #ffffff #ffffff;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable both-edges;
 }
 
 .xia-layout-aside:hover {
-  background-color: #9a9a9a;
-  /* display: none; */
-  ::-webkit-scrollbar {
-    /*滚动条整体样式*/
-    width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
-    height: 8px;
-    /* display: none; */
-  }
-}
-.xia-layout-aside {
-  background-color: #7a149f;
-  /* display: none; */
+  scrollbar-color: #ff2b2b #ffffff;
+  scrollbar-width: thin;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  background-color: #1c2848;
+.xia-layout-aside::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border-radius: 8px;
 }
 
-/*滚动条中间滑动部分*/
-::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-color: #1c2848;
+.xia-layout-aside::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #ffffff;
+}
+
+.xia-layout-aside::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #dd5;
+  background-image: -webkit-gradient(linear, 40% 0%, 75% 84%, from(#d9d9d9), to(#bcbcbc), color-stop(0.6, #b4b4b4));
+}
+
+.xia-layout-aside:hover::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #efefef;
+  border-radius: 8px;
+}
+
+.xia-layout-aside:hover::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: #5544f5;
 }
 
 .xia-layout-aside:hover::-webkit-scrollbar-thumb {
-  background: rgba(144, 147, 153, 0.3);
+  border-radius: 8px;
+  background-color: #dd5;
+  background-image: -webkit-gradient(linear, 40% 0%, 75% 84%, from(#4d9c41), to(#19911d), color-stop(0.6, #54de5d));
 }
 </style>

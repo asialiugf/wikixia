@@ -15,11 +15,11 @@ export default defineComponent({
       if (!props.size && !props.color) {
         return {};
       }
-      const style = {
+      const style1 = {
         ...(props.size ? { 'font-size': `${props.size}px` } : {}),
         ...(props.color ? { color: props.color } : {})
       };
-      console.log('style', style);
+      console.log('style', style1);
       return style;
     });
     return { style };

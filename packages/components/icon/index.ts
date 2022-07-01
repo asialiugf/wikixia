@@ -1,5 +1,5 @@
-import Icon from "./src/icon.vue";
-import { withInstall } from "@asialine/utils/with-install";
+import { withInstall } from '@asialine/utils/with-install';
+import Icon from './src/icon.vue';
 
 const XIcon = withInstall(Icon);
 export { XIcon };

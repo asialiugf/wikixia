@@ -1,38 +1,12 @@
 import { withInstall } from '@asialine/utils/with-install';
-import Layout from './src/Layout.vue';
+import Layout from './src/LayoutMain.vue';
 import type { asideItem } from './src/composables/useAsideList';
-// import type { asideType } from './src/XLayout.vue';
-// import asideType from './src/XLayout.vue';
 
 const YLayout = withInstall(Layout);
 export { YLayout };
 export default YLayout;
 
 export type { asideItem };
-
-// 两种导出方式
-//-----------------------------------------------------------------------
-
-export interface LayoutProps {
-  /** 开启fixed布局 */
-  position: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-  top?: number | 'auto';
-  left?: number | 'auto';
-  right?: number | 'auto';
-  bottom?: number | 'auto';
-  /** fixed布局的层级 */
-  zIndex?: number;
-  /** 最小宽度 */
-  width?: number;
-  /** 高度 */
-  height?: number;
-  /** 左侧内边距 */
-  paddingLeft?: number;
-  /** 动画过渡时间 */
-  transitionDuration?: number;
-  /** 动画过渡时间 */
-  transitionTimingFunction?: string;
-}
 
 // export interface asideItem {
 //   slotPosition: 'absolute' | 'sticky'; // LayoutAside使用 ： 从应用程序传过来，并将其传至 LayoutAside子组件中。
