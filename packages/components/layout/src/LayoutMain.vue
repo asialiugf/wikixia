@@ -35,7 +35,14 @@
       <div class="hello" :style="asideZhedie" @click="changeWidth"></div>
     </aside>
 
-    <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
+    <main v-if="mainScroll" id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
+      <slot name="main"></slot>
+      <div :style="mainLastStyle">
+        <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
+      </div>
+    </main>
+
+    <main v-if="!mainScroll" id="xia-layout-main" class="xia-layout-info" :style="mainStyle1">
       <slot name="main"></slot>
       <div :style="mainLastStyle">
         <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
@@ -69,7 +76,7 @@
     </component>
 
     <footer v-show="props.hasFooter" id="xia-layout-footer" class="footer xia-layout-info" :style="footerStyle">
-      <div v-show="props.fPosition === 'fixed'" ref="resizeF" class="f-resize"></div>
+      <div v-show="fPos === 'fixed'" ref="resizeF" class="f-resize"></div>
       <slot name="footer"></slot>
     </footer>
 
@@ -189,6 +196,8 @@ interface Props {
   footerAdHeight?: number; // 必须给出,不能是auto
 
   mWidth: number;
+
+  mainScroll: boolean;
   // myFooter: footerType;
 }
 
@@ -264,7 +273,8 @@ const props = withDefaults(defineProps<Props>(), {
   fzIndex: 1001,
   fWidth: 1200,
   fHeight: 148,
-  footerAdHeight: 150
+  footerAdHeight: 150,
+  mainScroll: false
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
@@ -281,7 +291,7 @@ const footerHH = ref(0);
 
 // const appWidth = ref(0); // 整个应用的宽度
 const appWidth = computed(() => {
-  return winSize.width.value - 17;
+  return winSize.width.value - 27;
 });
 
 // ------------ 计算 cover 是否显示 -----------------
@@ -370,27 +380,50 @@ const noneTop = computed(() => {
 });
 // *************************************************************************
 
-// -----【侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue
+const mainHeight1 = computed(() => {
+  const { hiddenPosition, hPosition, tPosition } = props;
+  const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+  const t1 = hPosition === 'relative' ? headerHH.value : 0;
+  const t2 = tPosition === 'relative' ? tabHH.value : 0;
+  const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
+  const a = appHeight.value - noneTop.value;
+  const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+  let rt = 0;
+  // if (fPosition === 'relative') {
+  //   rt = hr;
+  // }
+  // if (fPosition === 'fixed') {
+  rt = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+  // }
+  return rt;
+});
+
+const fPos = computed(() => {
+  const { mainScroll, fPosition } = props;
+  return mainScroll ? fPosition : 'fixed';
+});
+
+// -----【计算侧边栏sticky时的高度 不低于200】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue
 const asideHeighCalc = () => {
   const { hiddenPosition, hPosition, tPosition, fPosition } = props;
   for (let i = 0; i < asideList.value.length; i += 1) {
     switch (asideList.value[i].header) {
       case 'cover': {
         const hr = appHeight.value;
-        if (fPosition === 'relative') {
+        if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
-          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+        } else if (fPos.value === 'fixed') {
+          const hrr = hr - footerHH.value < 0 ? 0 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
         break;
       }
       case 'hidden': {
         const hr = appHeight.value - hiddenTop.value;
-        if (fPosition === 'relative') {
+        if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
-          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+        } else if (fPos.value === 'fixed') {
+          const hrr = hr - footerHH.value < 0 ? 0 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
         break;
@@ -401,10 +434,10 @@ const asideHeighCalc = () => {
         const h = t0 < y.value ? t0 : y.value;
         const a = appHeight.value - headerTop.value;
         const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
-        if (fPosition === 'relative') {
+        if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
-          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+        } else if (fPos.value === 'fixed') {
+          const hrr = hr - footerHH.value < 0 ? 0 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
         // console.log('--5555555555555ssssssssssssssssssssssssssssss');
@@ -417,10 +450,10 @@ const asideHeighCalc = () => {
         const h = t0 + t1 < y.value ? t0 + t1 : y.value;
         const a = appHeight.value - tabTop.value;
         const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
-        if (fPosition === 'relative') {
+        if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
-          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+        } else if (fPos.value === 'fixed') {
+          const hrr = hr - footerHH.value < 0 ? 0 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
         break;
@@ -432,10 +465,10 @@ const asideHeighCalc = () => {
         const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
         const a = appHeight.value - noneTop.value;
         const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
-        if (fPosition === 'relative') {
+        if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
-        } else if (fPosition === 'fixed') {
-          const hrr = hr - footerHH.value < 200 ? 200 : hr - footerHH.value;
+        } else if (fPos.value === 'fixed') {
+          const hrr = hr - footerHH.value < 0 ? 0 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
         break;
@@ -640,7 +673,7 @@ onMounted(() => {
       // tab    5000
       // main   4000
       //
-      // 计算 aside的高度
+      // 计算 aside的高度 【在absolute的情况下的高度，属于外层高度】 这里还需要修改 charmi 当mainScroll为false时，高度是固定不变的。
       for (let i = 0; i < asideList.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
         switch (asideList.value[i].header) {
@@ -650,8 +683,8 @@ onMounted(() => {
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
 
             // asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w;
-            if (props.fPosition === 'fixed') {
-              asideList.value[i].height = w;
+            if (fPos.value === 'fixed') {
+              asideList.value[i].height = props.mainScroll ? w : w + footerHH.value;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -661,8 +694,8 @@ onMounted(() => {
             asideList.value[i].top = 0;
             asideList.value[i].slotTop = hiddenTop.value;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
-            if (props.fPosition === 'fixed') {
-              asideList.value[i].height = w;
+            if (fPos.value === 'fixed') {
+              asideList.value[i].height = props.mainScroll ? w : w + footerHH.value;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -672,8 +705,8 @@ onMounted(() => {
             asideList.value[i].top = hiddenHH.value;
             asideList.value[i].slotTop = headerTop.value;
             const w = coverHH.value + headerHH.value + tabHH.value + mainHH.value;
-            if (props.fPosition === 'fixed') {
-              asideList.value[i].height = w;
+            if (fPos.value === 'fixed') {
+              asideList.value[i].height = props.mainScroll ? w : w + footerHH.value;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -683,8 +716,8 @@ onMounted(() => {
             asideList.value[i].top = hiddenHH.value + headerHH.value;
             asideList.value[i].slotTop = tabTop.value;
             const w = coverHH.value + tabHH.value + mainHH.value;
-            if (props.fPosition === 'fixed') {
-              asideList.value[i].height = w;
+            if (fPos.value === 'fixed') {
+              asideList.value[i].height = props.mainScroll ? w : w + footerHH.value;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -694,8 +727,8 @@ onMounted(() => {
             asideList.value[i].top = hiddenHH.value + headerHH.value + tabHH.value;
             asideList.value[i].slotTop = noneTop.value;
             const w = coverHH.value + mainHH.value;
-            if (props.fPosition === 'fixed') {
-              asideList.value[i].height = w;
+            if (fPos.value === 'fixed') {
+              asideList.value[i].height = props.mainScroll ? w : w + footerHH.value;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -803,7 +836,7 @@ useDraggable(resizeF, {
 const mainLastHH = computed(() => {
   const temp = winSize.height.value - noneTop.value;
   const x1 = temp < 50 ? 50 : temp;
-  return props.fPosition === 'fixed' ? x1 - 50 : x1;
+  return fPos.value === 'fixed' ? x1 - 50 : x1;
 });
 
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
@@ -896,6 +929,22 @@ const mainStyle = computed(() => {
 	`;
 });
 
+const mainStyle1 = computed(() => {
+  // const mainHei = isString(mainHeight.value) ? mainHeight.value : `${mainHeight.value}px`;
+  return `
+		position: relative;
+		top: 0px;
+		left: ${bars.value.main.left}px;
+		width: ${bars.value.main.width}px;
+		z-index: 1000;
+		height:${mainHeight1.value}px;
+		min-height: ${mainMinHeight.value}px;
+		background-color: #f1f1f1;
+
+		overflow: auto;
+	`;
+});
+
 const mainLastStyle = computed(() => {
   return `
 		position: relative;
@@ -938,7 +987,7 @@ const footerStyle = computed(() => {
   const { fPosition } = props;
   const footerHei = isString(footerHeight.value) ? footerHeight.value : `${footerHeight.value}px`;
   return `
-		position: ${fPosition};
+		position: ${fPos.value};
 		left: ${bars.value.footer.left}px;
 		width: ${bars.value.footer.width}px;
 		right: 0px;
@@ -1103,7 +1152,7 @@ const asideZhedie = computed(() => {
   height: 6px;
   cursor: ns-resize;
   z-index: 9999;
-  top: -3px;
+  top: 0px;
   background-color: rgba(220, 38, 38, 0);
 }
 
