@@ -747,7 +747,7 @@ onMounted(() => {
   });
 });
 
-// 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-------------------------------------
+// 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-----------------------------------
 // const mainWidth = computed(() => {
 //   const a = props.hasAsideLeft ? props.aLwidth : 0;
 //   const b = props.hasAsideRight ? props.aRwidth : 0;

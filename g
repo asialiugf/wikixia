@@ -4,4 +4,4 @@ npm run lint
 npm run typecheck
 cd ../..
 git cz
-git push
+git push -f origin master
