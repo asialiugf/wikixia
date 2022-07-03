@@ -67,7 +67,7 @@
       </div>
     </template>
     <template #main>
-      <li v-for="n in 2" :key="n">adfsafd {{ n }} <br /></li>
+      <li v-for="n in 20000" :key="n">adfsafd {{ n }} <br /></li>
       <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
     </template>
     <template #asideL>
