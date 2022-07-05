@@ -76,7 +76,7 @@
 
     <Transition name="xia-layout-hidden">
       <div v-show="props.hasFooterAd" id="xia-layout-footer-ad" class="xia-layout-info" :style="footerAdStyle">
-        <slot name="footerAd"></slot>
+        <slot name="footer-ad"></slot>
       </div>
     </Transition>
   </div>
@@ -185,7 +185,7 @@ interface Props {
   fWidth?: number | 'auto';
   fHeight?: number | 'auto';
   /** 底部广告区域的高度,number类型  */
-  footerAdHeight?: number; // 必须给出,不能是auto
+  footerAdHeight?: number | 'auto';
   /** main区域是随整个页面滚动,还是固定不变 */
   mainScroll?: boolean;
 }
@@ -261,7 +261,7 @@ const props = withDefaults(defineProps<Props>(), {
   fzIndex: 1001,
   fWidth: 1200,
   fHeight: 148,
-  footerAdHeight: 40,
+  footerAdHeight: 'auto',
   mainScroll: true
 });
 
@@ -274,10 +274,32 @@ const headerHH = ref(0);
 const tabHH = ref(0);
 const mainHH = ref(0);
 const footerHH = ref(0);
+const footerAdHH = ref(0);
 
 /**  appWidth  整个应用的宽度 */
 const appWidth = computed(() => {
   return props.mainScroll ? winSize.width.value - 17 : winSize.width.value - 1;
+});
+
+/**  底部广告区域高度 */
+// const footerAdHH = computed(() => {
+//   const { hasFooterAd, footerAdHeight } = props;
+//   return hasFooterAd ? footerAdHeight : 0;
+// });
+
+/** 整个应用程序高度(可见部分) - 底部广告区域部分  */
+const appHeight = computed(() => {
+  return winSize.height.value - footerAdHH.value - 1;
+});
+
+/** 容器的高度 即main区域可见部分高度 */
+const containerHH = computed(() => {
+  return appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
+});
+
+/** mainScroll为固定(false)的情况下 main的高度 */
+const mainHeight = computed(() => {
+  return containerHH.value - footerHH.value < 20 ? 20 : containerHH.value - footerHH.value;
 });
 
 // ------------ 计算 cover 是否显示 -----------------
@@ -292,22 +314,6 @@ const coverOut = computed(() => {
   const { hasCover } = props;
   return hasCover && y.value > 400;
 });
-
-/**  底部广告区域高度 */
-const footerAdHH = computed(() => {
-  const { hasFooterAd, footerAdHeight } = props;
-  return hasFooterAd ? footerAdHeight : 0;
-});
-
-/** 整个应用程序高度(可见部分) - 底部广告区域部分  */
-const appHeight = computed(() => {
-  return winSize.height.value - footerAdHH.value - 1;
-});
-
-// const mainMinHeight = computed(() => {
-//   // return appHeight.value < 500 ? 500 : appHeight.value;
-//   return appHeight.value < 500 ? 100 : 100;
-// });
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 
@@ -366,24 +372,6 @@ const noneTop = computed(() => {
   return t;
 });
 // *************************************************************************
-/** 容器的高度 即main区域可见部分高度 */
-const containerHH = computed(() => {
-  // const { hiddenPosition, hPosition, tPosition } = props;
-  // const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-  // const t1 = hPosition === 'relative' ? headerHH.value : 0;
-  // const t2 = tPosition === 'relative' ? tabHH.value : 0;
-  // const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-  // const a = appHeight.value - noneTop.value;
-  // const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
-  // return hr;
-  return appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
-});
-
-/** mainScroll为固定(false)的情况下 main的高度 */
-const mainHeight = computed(() => {
-  return containerHH.value - footerHH.value < 20 ? 20 : containerHH.value - footerHH.value;
-  // return appHeight.value - hiddenHH.value - headerHH.value - tabHH.value - footerHH.value;
-});
 
 /** 如果 main区是固定的话,则底部只能是fixed */
 const fPos = computed(() => {
@@ -426,8 +414,6 @@ const asideHeighCalc = () => {
         break;
       }
       case 'header': {
-        // const { hiddenPosition } = props;
-        // const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
         const h = t0 < y.value ? t0 : y.value;
         const a = appHeight.value - headerTop.value;
         let hr = hiddenPosition === 'relative' ? a - t0 + h : a;
@@ -445,9 +431,6 @@ const asideHeighCalc = () => {
         break;
       }
       case 'tab': {
-        // const { hiddenPosition, hPosition } = props;
-        // const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-        // const t1 = hPosition === 'relative' ? headerHH.value : 0;
         const h = t0 + t1 < y.value ? t0 + t1 : y.value;
         const a = appHeight.value - tabTop.value;
         let hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
@@ -465,9 +448,6 @@ const asideHeighCalc = () => {
         break;
       }
       case 'none': {
-        // const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-        // const t1 = hPosition === 'relative' ? headerHH.value : 0;
-        // const t2 = tPosition === 'relative' ? tabHH.value : 0;
         const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
         const a = appHeight.value - noneTop.value;
         let hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
@@ -670,14 +650,14 @@ onMounted(() => {
         tabHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-main') {
         mainHH.value = entry.contentRect.height;
-        // mainh.value = entry.contentRect.height < appHeight.value ? appHeight.value : entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-footer') {
         footerHH.value = entry.contentRect.height;
-        // console.log('ooooooooooo ========== ooooooooooo', footerHH.value);
+      } else if (entry.target.id === 'xia-layout-footer-ad') {
+        footerAdHH.value = entry.contentRect.height;
       }
-      asideWidthL.value = entry.contentRect.width;
+      asideWidthL.value = 600;
 
-      // 计算 aside的高度 【在absolute的情况下的高度，属于外层高度】 这里还需要修改 charmi 当mainScroll为false时，高度是固定不变的。
+      // 计算 aside的高度 【在absolute的情况下的高度，属于外层高度】
       for (let i = 0; i < asideList.value.length; i += 1) {
         // header:	'cover' | 'hidden' | 'header' | 'tab' | 'none';
         switch (asideList.value[i].header) {
@@ -848,7 +828,7 @@ const mainLastHH = computed(() => {
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
-  const layoutHH = props.mainScroll ? 'auto' : `${appHeight.value}px`;
+  const layoutHH = props.mainScroll ? 'auto' : '100vh';
   return `
     margin: 0px;
     width: ${appWidth.value}px;
@@ -994,19 +974,18 @@ const footerStyle = computed(() => {
 		bottom: ${footerAdHH.value}px;
 		z-index: 9000;
 		background-color: #ae4423;
-		min-height:50px;
 		height: ${footerHe};
 		background-color:rgba(220,38,38,0.7);
     overflow: hidden;
 	`;
 });
 
+// width: ${appWidth.value}px;
 const footerAdStyle = computed(() => {
   return `
 		position: fixed;
 		bottom: 0px;
-		width: ${appWidth.value}px;
-		height: ${footerAdHH.value}px;
+		width: 100%;
 		z-index: 9999;
 		background-color: #ae55ee;
 		overflow: hidden;
