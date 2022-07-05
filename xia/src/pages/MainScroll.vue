@@ -2,18 +2,19 @@
   <admin-layout
     @update:widthL="setWidthL"
     @update:widthR="setWidthR"
-    :has-cover="false"
+    :has-cover="true"
     :has-hidden="!hashiddenn"
     :has-header="true"
     :has-tab="true"
     :hasAsideLeft="true"
     :hasAsideRight="true"
     :hasMinimap="true"
-    :hasFooter="true"
+    :has-footer="true"
+    :has-footer-ad="true"
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'relative'"
+    :fPosition="'fixed'"
     :tHeight="'auto'"
     :aLtop="aLtop"
     :aLheight="500"
@@ -23,6 +24,7 @@
     :aRwidth="aRwidth"
     :mWidth="mWidth"
     :aside-array="asideArray"
+    :main-scroll="false"
   >
     <template #cover>
       <nav class="ttt">
@@ -65,8 +67,7 @@
       </div>
     </template>
     <template #main>
-      <li v-for="n in 20000" :key="n">adfsafd {{ n }} <br /></li>
-      <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
+      <Editor ref="editor" v-model="content" @change="onChange" :styleOption="style"> </Editor>
     </template>
     <template #asideL>
       <ul class="example-2">
@@ -98,10 +99,20 @@
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>p jfd 为什么不地 不好{{}}</div>
     </template>
 
     <template #asidee>
+      rrrrr跟绝大多数的小说不同，在这部小说里面，
+      直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div>p jfd 为什么不地 不好{{}}</div>
+    </template>
+    <template #asideg>
       rrrrr跟绝大多数的小说不同，在这部小说里面，
       直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
@@ -140,7 +151,7 @@
       </ul>
     </template>
     <template #footer>
-      <div v-if="!footerTimeOut" class="zxx-scroll">
+      <div v-if="!tabTimeOut" class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -182,8 +193,8 @@ const content = ref('<h1>Hello Editor</h1>');
 
 const style = ref({
   padding: '0',
-  background: '#fff',
-  width: '100%',
+  background: '#fef',
+  width: '80%',
   height: 'auto'
 });
 
@@ -195,51 +206,31 @@ const onChange = ({ html, json }: ChangePayload) => {
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
 const tabTimeOut = useTimeout(3000); // 设置一个定时器
 const hashiddenn = useTimeout(9000); // 设置一个定时器
-const footerTimeOut = useTimeout(11113000); // 设置一个定时器
+const hasfooterad = useTimeout(1115000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
-    key: 'asidea',
-    side: 'left',
-    width: 60,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
-    key: 'asideb',
-    side: 'right',
-    width: 100,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
+    header: 'cover',
+    footer: false,
     key: 'asidec',
     side: 'left',
-    width: 100,
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'hidden',
+    footer: true,
+    key: 'asided',
+    side: 'right',
+    width: 50,
     display: 2,
     draggbale: true
   },
   {
     slotPosition: 'sticky',
     header: 'tab',
-    footer: false,
-    key: 'asided',
-    side: 'right',
-    width: 100,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'none',
     footer: false,
     key: 'asidee',
     side: 'right',
@@ -273,7 +264,7 @@ const asideArray = ref<asideItem[]>([
     footer: true,
     key: 'asideg',
     side: 'right',
-    width: 80,
+    width: 50,
     display: 2,
     draggbale: true
   }
@@ -320,14 +311,11 @@ function setWidthR(width: number) {
   -ms-scroll-chaining: contain;
   white-space: normal;
 }
-
-ul li {
-  padding: 0;
-  margin: 0;
+.example-2 {
+  white-space: nowrap;
+  /* height: 3000px; */
 }
-ul {
-  list-style: none;
-  margin: 0;
+ul li {
   padding: 0;
 }
 </style>

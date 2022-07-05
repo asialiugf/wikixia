@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import MainScroll from '~/pages/MainScroll.vue';
+import HomePage from '../pages/HomePage.vue';
 import HomeView from '../pages/HomeView.vue';
 import LayoutFirst from '../pages/LayoutFirst.vue';
 const EditorPage = () => import('../pages/EditorPage.vue');
@@ -7,7 +9,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'homepage',
+      component: HomePage
+    },
+    {
+      path: '/homeview',
+      name: 'homeview',
       component: HomeView
     },
     {
@@ -19,6 +26,11 @@ const router = createRouter({
       path: '/layfirst',
       name: 'layfirst',
       component: LayoutFirst
+    },
+    {
+      path: '/mainscroll',
+      name: 'home',
+      component: MainScroll
     }
   ]
 });

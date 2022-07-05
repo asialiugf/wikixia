@@ -3,7 +3,7 @@
     @update:widthL="setWidthL"
     @update:widthR="setWidthR"
     :has-cover="false"
-    :has-hidden="!hashiddenn"
+    :has-hidden="false"
     :has-header="true"
     :has-tab="true"
     :hasAsideLeft="true"
@@ -24,25 +24,8 @@
     :mWidth="mWidth"
     :aside-array="asideArray"
   >
-    <template #cover>
-      <nav class="ttt">
-        <div>LOGO</div>
-        <RouterLink
-          to="/"
-          class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-blue-500 hover:bg-blue-700 border-none cursor-pointer"
-          >Home</RouterLink
-        >
-        <RouterLink to="/about">About</RouterLink>
-        <div>我的天</div>
-        <button
-          class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700 border-none cursor-pointer"
-        >
-          Click me
-        </button>
-      </nav>
-    </template>
     <template #header>
-      <layout-header></layout-header>
+      <main-header></main-header>
     </template>
     <template #tab>
       <div v-if="!tabTimeOut" class="zxx-scroll">
@@ -167,7 +150,7 @@ import { ref } from 'vue';
 import AdminLayout from '@asialine/xia-ui/layout';
 import type { asideItem } from '@asialine/xia-ui/layout';
 import { useTimeout } from '@vueuse/core';
-import LayoutHeader from '../components/layout/LayoutHeader.vue';
+import MainHeader from '../components/layout/MainHeader.vue';
 
 import Editor from '../components/Editor';
 import type { ChangePayload, EditorInstance } from '../components/Editor';
@@ -194,86 +177,26 @@ const onChange = ({ html, json }: ChangePayload) => {
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
 const tabTimeOut = useTimeout(3000); // 设置一个定时器
-const hashiddenn = useTimeout(9000); // 设置一个定时器
+// const hashiddenn = useTimeout(9000); // 设置一个定时器
 const footerTimeOut = useTimeout(11113000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
+    slotPosition: 'absolute',
+    header: 'none',
+    footer: false,
     key: 'asidea',
     side: 'left',
-    width: 60,
+    width: 260,
     display: 2,
     draggbale: true
   },
   {
     slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
+    header: 'none',
+    footer: false,
     key: 'asideb',
     side: 'right',
-    width: 100,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
-    key: 'asidec',
-    side: 'left',
-    width: 100,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'tab',
-    footer: false,
-    key: 'asided',
-    side: 'right',
-    width: 100,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'none',
-    footer: false,
-    key: 'asidee',
-    side: 'right',
-    width: 50,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'none',
-    footer: true,
-    key: 'asidef',
-    side: 'right',
-    width: 50,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
-    key: 'asideg',
-    side: 'left',
-    width: 50,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'header',
-    footer: true,
-    key: 'asideg',
-    side: 'right',
-    width: 80,
+    width: 200,
     display: 2,
     draggbale: true
   }
@@ -319,15 +242,5 @@ function setWidthR(width: number) {
   overscroll-behavior: contain;
   -ms-scroll-chaining: contain;
   white-space: normal;
-}
-
-ul li {
-  padding: 0;
-  margin: 0;
-}
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
 }
 </style>

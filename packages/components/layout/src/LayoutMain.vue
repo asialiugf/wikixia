@@ -71,11 +71,12 @@
     <footer v-show="props.hasFooter" id="xia-layout-footer" class="footer xia-layout-info" :style="footerStyle">
       <div v-show="fPos === 'fixed'" ref="resizeF" class="f-resize"></div>
       <slot name="footer"></slot>
+      <div>$$$$$$$$$$: {{ appWidth }} {{ appHeight }} ==== {{ winSize.width }}</div>
     </footer>
 
     <Transition name="xia-layout-hidden">
       <div v-show="props.hasFooterAd" id="xia-layout-footer-ad" class="xia-layout-info" :style="footerAdStyle">
-        <slot name="footerAd">这里是底部广告区</slot>
+        <slot name="footerAd"></slot>
       </div>
     </Transition>
   </div>
@@ -135,7 +136,6 @@ interface Props {
   hiddenPosition: 'relative' | 'sticky'; // 'relative'
   hPosition: 'relative' | 'sticky'; // 'relative'
   tPosition: 'relative' | 'sticky';
-  hTop?: number | 'auto';
   hLeft?: number | 'auto';
   hRight?: number | 'auto';
   hBottom?: number | 'auto';
@@ -186,11 +186,8 @@ interface Props {
   fHeight?: number | 'auto';
   /** 底部广告区域的高度,number类型  */
   footerAdHeight?: number; // 必须给出,不能是auto
-
-  mWidth: number;
-
   /** main区域是随整个页面滚动,还是固定不变 */
-  mainScroll: boolean;
+  mainScroll?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -214,14 +211,13 @@ const props = withDefaults(defineProps<Props>(), {
   hiddenPosition: 'relative',
   /* Header */
   hPosition: 'sticky',
-  hTop: 'auto',
   hLeft: 'auto',
   hRight: 'auto',
   hBottom: 'auto',
   hzIndex: 1001,
-  hWidth: 1200,
+  hWidth: 'auto',
   hHeight: 'auto',
-  hMinHeight: 100,
+  hMinHeight: 35,
   hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
@@ -265,7 +261,7 @@ const props = withDefaults(defineProps<Props>(), {
   fzIndex: 1001,
   fWidth: 1200,
   fHeight: 148,
-  footerAdHeight: 150,
+  footerAdHeight: 40,
   mainScroll: true
 });
 
@@ -281,7 +277,7 @@ const footerHH = ref(0);
 
 /**  appWidth  整个应用的宽度 */
 const appWidth = computed(() => {
-  return props.mainScroll ? winSize.width.value - 20 : winSize.width.value;
+  return props.mainScroll ? winSize.width.value - 17 : winSize.width.value - 1;
 });
 
 // ------------ 计算 cover 是否显示 -----------------
@@ -305,7 +301,7 @@ const footerAdHH = computed(() => {
 
 /** 整个应用程序高度(可见部分) - 底部广告区域部分  */
 const appHeight = computed(() => {
-  return winSize.height.value - footerAdHH.value;
+  return winSize.height.value - footerAdHH.value - 1;
 });
 
 // const mainMinHeight = computed(() => {
@@ -372,19 +368,21 @@ const noneTop = computed(() => {
 // *************************************************************************
 /** 容器的高度 即main区域可见部分高度 */
 const containerHH = computed(() => {
-  const { hiddenPosition, hPosition, tPosition } = props;
-  const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
-  const t1 = hPosition === 'relative' ? headerHH.value : 0;
-  const t2 = tPosition === 'relative' ? tabHH.value : 0;
-  const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-  const a = appHeight.value - noneTop.value;
-  const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
-  return hr;
+  // const { hiddenPosition, hPosition, tPosition } = props;
+  // const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
+  // const t1 = hPosition === 'relative' ? headerHH.value : 0;
+  // const t2 = tPosition === 'relative' ? tabHH.value : 0;
+  // const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
+  // const a = appHeight.value - noneTop.value;
+  // const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+  // return hr;
+  return appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
 });
 
 /** mainScroll为固定(false)的情况下 main的高度 */
 const mainHeight = computed(() => {
   return containerHH.value - footerHH.value < 20 ? 20 : containerHH.value - footerHH.value;
+  // return appHeight.value - hiddenHH.value - headerHH.value - tabHH.value - footerHH.value;
 });
 
 /** 如果 main区是固定的话,则底部只能是fixed */
@@ -410,16 +408,21 @@ const asideHeighCalc = () => {
           const hrr = hr - footerHH.value < 20 ? 20 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
+
         break;
       }
       case 'hidden': {
-        const hr = appHeight.value - hiddenTop.value;
+        let hr = appHeight.value - hiddenTop.value;
+        if (!props.mainScroll) {
+          hr = appHeight.value;
+        }
         if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
         } else if (fPos.value === 'fixed') {
           const hrr = hr - footerHH.value < 20 ? 20 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
+
         break;
       }
       case 'header': {
@@ -427,13 +430,17 @@ const asideHeighCalc = () => {
         // const t0 = hiddenPosition === 'relative' ? hiddenHH.value : 0;
         const h = t0 < y.value ? t0 : y.value;
         const a = appHeight.value - headerTop.value;
-        const hr = hiddenPosition === 'relative' ? a - t0 + h : a;
+        let hr = hiddenPosition === 'relative' ? a - t0 + h : a;
+        if (!props.mainScroll) {
+          hr = appHeight.value - hiddenHH.value;
+        }
         if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
         } else if (fPos.value === 'fixed') {
           const hrr = hr - footerHH.value < 20 ? 20 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
+
         // console.log('--5555555555555ssssssssssssssssssssssssssssss');
         break;
       }
@@ -443,13 +450,18 @@ const asideHeighCalc = () => {
         // const t1 = hPosition === 'relative' ? headerHH.value : 0;
         const h = t0 + t1 < y.value ? t0 + t1 : y.value;
         const a = appHeight.value - tabTop.value;
-        const hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
+        let hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
+        if (!props.mainScroll) {
+          hr = appHeight.value - hiddenHH.value - headerHH.value;
+        }
         if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
         } else if (fPos.value === 'fixed') {
           const hrr = hr - footerHH.value < 20 ? 20 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
+          // if(!props.mainScroll) { asideList.value[i].slotHeight =}
         }
+
         break;
       }
       case 'none': {
@@ -458,13 +470,17 @@ const asideHeighCalc = () => {
         // const t2 = tPosition === 'relative' ? tabHH.value : 0;
         const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
         const a = appHeight.value - noneTop.value;
-        const hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+        let hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+        if (!props.mainScroll) {
+          hr = appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
+        }
         if (fPos.value === 'relative') {
           asideList.value[i].slotHeight = hr;
         } else if (fPos.value === 'fixed') {
           const hrr = hr - footerHH.value < 20 ? 20 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
+
         break;
       }
       default: {
@@ -832,12 +848,13 @@ const mainLastHH = computed(() => {
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
+  const layoutHH = props.mainScroll ? 'auto' : `${appHeight.value}px`;
   return `
     margin: 0px;
     width: ${appWidth.value}px;
+		height: ${layoutHH};
     position: relative;
-		scrollbar-gutter: stable;
-		background-color: #3d3e3a;
+		background-color: #fff;
   `;
 });
 
@@ -854,6 +871,7 @@ const coverStyle = computed(() => {
 		height: 48px;
 		z-index: 8000;
     background-color: rgb(40, 181, 187);
+
 	`;
 });
 
@@ -883,7 +901,7 @@ const headerStyle = computed(() => {
 		left: ${bars.value.header.left}px;
 		width: ${bars.value.header.width}px;
 		z-index: 6000;
-		background-color: #e2e2e2;
+		background-color: #fff;
 	`;
 });
 // tab 的样式
@@ -965,7 +983,9 @@ const asideStyle = computed(() => (it: asideItem) => {
 
 // width left right 要重新计算 charmi
 const footerStyle = computed(() => {
+  const { hasFooter } = props;
   const footerHei = isString(footerHeight.value) ? footerHeight.value : `${footerHeight.value}px`;
+  const footerHe = hasFooter ? footerHei : '0px';
   return `
 		position: ${fPos.value};
 		left: ${bars.value.footer.left}px;
@@ -975,7 +995,7 @@ const footerStyle = computed(() => {
 		z-index: 9000;
 		background-color: #ae4423;
 		min-height:50px;
-		height: ${footerHei};
+		height: ${footerHe};
 		background-color:rgba(220,38,38,0.7);
     overflow: hidden;
 	`;
@@ -985,10 +1005,11 @@ const footerAdStyle = computed(() => {
   return `
 		position: fixed;
 		bottom: 0px;
-		width: 100%;
+		width: ${appWidth.value}px;
 		height: ${footerAdHH.value}px;
 		z-index: 9999;
 		background-color: #ae55ee;
+		overflow: hidden;
 	`;
 });
 
