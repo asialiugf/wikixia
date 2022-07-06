@@ -37,7 +37,7 @@
 
     <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
       <slot name="main"></slot>
-      <div :style="mainLastStyle">
+      <div v-if="fPos === 'fixed' && props.mainScroll" :style="mainLastStyle">
         <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
       </div>
     </main>
