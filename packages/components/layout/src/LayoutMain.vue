@@ -120,9 +120,7 @@ interface Props {
   hasAsideRight?: boolean;
   hasMinimap?: boolean;
   hasFooter?: boolean;
-
   hasFooterAd?: boolean;
-
   headerTimeout?: boolean;
 
   hiddenPosition: 'relative' | 'sticky'; // 'relative'
@@ -131,16 +129,12 @@ interface Props {
   hLeft?: number | 'auto';
   hRight?: number | 'auto';
   hBottom?: number | 'auto';
-  hzIndex?: number | 'auto';
+
   hWidth?: number | 'auto';
   hHeight?: number | 'auto';
   hMinHeight?: number | 'auto';
   hPaddingLeft?: number | 'auto';
-  tTop?: number | 'auto';
-  tLeft?: number | 'auto';
-  tRight?: number | 'auto';
-  tBottom?: number | 'auto';
-  tzIndex?: number | 'auto';
+
   tWidth?: number | 'auto';
   tHeight?: number | 'auto';
   tMinHeight?: number | string;
@@ -148,13 +142,6 @@ interface Props {
 
   /* Footer */
   fPosition?: 'relative' | 'fixed';
-  fTop?: number | 'auto';
-  fLeft?: number | 'auto';
-  fRight?: number | 'auto';
-  fBottom?: number | 'auto';
-  fzIndex?: number | 'auto';
-  fWidth?: number | 'auto';
-  fHeight?: number | 'auto';
   /** 底部广告区域的高度,number类型  */
   footerAdHeight?: number | 'auto';
   /** main区域是随整个页面滚动,还是固定不变 */
@@ -185,18 +172,14 @@ const props = withDefaults(defineProps<Props>(), {
   hLeft: 'auto',
   hRight: 'auto',
   hBottom: 'auto',
-  hzIndex: 1001,
+
   hWidth: 'auto',
   hHeight: 'auto',
   hMinHeight: 35,
   hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
-  tTop: 'auto',
-  tLeft: 'auto',
-  tRight: 'auto',
-  tBottom: 'auto',
-  tzIndex: 1003,
+
   tWidth: 1200,
   tHeight: 'auto',
   tMinHeight: 50,
@@ -204,13 +187,6 @@ const props = withDefaults(defineProps<Props>(), {
 
   /* Footer */
   fPosition: 'relative',
-  fTop: 'auto',
-  fLeft: 'auto',
-  fRight: 'auto',
-  fBottom: 0,
-  fzIndex: 1001,
-  fWidth: 1200,
-  fHeight: 148,
   footerAdHeight: 'auto',
   mainScroll: true
 });
