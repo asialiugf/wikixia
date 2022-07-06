@@ -27,14 +27,6 @@
       <slot name="tab"> </slot>
     </div>
 
-    <aside v-if="props.hasAsideLeft" class="asideL" :style="asideLStyle">
-      <slot name="asideL"></slot>
-      <!-- 拖拽变宽窄 -->
-      <div class="resize resizeL"></div>
-      <!-- 折叠小图标 -->
-      <div class="hello" :style="asideZhedie" @click="changeWidth"></div>
-    </aside>
-
     <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
       <slot name="main"></slot>
       <div v-if="fPos === 'fixed' && props.mainScroll" :style="mainLastStyle">
@@ -153,28 +145,7 @@ interface Props {
   tHeight?: number | 'auto';
   tMinHeight?: number | string;
   tPaddingLeft?: number | 'auto';
-  /* Aside Left */
-  aLposition?: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-  aLtop?: number | 'auto';
-  aLleft?: number | 'auto';
-  aLright?: number | 'auto';
-  aLbottom?: number | 'auto';
-  aLzIndex?: number | 'auto';
-  aLMinWidth?: number;
-  aLwidth?: number;
-  aLheight?: number | 'auto';
-  aLpaddingLeft?: number | 'auto';
-  /* Aside Right */
-  aRposition?: 'relative' | 'static' | 'fixed' | 'absolute' | 'sticky';
-  aRtop?: number | 'auto';
-  aRleft?: number | 'auto';
-  aRright?: number | 'auto';
-  aRbottom?: number | 'auto';
-  aRzIndex?: number | 'auto';
-  aRMinWidth?: number;
-  aRwidth?: number;
-  aRheight?: number | 'auto';
-  aRpaddingLeft?: number | 'auto';
+
   /* Footer */
   fPosition?: 'relative' | 'fixed';
   fTop?: number | 'auto';
@@ -230,28 +201,7 @@ const props = withDefaults(defineProps<Props>(), {
   tHeight: 'auto',
   tMinHeight: 50,
   tPaddingLeft: 0,
-  /* Aside Left */
-  aLposition: 'absolute',
-  aLtop: 'auto',
-  aLleft: 'auto',
-  aLright: 'auto',
-  aLbottom: 'auto',
-  aLzIndex: 1001,
-  aLMinWidth: 0,
-  aLwidth: 1200,
-  aLheight: 148,
-  aLpaddingLeft: 0,
-  /* Aside Right */
-  aRposition: 'absolute',
-  aRtop: 'auto',
-  aRleft: 'auto',
-  aRright: 'auto',
-  aRbottom: 'auto',
-  aRzIndex: 1001,
-  aRMinWidth: 0,
-  aRwidth: 1200,
-  aRheight: 148,
-  aRpaddingLeft: 0,
+
   /* Footer */
   fPosition: 'relative',
   fTop: 'auto',
@@ -537,69 +487,6 @@ function setWidthR(rtn: rtnType): void {
   }
 }
 
-const widthL = computed(() => {
-  return props.aLwidth;
-});
-
-// ---------------------------------拖动改变宽度-----------------------------------------
-const xxx = ref(0);
-const yyy = ref(0);
-
-interface Emits {
-  (e: 'update:widthL', asideWidthL: number): void;
-  (e: 'update:widthR', asideWidthR: number): void;
-}
-const emit = defineEmits<Emits>();
-const asideWidthL = computed({
-  get() {
-    return props.aLwidth;
-  },
-  set(newValue: number) {
-    emit('update:widthL', newValue);
-  }
-});
-
-const asideWidthR = computed({
-  get() {
-    return props.aRwidth;
-  },
-  // 当给 asideWidthR 赋值时，会触发 set 方法 通过下面的handleWidth()方法赋值
-  set(newValue: number) {
-    emit('update:widthR', newValue);
-  }
-});
-
-function handleWidth(className: string, isLeft: boolean): boolean {
-  const element = document.querySelector(className) as HTMLElement;
-  element.onmousedown = e => {
-    e.preventDefault(); // 阻止默认事件发生
-    const startX1 = e.clientX;
-    const w = isLeft ? props.aLwidth : props.aRwidth;
-    xxx.value = startX1;
-    document.onmousemove = e1 => {
-      const endX = e1.clientX;
-      // const len = w + endX - startX;
-      if (isLeft) {
-        const len = w + endX - startX1;
-        asideWidthL.value = len < props.aLMinWidth ? props.aLMinWidth : len;
-      } else {
-        const len = w + startX1 - endX;
-        asideWidthR.value = len < props.aRMinWidth ? props.aRMinWidth : len;
-      }
-
-      yyy.value = endX;
-    };
-  };
-  element.onmouseup = () => {
-    document.onmousemove = null;
-    document.onmouseup = null;
-  };
-  return false;
-}
-// -------------------------------- 折叠图标处理 ------------------------------------------
-function changeWidth() {
-  asideWidthL.value = 0;
-}
 // -------------------------------- resize处理 -------------------------------------------
 
 // type Auto = number | 'auto';
@@ -655,7 +542,6 @@ onMounted(() => {
       } else if (entry.target.id === 'xia-layout-footer-ad') {
         footerAdHH.value = entry.contentRect.height;
       }
-      asideWidthL.value = 600;
 
       // 计算 aside的高度 【在absolute的情况下的高度，属于外层高度】
       for (let i = 0; i < asideList.value.length; i += 1) {
@@ -786,12 +672,6 @@ watch(
   },
   { immediate: true, deep: true }
 );
-
-onMounted(() => {
-  if (props.hasAsideLeft) {
-    handleWidth('.resizeL', true);
-  }
-});
 
 // 底部可以拖动的高度 ---------------------------------------------------------------
 const startY = ref<number>(0);
@@ -928,20 +808,6 @@ const mainLastStyle = computed(() => {
 	`;
 });
 
-const asideLStyle = computed(() => {
-  const { aLleft, aLright } = props;
-  return `
-		position: absolute;
-		top: ${asideLTop.value}px;
-		left: ${aLleft}px;
-		right: ${aLright}px;
-		bottom: 0px;
-		width: ${widthL.value}px;
-    height: 30px;
-		z-index: 1001;
-	`;
-});
-
 /** aside 外层样式
  *  如果是sticky的话,里层的样式在 LayoutAside 组件中定义
  *
@@ -993,16 +859,6 @@ const footerAdStyle = computed(() => {
 });
 
 // --------------------- 左侧折叠图标样式
-const asideZhedie = computed(() => {
-  return `
-	position: fixed;
-	top:250px;
-	left:${asideWidthL.value - 10}px;
-	height:20px;
-	width:20px;
-	z-index:8000
-	`;
-});
 
 // ------------------------------------------ 页面样式 ------------------------------------------------
 </script>
