@@ -118,7 +118,6 @@ interface Props {
   hasTab?: boolean;
   hasAsideLeft?: boolean;
   hasAsideRight?: boolean;
-  hasMinimap?: boolean;
   hasFooter?: boolean;
   hasFooterAd?: boolean;
   headerTimeout?: boolean;
@@ -157,7 +156,6 @@ const props = withDefaults(defineProps<Props>(), {
   hasTab: true,
   hasAsideLeft: false,
   hasAsideRight: false,
-  hasMinimap: true,
   hasFooter: true,
 
   hasFooterAd: true,
@@ -340,9 +338,11 @@ const asideHeighCalc = () => {
         break;
       }
       case 'header': {
-        const h = t0 < y.value ? t0 : y.value;
-        const a = appHeight.value - headerTop.value;
-        let hr = hiddenPosition === 'relative' ? a - t0 + h : a;
+        // const h = t0 < y.value ? t0 : y.value;
+        // const a = appHeight.value - headerTop.value;
+        // let hr = hiddenPosition === 'relative' ? a - t0 + h : a;
+        const hh = t0 - y.value > 0 ? t0 - y.value : 0;
+        let hr = appHeight.value - headerTop.value - hh;
         if (!props.mainScroll) {
           hr = appHeight.value - hiddenHH.value;
         }
@@ -357,9 +357,11 @@ const asideHeighCalc = () => {
         break;
       }
       case 'tab': {
-        const h = t0 + t1 < y.value ? t0 + t1 : y.value;
-        const a = appHeight.value - tabTop.value;
-        let hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
+        // const h = t0 + t1 < y.value ? t0 + t1 : y.value;
+        // const a = appHeight.value - tabTop.value;
+        // let hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
+        const hh = t0 + t1 - y.value > 0 ? t0 + t1 - y.value : 0;
+        let hr = appHeight.value - tabTop.value - hh;
         if (!props.mainScroll) {
           hr = appHeight.value - hiddenHH.value - headerHH.value;
         }
@@ -368,15 +370,16 @@ const asideHeighCalc = () => {
         } else if (fPos.value === 'fixed') {
           const hrr = hr - footerHH.value < 20 ? 20 : hr - footerHH.value;
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
-          // if(!props.mainScroll) { asideList.value[i].slotHeight =}
         }
 
         break;
       }
       case 'none': {
-        const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-        const a = appHeight.value - noneTop.value;
-        let hr = hPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+        // const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
+        // const a = appHeight.value - noneTop.value;
+        // let hr = tPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
+        const hh = t0 + t1 + t2 - y.value > 0 ? t0 + t1 + t2 - y.value : 0;
+        let hr = appHeight.value - noneTop.value - hh;
         if (!props.mainScroll) {
           hr = appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
         }
@@ -595,25 +598,6 @@ onMounted(() => {
   });
 });
 
-// 计算 main的宽度  --------------------------------？？ 要看执行的时机 -----charmi-----------------------------------
-// const mainWidth = computed(() => {
-//   const a = props.hasAsideLeft ? props.aLwidth : 0;
-//   const b = props.hasAsideRight ? props.aRwidth : 0;
-//   const c = sx.value - a - b - 20;
-//   return c < 600 ? 600 : c;
-// });
-
-// const lWidth = computed(() => {
-//   return sx.value;
-// });
-
-// const hWidth = computed(() => {
-//   return sx.value;
-// });
-
-// 计算高度 --------------------------------------------------------------------------
-const asideLTop = ref(300);
-
 // 测试代码 --------------------------------------------------------------------------
 // setTimeout(() => {
 //   asideDisplay(asideList, 1);
@@ -762,6 +746,7 @@ const tabStyle = computed(() => {
 const mainStyle = computed(() => {
   // const mainHei = isString(mainHeight.value) ? mainHeight.value : `${mainHeight.value}px`;
   const mainHei = props.mainScroll ? 'auto' : `${mainHeight.value}px`;
+  const minHei = props.fPosition === 'relative' ? appHeight.value : 0;
   return `
 		position: relative;
 		top: 0px;
@@ -769,7 +754,7 @@ const mainStyle = computed(() => {
 		width: ${bars.value.main.width}px;
 		z-index: 1000;
 		height: ${mainHei};
-		min-height: 50px;
+		min-height: ${minHei}px;
 		background-color: #f1f1f1;
 		overflow: auto;
 	`;
@@ -840,9 +825,6 @@ const footerAdStyle = computed(() => {
 </script>
 
 <style>
-.xia-layout-cover {
-}
-
 /* ---------------------相邻选择器 实现 hover 控制 子DIV 显示隐藏 --------------  */
 .asideL:hover .hello {
   display: block;

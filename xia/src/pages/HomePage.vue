@@ -6,8 +6,8 @@
     :has-tab="true"
     :hasFooter="true"
     :hiddenPosition="'relative'"
-    :hPosition="'relative'"
-    :tPosition="'sticky'"
+    :hPosition="'sticky'"
+    :tPosition="'relative'"
     :fPosition="'relative'"
     :tHeight="'auto'"
     :aLtop="aLtop"
@@ -43,29 +43,29 @@
       </div>
     </template>
     <template #main>
-      <li v-for="n in 100" :key="n">adfsafd {{ n }} <br /></li>
+      <li v-for="n in 115" :key="n">adfsafd {{ n }} <br /></li>
       <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
     </template>
 
     <template #asidea>
-      rrrrr跟绝大多数的小说不同，在这部小说里面，
-      直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <el-row class="mb-4">
+        <el-button disabled>Default</el-button>
+        <el-button type="primary" disabled>Primary</el-button>
+        <el-button type="success" disabled>Success</el-button>
+        <el-button type="info" disabled>Info</el-button>
+        <el-button type="warning" disabled>Warning</el-button>
+        <el-button type="danger" disabled>Danger</el-button>
+      </el-row>
+      <el-row>
+        <el-button plain disabled>Plain</el-button>
+        <el-button type="primary" plain disabled>Primary</el-button>
+        <el-button type="success" plain disabled>Success</el-button>
+        <el-button type="info" plain disabled>Info</el-button>
+        <el-button type="warning" plain disabled>Warning</el-button>
+        <el-button type="danger" plain disabled>Danger</el-button>
+      </el-row>
       <div>p jfd 为什么不地 不好{{}}</div>
-    </template>
-
-    <template #asidee>
-      rrrrr跟绝大多数的小说不同，在这部小说里面，
-      直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
-      <div>p jfd 为什么不地 不好{{}}</div>
+      <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
     </template>
 
     <template #asideb>
@@ -153,11 +153,11 @@ const tabTimeOut = useTimeout(3000); // 设置一个定时器
 const footerTimeOut = useTimeout(11113000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
-    slotPosition: 'absolute',
-    header: 'none',
-    footer: false,
     key: 'asidea',
     side: 'left',
+    header: 'none',
+    footer: false,
+    slotPosition: 'absolute',
     width: 260,
     display: 2,
     draggbale: true
@@ -165,6 +165,16 @@ const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
     header: 'none',
+    footer: false,
+    key: 'asideb',
+    side: 'right',
+    width: 200,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'tab',
     footer: false,
     key: 'asideb',
     side: 'right',

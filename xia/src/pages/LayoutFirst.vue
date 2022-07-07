@@ -197,7 +197,7 @@ const onChange = ({ html, json }: ChangePayload) => {
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
 const tabTimeOut = useTimeout(3000); // 设置一个定时器
-const hashiddenn = useTimeout(9000); // 设置一个定时器
+const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const hasfooterad = useTimeout(5000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {

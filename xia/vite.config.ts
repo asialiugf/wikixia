@@ -5,6 +5,11 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend';
 import WindiCSS from 'vite-plugin-windicss';
 import path from 'path';
 
+import { defineConfig } from 'vite';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+
 export default () => {
   const markdownWrapperClasses = 'prose prose-sm m-auto text-left';
   return {
@@ -15,7 +20,12 @@ export default () => {
     },
     plugins: [
       Vue(),
-
+      AutoImport({
+        resolvers: [ElementPlusResolver()]
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()]
+      }),
       // https://github.com/antfu/vite-plugin-windicss
       WindiCSS({
         safelist: markdownWrapperClasses
@@ -59,3 +69,16 @@ export default () => {
     }
   };
 };
+
+// export default defineConfig({
+//   // ...
+//   plugins: [
+//     // ...
+//     AutoImport({
+//       resolvers: [ElementPlusResolver()]
+//     }),
+//     Components({
+//       resolvers: [ElementPlusResolver()]
+//     })
+//   ]
+// });
