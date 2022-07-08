@@ -29,7 +29,7 @@
 
     <main id="xia-layout-main" class="xia-layout-info" :style="mainStyle">
       <slot name="main"></slot>
-      <div v-if="fPos === 'fixed' && props.mainScroll" :style="mainLastStyle">
+      <div v-if="fPos === 'fixed' && props.pageScroll" :style="mainLastStyle">
         <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
       </div>
     </main>
@@ -109,84 +109,45 @@ interface rtnType {
 //  |                                 footer  广告区 可隐藏                              |
 //  +-----------------------------------------------------------------------------------+
 interface Props {
+  /** 侧边栏数组 */
   asideArray?: asideItem[];
-
+  /** 顶部冒出区 */
   hasCover?: boolean;
+  /** 顶部隐藏的广告区 */
   hasHidden?: boolean;
   hasHeader?: boolean;
-
   hasTab?: boolean;
-  hasAsideLeft?: boolean;
-  hasAsideRight?: boolean;
   hasFooter?: boolean;
+  /** 底部广告区 */
   hasFooterAd?: boolean;
-  headerTimeout?: boolean;
 
   hiddenPosition: 'relative' | 'sticky'; // 'relative'
   hPosition: 'relative' | 'sticky'; // 'relative'
   tPosition: 'relative' | 'sticky';
-  hLeft?: number | 'auto';
-  hRight?: number | 'auto';
-  hBottom?: number | 'auto';
-
-  hWidth?: number | 'auto';
-  hHeight?: number | 'auto';
-  hMinHeight?: number | 'auto';
-  hPaddingLeft?: number | 'auto';
-
-  tWidth?: number | 'auto';
-  tHeight?: number | 'auto';
-  tMinHeight?: number | string;
-  tPaddingLeft?: number | 'auto';
-
-  /* Footer */
   fPosition?: 'relative' | 'fixed';
-  /** 底部广告区域的高度,number类型  */
-  footerAdHeight?: number | 'auto';
-  /** main区域是随整个页面滚动,还是固定不变 */
-  mainScroll?: boolean;
+  /** 主页面滚动还是不变。true:主页面滚动，main区不滚动。 false: 主页面不滚动，main区滚动 */
+  pageScroll?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   asideArray: () => [], // 对象或数组需要使用函数，不能直接写默认值
   hasCover: false,
   hasHidden: false,
-
   hasHeader: true,
   hasTab: true,
-  hasAsideLeft: false,
-  hasAsideRight: false,
-  hasFooter: true,
+  hasFooter: false,
+  hasFooterAd: false,
 
-  hasFooterAd: true,
-
-  // isFooterZoom: true,
-
-  headerTimeout: false,
-  /* 顶部隐藏的广告区 */
   hiddenPosition: 'relative',
-  /* Header */
   hPosition: 'sticky',
-  hLeft: 'auto',
-  hRight: 'auto',
-  hBottom: 'auto',
 
-  hWidth: 'auto',
-  hHeight: 'auto',
-  hMinHeight: 35,
-  hPaddingLeft: 0,
   /* Tab */
   tPosition: 'relative',
 
-  tWidth: 1200,
-  tHeight: 'auto',
-  tMinHeight: 50,
-  tPaddingLeft: 0,
-
   /* Footer */
   fPosition: 'relative',
-  footerAdHeight: 'auto',
-  mainScroll: true
+
+  pageScroll: true
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
@@ -202,14 +163,8 @@ const footerAdHH = ref(0);
 
 /**  appWidth  整个应用的宽度 */
 const appWidth = computed(() => {
-  return props.mainScroll ? winSize.width.value - 17 : winSize.width.value - 1;
+  return props.pageScroll ? winSize.width.value - 17 : winSize.width.value - 1;
 });
-
-/**  底部广告区域高度 */
-// const footerAdHH = computed(() => {
-//   const { hasFooterAd, footerAdHeight } = props;
-//   return hasFooterAd ? footerAdHeight : 0;
-// });
 
 /** 整个应用程序高度(可见部分) - 底部广告区域部分  */
 const appHeight = computed(() => {
@@ -221,7 +176,7 @@ const containerHH = computed(() => {
   return appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
 });
 
-/** mainScroll为固定(false)的情况下 main的高度 */
+/** pageScroll为固定(false)的情况下 main的高度 */
 const mainHeight = computed(() => {
   return containerHH.value - footerHH.value < 20 ? 20 : containerHH.value - footerHH.value;
 });
@@ -299,8 +254,8 @@ const noneTop = computed(() => {
 
 /** 如果 main区是固定的话,则底部只能是fixed */
 const fPos = computed(() => {
-  const { mainScroll, fPosition } = props;
-  return mainScroll ? fPosition : 'fixed';
+  const { pageScroll, fPosition } = props;
+  return pageScroll ? fPosition : 'fixed';
 });
 
 // -----【计算侧边栏sticky时的高度 不低于20】计算---- 为aside sticky情形 提供计算aside高度 通过props传给 LayoutAside.vue
@@ -325,7 +280,7 @@ const asideHeighCalc = () => {
       }
       case 'hidden': {
         let hr = appHeight.value - hiddenTop.value;
-        if (!props.mainScroll) {
+        if (!props.pageScroll) {
           hr = appHeight.value;
         }
         if (fPos.value === 'relative') {
@@ -343,7 +298,7 @@ const asideHeighCalc = () => {
         // let hr = hiddenPosition === 'relative' ? a - t0 + h : a;
         const hh = t0 - y.value > 0 ? t0 - y.value : 0;
         let hr = appHeight.value - headerTop.value - hh;
-        if (!props.mainScroll) {
+        if (!props.pageScroll) {
           hr = appHeight.value - hiddenHH.value;
         }
         if (fPos.value === 'relative') {
@@ -362,7 +317,7 @@ const asideHeighCalc = () => {
         // let hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
         const hh = t0 + t1 - y.value > 0 ? t0 + t1 - y.value : 0;
         let hr = appHeight.value - tabTop.value - hh;
-        if (!props.mainScroll) {
+        if (!props.pageScroll) {
           hr = appHeight.value - hiddenHH.value - headerHH.value;
         }
         if (fPos.value === 'relative') {
@@ -380,7 +335,7 @@ const asideHeighCalc = () => {
         // let hr = tPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
         const hh = t0 + t1 + t2 - y.value > 0 ? t0 + t1 + t2 - y.value : 0;
         let hr = appHeight.value - noneTop.value - hh;
-        if (!props.mainScroll) {
+        if (!props.pageScroll) {
           hr = appHeight.value - hiddenHH.value - headerHH.value - tabHH.value;
         }
         if (fPos.value === 'relative') {
@@ -531,7 +486,7 @@ onMounted(() => {
             asideList.value[i].slotTop = 0;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
             if (fPos.value === 'fixed') {
-              asideList.value[i].height = props.mainScroll ? w : appHeight.value;
+              asideList.value[i].height = props.pageScroll ? w : appHeight.value;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -543,7 +498,7 @@ onMounted(() => {
             const m = coverHH.value;
             const w = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value + mainHH.value;
             if (fPos.value === 'fixed') {
-              asideList.value[i].height = props.mainScroll ? w : appHeight.value - m;
+              asideList.value[i].height = props.pageScroll ? w : appHeight.value - m;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -555,7 +510,7 @@ onMounted(() => {
             const m = coverHH.value + hiddenHH.value;
             const w = coverHH.value + headerHH.value + tabHH.value + mainHH.value;
             if (fPos.value === 'fixed') {
-              asideList.value[i].height = props.mainScroll ? w : appHeight.value - m;
+              asideList.value[i].height = props.pageScroll ? w : appHeight.value - m;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -567,7 +522,7 @@ onMounted(() => {
             const m = coverHH.value + hiddenHH.value + headerHH.value;
             const w = coverHH.value + tabHH.value + mainHH.value;
             if (fPos.value === 'fixed') {
-              asideList.value[i].height = props.mainScroll ? w : appHeight.value - m;
+              asideList.value[i].height = props.pageScroll ? w : appHeight.value - m;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -579,7 +534,7 @@ onMounted(() => {
             const m = coverHH.value + hiddenHH.value + headerHH.value + tabHH.value;
             const w = coverHH.value + mainHH.value;
             if (fPos.value === 'fixed') {
-              asideList.value[i].height = props.mainScroll ? w : appHeight.value - m;
+              asideList.value[i].height = props.pageScroll ? w : appHeight.value - m;
             } else {
               asideList.value[i].height = asideList.value[i].footer ? w + footerHH.value : w - footerAdHH.value;
             }
@@ -668,7 +623,7 @@ const mainLastHH = computed(() => {
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
-  const layoutHH = props.mainScroll ? 'auto' : '100vh';
+  const layoutHH = props.pageScroll ? 'auto' : '100vh';
   return `
     margin: 0px;
     width: ${appWidth.value}px;
@@ -745,8 +700,8 @@ const tabStyle = computed(() => {
 
 const mainStyle = computed(() => {
   // const mainHei = isString(mainHeight.value) ? mainHeight.value : `${mainHeight.value}px`;
-  const mainHei = props.mainScroll ? 'auto' : `${mainHeight.value}px`;
-  const minHei = props.fPosition === 'relative' ? appHeight.value : 0;
+  const mainHei = props.pageScroll ? 'auto' : `${mainHeight.value}px`;
+  const minHei = fPos.value === 'relative' ? appHeight.value : 0;
   return `
 		position: relative;
 		top: 0px;

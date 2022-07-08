@@ -9,17 +9,9 @@
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
-    :fPosition="'fixed'"
-    :tHeight="'auto'"
-    :aLtop="aLtop"
-    :aLheight="500"
-    :aLwidth="aLwidth"
-    :aRtop="aLtop"
-    :aRheight="500"
-    :aRwidth="aRwidth"
-    :mWidth="mWidth"
+    :fPosition="'relative'"
     :aside-array="asideArray"
-    :main-scroll="false"
+    :page-scroll="false"
   >
     <template #cover>
       <nav class="ttt">
@@ -38,6 +30,7 @@
         </button>
       </nav>
     </template>
+
     <template #header>
       <layout-header></layout-header>
     </template>
@@ -196,7 +189,7 @@ const onChange = ({ html, json }: ChangePayload) => {
 };
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
-const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const tabTimeOut = useTimeout(13000); // 设置一个定时器
 const hashiddenn = useTimeout(9000); // 设置一个定时器
 const hasfooterad = useTimeout(1115000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([

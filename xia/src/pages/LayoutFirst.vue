@@ -10,14 +10,6 @@
     :hPosition="'relative'"
     :tPosition="'sticky'"
     :fPosition="'fixed'"
-    :tHeight="'auto'"
-    :aLtop="aLtop"
-    :aLheight="500"
-    :aLwidth="aLwidth"
-    :aRtop="aLtop"
-    :aRheight="500"
-    :aRwidth="aRwidth"
-    :mWidth="mWidth"
     :aside-array="asideArray"
   >
     <template #cover>
@@ -37,6 +29,7 @@
         </button>
       </nav>
     </template>
+
     <template #header>
       <layout-header></layout-header>
     </template>
