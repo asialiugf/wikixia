@@ -293,9 +293,6 @@ const asideHeighCalc = () => {
         break;
       }
       case 'header': {
-        // const h = t0 < y.value ? t0 : y.value;
-        // const a = appHeight.value - headerTop.value;
-        // let hr = hiddenPosition === 'relative' ? a - t0 + h : a;
         const hh = t0 - y.value > 0 ? t0 - y.value : 0;
         let hr = appHeight.value - headerTop.value - hh;
         if (!props.pageScroll) {
@@ -312,9 +309,6 @@ const asideHeighCalc = () => {
         break;
       }
       case 'tab': {
-        // const h = t0 + t1 < y.value ? t0 + t1 : y.value;
-        // const a = appHeight.value - tabTop.value;
-        // let hr = hPosition === 'relative' ? a - t0 - t1 + h : a;
         const hh = t0 + t1 - y.value > 0 ? t0 + t1 - y.value : 0;
         let hr = appHeight.value - tabTop.value - hh;
         if (!props.pageScroll) {
@@ -330,9 +324,6 @@ const asideHeighCalc = () => {
         break;
       }
       case 'none': {
-        // const h = t0 + t1 + t2 < y.value ? t0 + t1 + t2 : y.value;
-        // const a = appHeight.value - noneTop.value;
-        // let hr = tPosition === 'relative' ? a - t0 - t1 - t2 + h : a;
         const hh = t0 + t1 + t2 - y.value > 0 ? t0 + t1 + t2 - y.value : 0;
         let hr = appHeight.value - noneTop.value - hh;
         if (!props.pageScroll) {
@@ -458,7 +449,7 @@ function setWidthR(rtn: rtnType): void {
 //  +-----------------+
 
 onMounted(() => {
-  // 只有 entries[0]有内容，虽然是观察多个，但是一个一个返回的。
+  /**  只有 entries[0]有内容，虽然是观察多个，但是一个一个返回的。 */
   const resizeObserver = new ResizeObserver(entries => {
     entries.forEach(entry => {
       if (entry.target.id === 'xia-layout-cover') {
@@ -623,30 +614,25 @@ const mainLastHH = computed(() => {
 // ------------------------------------------ 计算页面样式 ------------------------------------------------
 // layout页面的样式
 const layoutStyle = computed(() => {
-  const layoutHH = props.pageScroll ? 'auto' : '100vh';
+  const layoutHei = props.pageScroll ? 'auto' : '100vh';
   return `
     margin: 0px;
     width: ${appWidth.value}px;
-		height: ${layoutHH};
+		height: ${layoutHei};
     position: relative;
 		background-color: #fff;
   `;
 });
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++ begin
-
 const coverStyle = computed(() => {
-  // const { hPosition } = props;
   return `
 		position: sticky;
 		top: 0px;
 		left: ${bars.value.cover.left}px;
 		width: ${bars.value.cover.width}px;
-		min-height:40px;
-		height: 48px;
 		z-index: 8000;
     background-color: rgb(40, 181, 187);
-
 	`;
 });
 
@@ -666,12 +652,11 @@ const hiddenStyle = computed(() => {
 // header 的样式
 // header 的 position 从 应用程序 传过来。值为 fixed 和 absolute
 const headerStyle = computed(() => {
-  const { hiddenPosition, hPosition, hMinHeight } = props;
+  const { hiddenPosition, hPosition } = props;
   const t = hiddenPosition === 'sticky' ? hiddenHH.value : 0;
   const h = hPosition === 'sticky' ? t : 0;
   return `
 		position: ${hPosition};
-		min-height: ${hMinHeight}px;
 		top: ${h}px;
 		left: ${bars.value.header.left}px;
 		width: ${bars.value.header.width}px;
@@ -681,14 +666,11 @@ const headerStyle = computed(() => {
 });
 // tab 的样式
 const tabStyle = computed(() => {
-  const { hiddenPosition, hPosition, tPosition, tHeight, tMinHeight } = props;
-  const height1 = isString(tHeight) ? tHeight : `${tHeight}px`;
+  const { hiddenPosition, hPosition, tPosition } = props;
   const m = hiddenPosition === 'sticky' ? hiddenHH.value : 0;
   const t = hPosition === 'sticky' ? m + headerHH.value : m;
   const h = tPosition === 'sticky' ? t : 0;
   return `
-		height: ${height1};
-		min-height: ${tMinHeight}px;
 		position: ${tPosition};
 		top: ${h}px;
 		left: ${bars.value.tab.left}px;
