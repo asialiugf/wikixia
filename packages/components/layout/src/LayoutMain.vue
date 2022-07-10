@@ -37,12 +37,15 @@
     <component
       :is="'aside'"
       v-for="(item, index) of asideList"
+      v-show="item.display === 2"
       :key="index"
       :style="asideStyle(item)"
       :class="item.key"
     >
+      <!-- <div v-if="item.side === 'left'" :style="asideStyle1(item)">
+        <div style="position: absolute; left: -10px; width: 25px; height: 25px; background-color: blue">tttt</div>
+      </div> -->
       <layout-aside
-        v-if="item.display === 2"
         :id="index"
         :aside-position="item.slotPosition"
         :aside-top="item.slotTop"
@@ -197,7 +200,7 @@ const coverOut = computed(() => {
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 
 const { asideList } = useAsideList(props.asideArray);
-/**  bars 用于记录 asideList 的宽度及起点 */
+/**  bars 用于记录 cover,hidden,header,tab,main,footer 的宽度及起点 */
 const bars = ref<barsType>({
   cover: { left: 0, width: 0 },
   hidden: { left: 0, width: 0 },
@@ -661,6 +664,7 @@ const headerStyle = computed(() => {
 		left: ${bars.value.header.left}px;
 		width: ${bars.value.header.width}px;
 		z-index: 6000;
+		min-height: 80px;
 		background-color: #fff;
 	`;
 });
@@ -712,18 +716,32 @@ const mainLastStyle = computed(() => {
  *
  */
 const asideStyle = computed(() => (it: asideItem) => {
+  const asideL = isString(it.left) ? 'auto' : `${it.left}px`;
+  const asideR = isString(it.right) ? 'auto' : `${it.right}px`;
   return `
 		position: absolute;
 		top: ${it.top}px;
-		left: ${it.left}px;
-		right: ${it.right}px;
+		left: ${asideL};
+		right: ${asideR};
 		bottom: 0px;
-		width: ${it.display === 2 ? it.width : 0}px;
+		width: ${it.width}px;
     height: ${it.height}px;
 		z-index:  ${it.zIndex};
 		background-color: #f1f1f1;
 	`;
 });
+
+// const asideStyle1 = computed(() => (it: asideItem) => {
+//   const top = isString(it.slotTop) ? 0 : it.slotTop;
+//   return `
+// 		position: fixed;
+// 		top: ${400 - top!}px;
+// 		width: 0px;
+//     height: 30px;
+// 		z-index:  ${it.zIndex};
+// 		background-color: red;
+// 	`;
+// });
 
 // width left right 要重新计算 charmi
 const footerStyle = computed(() => {
@@ -890,5 +908,8 @@ const footerAdStyle = computed(() => {
 .f-resize:hover {
   background-color: hsl(213, 100%, 50%);
   transition: all 0.5s;
+}
+* {
+  box-sizing: border-box;
 }
 </style>

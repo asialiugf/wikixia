@@ -189,13 +189,13 @@ const onChange = ({ html, json }: ChangePayload) => {
 };
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
-const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const tabTimeOut = useTimeout(1113000); // 设置一个定时器
 const hashiddenn = useTimeout(1119000); // 设置一个定时器
 const hasfooterad = useTimeout(5000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
-    header: 'header',
+    header: 'cover',
     footer: true,
     key: 'asidec',
     side: 'left',
@@ -205,30 +205,10 @@ const asideArray = ref<asideItem[]>([
   },
   {
     slotPosition: 'sticky',
-    header: 'tab',
+    header: 'hidden',
     footer: true,
     key: 'asided',
-    side: 'right',
-    width: 50,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'none',
-    footer: false,
-    key: 'asidee',
-    side: 'right',
-    width: 50,
-    display: 2,
-    draggbale: true
-  },
-  {
-    slotPosition: 'sticky',
-    header: 'none',
-    footer: true,
-    key: 'asidef',
-    side: 'right',
+    side: 'left',
     width: 50,
     display: 2,
     draggbale: true
@@ -236,6 +216,26 @@ const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'sticky',
     header: 'header',
+    footer: false,
+    key: 'asidee',
+    side: 'left',
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'tab',
+    footer: true,
+    key: 'asidef',
+    side: 'left',
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'none',
     footer: true,
     key: 'asideg',
     side: 'left',
@@ -245,9 +245,49 @@ const asideArray = ref<asideItem[]>([
   },
   {
     slotPosition: 'sticky',
-    header: 'header',
+    header: 'cover',
     footer: true,
     key: 'asideg',
+    side: 'right',
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'hidden',
+    footer: true,
+    key: 'asideg1',
+    side: 'right',
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'header',
+    footer: true,
+    key: 'asideg2',
+    side: 'right',
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'tab',
+    footer: true,
+    key: 'asideg3',
+    side: 'right',
+    width: 50,
+    display: 2,
+    draggbale: true
+  },
+  {
+    slotPosition: 'sticky',
+    header: 'none',
+    footer: true,
+    key: 'asideg4',
     side: 'right',
     width: 50,
     display: 2,

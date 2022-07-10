@@ -1,15 +1,23 @@
 <template>
-  <div v-if="isRight" ref="resizeLL" class="xia-aside-resize resizeLL"></div>
+  <div v-if="isRight" ref="resizeLL" class="xia-aside-resize resizeLL">
+    <div :style="asideStyle1">
+      <div style="position: absolute; left: -20px; width: 25px; height: 25px; background-color: blue">tttt</div>
+    </div>
+  </div>
   <div v-if="props.asidePosition === 'sticky'" class="xia-layout-aside" :style="asideStyle">
     <slot name="aside"></slot>
   </div>
   <slot v-if="props.asidePosition === 'absolute'" name="aside"></slot>
-  <div v-if="isLeft" ref="resizeRR" class="xia-aside-resize resizeRR"></div>
+  <div v-if="isLeft" ref="resizeRR" class="xia-aside-resize resizeRR">
+    <div :style="asideStyle1">
+      <div style="position: absolute; right: -20px; width: 25px; height: 25px; background-color: blue">tttt</div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useDraggable } from '@vueuse/core';
+import { isString, useDraggable } from '@vueuse/core';
 import type { Position } from '@vueuse/core';
 
 interface asideProps {
@@ -100,6 +108,16 @@ const asideStyle = computed(() => {
 		margin-left: ${marginL}px;
 `;
 });
+
+const asideStyle1 = computed(() => {
+  const { asideTop } = props;
+  const top = isString(asideTop) ? 0 : asideTop;
+  return `
+		position: fixed;
+		top: 300px;
+	`;
+});
+
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++ end
 </script>
 <style scoped>

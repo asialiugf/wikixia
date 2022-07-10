@@ -127,7 +127,7 @@ export const item0: asideItem = {
   left: 'auto',
   right: 'auto',
   bottom: 'auto',
-  zIndex: 9000,
+  zIndex: 1500,
   draggbale: true,
   slotPosition: 'absolute',
   slotTop: 0,
@@ -340,32 +340,32 @@ export function useAsideList(asideArray: asideItem[]) {
   // 2. asideMap 的值, 如果同类型有一项为false，则同类型所有均需设置为 false
   let flagx = true;
   for (let i = 0; i < asideList.value.length; i += 1) {
-    switch (asideList.value[i].header) {
-      case 'cover': {
-        asideList.value[i].zIndex = 8500;
-        break;
-      }
-      case 'hidden': {
-        asideList.value[i].zIndex = 7500;
-        break;
-      }
-      case 'header': {
-        asideList.value[i].zIndex = 6500;
-        break;
-      }
-      case 'tab': {
-        asideList.value[i].zIndex = 5500;
-        break;
-      }
-      case 'none': {
-        asideList.value[i].zIndex = 4500;
-        break;
-      }
-      default: {
-        asideList.value[i].zIndex = 4500;
-        break;
-      }
-    }
+    // switch (asideList.value[i].header) {
+    //   case 'cover': {
+    //     asideList.value[i].zIndex = 1500;
+    //     break;
+    //   }
+    //   case 'hidden': {
+    //     asideList.value[i].zIndex = 1500;
+    //     break;
+    //   }
+    //   case 'header': {
+    //     asideList.value[i].zIndex = 1500;
+    //     break;
+    //   }
+    //   case 'tab': {
+    //     asideList.value[i].zIndex = 1500;
+    //     break;
+    //   }
+    //   case 'none': {
+    //     asideList.value[i].zIndex = 1500;
+    //     break;
+    //   }
+    //   default: {
+    //     asideList.value[i].zIndex = 1500;
+    //     break;
+    //   }
+    // }
 
     const xz = asideMap.get(asideList.value[i].header)!; // 取出 asideMap的值
     if (!flagx) {

@@ -1,7 +1,7 @@
 <template>
   <admin-layout
-    :has-cover="false"
-    :has-hidden="false"
+    :has-cover="true"
+    :has-hidden="true"
     :has-header="true"
     :has-tab="true"
     :has-footer="true"
@@ -12,6 +12,24 @@
     :fPosition="'relative'"
     :aside-array="asideArray"
   >
+    <template #cover>
+      <nav class="ttt">
+        <div>LOGO</div>
+        <RouterLink
+          to="/"
+          class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-blue-500 hover:bg-blue-700 border-none cursor-pointer"
+          >Home</RouterLink
+        >
+        <RouterLink to="/about">About</RouterLink>
+        <div>我的天</div>
+        <button
+          class="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-green-500 hover:bg-green-700 border-none cursor-pointer"
+        >
+          Click me
+        </button>
+      </nav>
+    </template>
+
     <template #header>
       <main-header></main-header>
     </template>
@@ -111,7 +129,7 @@
     </template>
 
     <template #footer-ad>
-      <div v-if="!tabTimeOut" class="zxx-scroll">
+      <div v-if="!footerADout" class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -167,11 +185,12 @@ const headerTimeOut = useTimeout(6000); // 设置一个定时器
 const tabTimeOut = useTimeout(3000); // 设置一个定时器
 // const hashiddenn = useTimeout(9000); // 设置一个定时器
 const footerTimeOut = useTimeout(11113000); // 设置一个定时器
+const footerADout = useTimeout(11115000);
 const asideArray = ref<asideItem[]>([
   {
     key: 'asidea',
     side: 'left',
-    header: 'none',
+    header: 'cover',
     footer: false,
     slotPosition: 'absolute',
     width: 260,
@@ -192,7 +211,7 @@ const asideArray = ref<asideItem[]>([
     slotPosition: 'sticky',
     header: 'tab',
     footer: false,
-    key: 'asideb',
+    key: 'asidec',
     side: 'right',
     width: 200,
     display: 2,
