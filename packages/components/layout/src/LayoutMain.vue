@@ -53,6 +53,9 @@
         :aside-width="item.width"
         :is-left="item.side === 'left'"
         :is-right="item.side === 'right'"
+        :is-toggle="item.toggle"
+        :is-draggbale="item.draggbale"
+        :toggle-postion="ddd"
         @update:width-l="setWidthL"
         @update:width-r="setWidthR"
       >
@@ -164,7 +167,7 @@ const mainHH = ref(0);
 const footerHH = ref(0);
 const footerAdHH = ref(0);
 
-/**  appWidth  整个应用的宽度 */
+/**  appWidth  整个应用的宽度  charmi 滚动条宽度需要计算出来 */
 const appWidth = computed(() => {
   return props.pageScroll ? winSize.width.value - 17 : winSize.width.value - 1;
 });
@@ -252,6 +255,10 @@ const noneTop = computed(() => {
     return coverHH.value > t ? coverHH.value : t;
   }
   return t;
+});
+
+const ddd = computed(() => {
+  return winSize.height.value / 2;
 });
 // *************************************************************************
 

@@ -201,7 +201,8 @@ const asideArray = ref<asideItem[]>([
     side: 'left',
     width: 50,
     display: 2,
-    draggbale: true
+    draggbale: true,
+    toggle: true
   },
   {
     slotPosition: 'sticky',
@@ -211,7 +212,8 @@ const asideArray = ref<asideItem[]>([
     side: 'left',
     width: 50,
     display: 2,
-    draggbale: true
+    draggbale: true,
+    toggle: true
   },
   {
     slotPosition: 'sticky',
@@ -219,9 +221,10 @@ const asideArray = ref<asideItem[]>([
     footer: false,
     key: 'asidee',
     side: 'left',
-    width: 50,
+    width: 150,
     display: 2,
-    draggbale: true
+    draggbale: false,
+    toggle: true
   },
   {
     slotPosition: 'sticky',
@@ -281,7 +284,8 @@ const asideArray = ref<asideItem[]>([
     side: 'right',
     width: 50,
     display: 2,
-    draggbale: true
+    draggbale: true,
+    toggle: true
   },
   {
     slotPosition: 'sticky',
@@ -291,7 +295,8 @@ const asideArray = ref<asideItem[]>([
     side: 'right',
     width: 50,
     display: 2,
-    draggbale: true
+    draggbale: true,
+    toggle: true
   }
 ]);
 

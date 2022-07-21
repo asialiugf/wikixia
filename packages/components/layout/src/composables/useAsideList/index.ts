@@ -13,6 +13,8 @@ export interface asideItem {
   side: 'left' | 'right'; // 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
   display?: number; // 2:显示， 1：不显示：屏幕宽度变窄，0：不显示：人为设定不显示。默认为2。
   draggbale?: boolean; // 是否可以移动
+  /** 显示开关 */
+  toggle?: boolean;
   width: number;
   height?: number;
   start?: number;
@@ -20,6 +22,7 @@ export interface asideItem {
   top?: number | 'auto';
   left?: number | 'auto';
   right?: number | 'auto';
+
   bottom?: number | 'auto';
   zIndex?: number;
   coverType?: number; // 覆盖类型，0:-cover，1:-hidden，2:-header，3:-tab，4:-none 用于排序
@@ -123,12 +126,13 @@ export const item0: asideItem = {
   start: 0,
   end: 0,
   display: 2,
+  draggbale: true,
+  toggle: true,
   top: 0,
   left: 'auto',
   right: 'auto',
   bottom: 'auto',
   zIndex: 1500,
-  draggbale: true,
   slotPosition: 'absolute',
   slotTop: 0,
   slotHeight: 0
@@ -323,6 +327,8 @@ export function useAsideList(asideArray: asideItem[]) {
     asideList.value[i].footer = asideArray[i].footer;
     asideList.value[i].width = asideArray[i].width;
     asideList.value[i].display = asideArray[i].display;
+    asideList.value[i].toggle = asideArray[i].toggle;
+    asideList.value[i].draggbale = asideArray[i].draggbale;
     asideList.value[i].slotPosition = asideArray[i].slotPosition;
 
     const xz = asideMap.get(asideArray[i].header)!;
@@ -340,6 +346,7 @@ export function useAsideList(asideArray: asideItem[]) {
   // 2. asideMap 的值, 如果同类型有一项为false，则同类型所有均需设置为 false
   let flagx = true;
   for (let i = 0; i < asideList.value.length; i += 1) {
+    asideList.value[i].zIndex = 2500 - i;
     // switch (asideList.value[i].header) {
     //   case 'cover': {
     //     asideList.value[i].zIndex = 1500;
@@ -396,32 +403,6 @@ export function useAsideList(asideArray: asideItem[]) {
           break;
         }
       }
-      // switch (asideList.value[i - 1].header) {
-      //   case 'cover': {
-      //     footerZIndex.value = 8600;
-      //     break;
-      //   }
-      //   case 'hidden': {
-      //     footerZIndex.value = 7600;
-      //     break;
-      //   }
-      //   case 'header': {
-      //     footerZIndex.value = 6600;
-      //     break;
-      //   }
-      //   case 'tab': {
-      //     footerZIndex.value = 5600;
-      //     break;
-      //   }
-      //   case 'none': {
-      //     footerZIndex.value = 4600;
-      //     break;
-      //   }
-      //   default: {
-      //     footerZIndex.value = 4600;
-      //     break;
-      //   }
-      // }
       break;
     }
   }
