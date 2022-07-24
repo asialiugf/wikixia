@@ -66,7 +66,7 @@
     </template>
 
     <template #asidee>
-      rrrrr跟绝大多数的小说不同，在这部小说里面，
+      asidee:rrrrr跟绝大多数的小说不同，在这部小说里面，
       直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
@@ -77,9 +77,12 @@
       <div>p jfd 为什么不地 不好{{}}</div>
     </template>
     <template #asideg>
-      rrrrr跟绝大多数的小说不同，在这部小说里面，
+      asideg:rrrrr跟绝大多数的小说不同，在这部小说里面，
       直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
-      <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
+      <div style="width: 140px">
+        RRRRRRRRRRRRRRRRR称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
+        %%%%%%%%%%%
+      </div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
       <div>称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更</div>
@@ -194,7 +197,7 @@ const hashiddenn = useTimeout(9000); // 设置一个定时器
 const hasfooterad = useTimeout(1115000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'cover',
     footer: false,
     key: 'asidec',
@@ -204,7 +207,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'hidden',
     footer: true,
     key: 'asided',
@@ -214,7 +217,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'tab',
     footer: false,
     key: 'asidee',
@@ -224,7 +227,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'none',
     footer: true,
     key: 'asidef',
@@ -234,7 +237,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'header',
     footer: true,
     key: 'asideg',
@@ -244,7 +247,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'sticky',
+    slotPosition: 'absolute',
     header: 'header',
     footer: true,
     key: 'asideg',

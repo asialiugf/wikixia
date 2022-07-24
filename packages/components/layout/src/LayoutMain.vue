@@ -42,9 +42,6 @@
       :style="asideStyle(item)"
       :class="item.key"
     >
-      <!-- <div v-if="item.side === 'left'" :style="asideStyle1(item)">
-        <div style="position: absolute; left: -10px; width: 25px; height: 25px; background-color: blue">tttt</div>
-      </div> -->
       <layout-aside
         :id="index"
         :aside-position="item.slotPosition"
@@ -58,10 +55,10 @@
         :toggle-postion="ddd"
         @update:width-l="setWidthL"
         @update:width-r="setWidthR"
+        @update:toggle="setToggle"
       >
         <template #aside>
           <slot :name="`${item.key}`"> slot-name: {{ item.key }}无天 </slot>
-          <div>###################################</div>
         </template>
       </layout-aside>
     </component>
@@ -77,6 +74,49 @@
         <slot name="footer-ad"></slot>
       </div>
     </Transition>
+
+    <div
+      v-for="(item, index) of asideList"
+      v-show="item.display === 0"
+      :key="index"
+      :style="toggleStyle1(item)"
+      style="z-index: 9999"
+      @click="toggleAside(index)"
+    >
+      <div v-if="item.side === 'left'" :style="toggleStyle" class="ll1"></div>
+      <div v-if="item.side === 'left'" :style="toggleStyle">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          width="1em"
+          height="1em"
+          viewBox="0 0 1024 1024"
+          class="svgg"
+        >
+          <path
+            fill="#cb1010"
+            d="M338.752 104.704a64 64 0 0 0 0 90.496l316.8 316.8l-316.8 316.8a64 64 0 0 0 90.496 90.496l362.048-362.048a64 64 0 0 0 0-90.496L429.248 104.704a64 64 0 0 0-90.496 0z"
+          ></path>
+        </svg>
+      </div>
+
+      <div v-if="item.side === 'right'" :style="toggleStyle" class="rr1"></div>
+      <div v-if="item.side === 'right'" :style="toggleStyle">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          width="1em"
+          height="1em"
+          viewBox="0 0 1024 1024"
+          class="svgg"
+        >
+          <path
+            fill="#cb1010"
+            d="M685.248 104.704a64 64 0 0 1 0 90.496L368.448 512l316.8 316.8a64 64 0 0 1-90.496 90.496L232.704 557.248a64 64 0 0 1 0-90.496l362.048-362.048a64 64 0 0 1 90.496 0z"
+          ></path>
+        </svg>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -96,7 +136,7 @@ interface rtnType {
   pageX: number;
 }
 
-// 侧边栏数组：用于主程序在调用这个组件时，传入侧边栏数组，以及其他的参数=====================
+// 侧边栏数组：用于主程序在调用这个组件时，传入侧边栏数组，以及其他的参数======================
 
 //  +-----------------------------------------------------------------------------------+
 //  |                                 hidden  广告区 可隐藏                              |
@@ -202,7 +242,7 @@ const coverOut = computed(() => {
 
 // ------------------------------------------------- aside group 初始化 计算-----------------------------------
 
-const { asideList } = useAsideList(props.asideArray);
+const { asideList } = useAsideList(props.asideArray, props.pageScroll);
 /**  bars 用于记录 cover,hidden,header,tab,main,footer 的宽度及起点 */
 const bars = ref<barsType>({
   cover: { left: 0, width: 0 },
@@ -315,7 +355,6 @@ const asideHeighCalc = () => {
           asideList.value[i].slotHeight = asideList.value[i].footer ? hr : hrr;
         }
 
-        // console.log('--5555555555555ssssssssssssssssssssssssssssss');
         break;
       }
       case 'tab': {
@@ -422,8 +461,16 @@ function setWidthR(rtn: rtnType): void {
   }
 }
 
-// -------------------------------- resize处理 -------------------------------------------
+function setToggle(id: number): void {
+  asideList.value[id].display = 0;
+  // alert(id);
+}
 
+function toggleAside(id: number): void {
+  asideList.value[id].display = 2;
+}
+
+// -------------------------------- resize处理 -------------------------------------------
 // type Auto = number | 'auto';
 // const headerHeight = ref<Auto>(0);
 
@@ -444,7 +491,7 @@ function setWidthR(rtn: rtnType): void {
 // 第二级，如果 slotPosition 如果是absolute，那么仅为一个slot。见LayoutAside.vue
 // 下面的asideList.value[i].height，是指侧边栏上级的高度。供 【:style="asideStyle(item)"】使用
 // 下面的asideList.value[i].slotHeight，是指侧边栏第二级的高度。供LayoutAside.vue用
-//
+
 //  侧边栏的两级div配置：
 //  +-----------------+ <= asideList.value[i].height     position: absolute;
 //  |+---------------+| <= asideList.value[i].slotHeight position: sticky ;
@@ -584,7 +631,7 @@ onMounted(() => {
 watch(
   () => [asideList, appWidth],
   () => {
-    asideWidth(asideList, appWidth, bars); // charmi  sx要处理
+    asideWidth(asideList, appWidth, bars);
   },
   { immediate: true, deep: true }
 );
@@ -738,6 +785,33 @@ const asideStyle = computed(() => (it: asideItem) => {
 	`;
 });
 
+const toggleStyle = computed(() => {
+  // const { isRight, isLeft, togglePostion } = props;
+  // const ll = isLeft ? 'auto' : `${-6}px`;
+  // const rr = isRight ? 'auto' : `${-6 - ww}px`;
+  // const radiusL = isLeft ? '0px' : '15px';
+  // const radiusR = isRight ? '0px' : '15px';
+  return `
+		position: fixed;
+		top: ${ddd.value}px;
+		width: 12px;
+		height: 40px;
+	`;
+});
+
+const toggleStyle1 = computed(() => (it: asideItem) => {
+  const asideL = it.side === 'left' ? `0px` : 'auto';
+  const asideR = it.side === 'right' ? `0px` : 'auto';
+  return `
+		position: fixed;
+		top: ${ddd.value}px;
+		left: ${asideL};
+		right: ${asideR};
+		width: 12px;
+		height: 40px;
+	`;
+});
+
 // const asideStyle1 = computed(() => (it: asideItem) => {
 //   const top = isString(it.slotTop) ? 0 : it.slotTop;
 //   return `
@@ -786,7 +860,25 @@ const footerAdStyle = computed(() => {
 // ------------------------------------------ 页面样式 ------------------------------------------------
 </script>
 
-<style>
+<style scoped>
+.ll1 {
+  background-color: rgb(0, 88, 0);
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  transform: perspective(6px) rotateX(0deg) rotateY(8deg) translateZ(0);
+}
+.rr1 {
+  background-color: rgb(0, 88, 0);
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  transform: perspective(6px) rotateX(0deg) rotateY(-8deg) translateZ(0);
+}
+.svgg {
+  display: block;
+  /* margin: auto; */
+  height: 100%;
+  width: 100%;
+}
 /* ---------------------相邻选择器 实现 hover 控制 子DIV 显示隐藏 --------------  */
 .asideL:hover .hello {
   display: block;

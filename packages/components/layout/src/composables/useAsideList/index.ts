@@ -304,7 +304,7 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
   // bars.value.main.left = 100;
 }
 
-export function useAsideList(asideArray: asideItem[]) {
+export function useAsideList(asideArray: asideItem[], pageScroll: boolean) {
   // asideArray 需要在这个函数里面设置，因为在这个函数外部，设置 asideArray, 会造成 不同页面切换, asideArray
   // 会使用前一个页面的值，而不是最新的值.
   asideMap.set('cover', { a: 0, b: true });
@@ -330,6 +330,9 @@ export function useAsideList(asideArray: asideItem[]) {
     asideList.value[i].toggle = asideArray[i].toggle;
     asideList.value[i].draggbale = asideArray[i].draggbale;
     asideList.value[i].slotPosition = asideArray[i].slotPosition;
+    if (!pageScroll) {
+      asideList.value[i].slotPosition = 'sticky';
+    }
 
     const xz = asideMap.get(asideArray[i].header)!;
     asideList.value[i].coverType = xz.a;
