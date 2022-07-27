@@ -76,6 +76,7 @@ interface asideProps {
   isToggle?: boolean;
   isDraggbale?: boolean;
   togglePostion?: number;
+  onToggle?: boolean;
 }
 
 const props = withDefaults(defineProps<asideProps>(), {
@@ -88,7 +89,8 @@ const props = withDefaults(defineProps<asideProps>(), {
   isRight: false,
   isToggle: true,
   isDraggbale: true,
-  togglePostion: 300
+  togglePostion: 300,
+  onToggle: true
 });
 
 // ---------------------------------拖动改变宽度-----------------------------------------
@@ -152,10 +154,14 @@ function toggleC() {
 const ww = 4;
 const ww1 = `${ww}px`;
 
-/** toggle的宽度 */
+/** toggle按钮的宽度 */
 const tw = 12;
 const toggleW = `${tw}px`;
 const toggleW1 = `-${tw}px`;
+
+const onToggl = computed(() => {
+  return props.onToggle ? '1' : '0';
+});
 
 // layout页面的样式
 // 这个样式，只给sticky使用， 属于子DIV样式
@@ -186,7 +192,7 @@ const asideStyle = computed(() => {
 // });
 
 const toggleStyle = computed(() => {
-  const { isRight, isLeft, togglePostion } = props;
+  const { togglePostion } = props;
   // const ll = isLeft ? 'auto' : `${-6}px`;
   // const rr = isRight ? 'auto' : `${-6 - ww}px`;
   // const radiusL = isLeft ? '0px' : '15px';
@@ -232,11 +238,6 @@ const toggleStyle = computed(() => {
   border-bottom-right-radius: 5px;
   transform: perspective(6px) rotateX(0deg) rotateY(8deg) translateZ(0);
 }
-
-.rr1:hover {
-  background-color: #0b9f49;
-}
-
 .svgg {
   display: block;
   /* margin: auto; */
@@ -267,25 +268,18 @@ const toggleStyle = computed(() => {
 } */
 /**  ---- toggle显示 ------------------------------------ */
 .asideslot:hover + .toggle {
-  display: block;
-  opacity: 1;
-  /* background-color: #ff0505; */
+  opacity: v-bind('onToggl');
 }
 
 .asideslot:hover {
-  display: block;
-  background-color: #fb22ff;
+  background-color: #989598;
 }
 
 .toggle {
-  background-color: #0b9f49;
-  /* transition: all 0.5s; */
   opacity: 0;
 }
 
 .toggle:hover {
-  background-color: #0054c9;
-  /* transition: all 0.5s; */
   opacity: 1;
 }
 

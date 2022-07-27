@@ -51,6 +51,7 @@
         :is-right="item.side === 'right'"
         :is-toggle="item.toggle"
         :is-draggbale="item.draggbale"
+        :on-toggle="onToggle"
         :toggle-postion="togglePos"
         @update:width-l="setWidthL"
         @update:width-r="setWidthR"
@@ -206,6 +207,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 // ------------------------------ 变量定义 -----------------------------------------------------
 const isTransition = ref(false);
+
+/** Toggle 侧边栏显隐按钮被点击时，侧边栏会有一个动画过渡，过渡时，不显示这个按钮  */
+const onToggle = ref(true);
+/** 过渡动画时长（秒） */
+const onToggleTime = 1;
 
 const winSize = useWindowSize();
 
@@ -488,6 +494,7 @@ function setWidthR(rtn: rtnType): void {
 }
 
 function setToggle(id: number, side: string): void {
+  onToggle.value = false;
   isTransition.value = true;
   asideList.value[id].display = 0;
   if (side === 'left') {
@@ -495,25 +502,30 @@ function setToggle(id: number, side: string): void {
   } else {
     dispRight.value.push(id);
   }
-  // setTimeout(() => {
-  //   isTransition.value = false;
-  // }, 1000);
+  setTimeout(() => {
+    onToggle.value = true;
+    // isTransition.value = false;
+  }, onToggleTime * 1000);
 }
 function toggleAsideL(id: number): void {
+  onToggle.value = false;
   isTransition.value = true;
   asideList.value[id].display = 2;
   dispLeft.value.pop();
-  // setTimeout(() => {
-  //   isTransition.value = false;
-  // }, 1000);
+  setTimeout(() => {
+    onToggle.value = true;
+    // isTransition.value = false;
+  }, onToggleTime * 1000);
 }
 function toggleAsideR(id: number): void {
+  onToggle.value = false;
   isTransition.value = true;
   asideList.value[id].display = 2;
   dispRight.value.pop();
-  // setTimeout(() => {
-  //   isTransition.value = false;
-  // }, 1000);
+  setTimeout(() => {
+    onToggle.value = true;
+    // isTransition.value = false;
+  }, onToggleTime * 1000);
 }
 
 // function toggleAside(id: number): void {
@@ -936,7 +948,7 @@ const footerAdStyle = computed(() => {
 });
 
 const transitionV = computed(() => {
-  return isTransition.value ? 'all 0.5s ease-in-out' : 'none';
+  return isTransition.value ? `all ${onToggleTime}s ease-in-out` : 'none';
 });
 
 // ------------------------------------------ 页面样式 ------------------------------------------------
