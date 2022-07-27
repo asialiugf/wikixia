@@ -103,7 +103,7 @@ interface rtnType {
 interface Emits {
   (e: 'update:widthL', L: rtnType): void;
   (e: 'update:widthR', R: rtnType): void;
-  (e: 'update:toggle', id: number): void;
+  (e: 'update:toggle', id: number, side: string): void;
 }
 const emit = defineEmits<Emits>();
 
@@ -145,7 +145,7 @@ useDraggable(resizeLL, {
 });
 
 function toggleC() {
-  emit('update:toggle', props.id);
+  emit('update:toggle', props.id, props.isLeft ? 'left' : 'right');
 }
 
 /** aside的可拖拉线的宽度 */

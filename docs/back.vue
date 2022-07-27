@@ -5,6 +5,7 @@
         <slot name="cover"></slot>
       </div>
     </Transition>
+
     <Transition name="xia-layout-hidden">
       <div
         v-show="props.hasHidden"
@@ -15,6 +16,7 @@
         <slot name="hidden">这里是广告区</slot>
       </div>
     </Transition>
+
     <header
       v-show="props.hasHeader"
       id="xia-layout-header"
@@ -23,6 +25,7 @@
     >
       <slot name="header"></slot>
     </header>
+
     <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab xia-layout-info" :style="tabStyle">
       <slot name="tab"> </slot>
     </div>
@@ -204,7 +207,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 // ------------------------------ 变量定义 -----------------------------------------------------
 const isTransition = ref(true);
-
 const winSize = useWindowSize();
 
 const coverHH = ref(0);
@@ -217,12 +219,12 @@ const footerAdHH = ref(0);
 
 /**  appWidth  整个应用的宽度  charmi 滚动条宽度需要计算出来 */
 const appWidth = computed(() => {
-  return props.pageScroll ? winSize.width.value - 17 : winSize.width.value;
+  return props.pageScroll ? winSize.width.value - 17 : winSize.width.value - 1;
 });
 
 /** 整个应用程序高度(可见部分) - 底部广告区域部分  */
 const appHeight = computed(() => {
-  return winSize.height.value - footerAdHH.value;
+  return winSize.height.value - footerAdHH.value - 1;
 });
 
 /** 容器的高度 即main区域可见部分高度 */
@@ -274,7 +276,6 @@ for (let i = 0; i < asideList.value.length; i += 1) {
 }
 
 // asideWidth(asideList, winSize.width, bars);
-
 // ---【aside sticky的 top值】-------计算  通过props传给 LayoutAside.vue ------
 // *************************************************************************
 // 侧边栏aside覆盖 hidden
@@ -318,7 +319,7 @@ const noneTop = computed(() => {
 });
 
 const togglePos = computed(() => {
-  return winSize.height.value / 2 - 20;
+  return winSize.height.value / 2 - 40;
 });
 // *************************************************************************
 
@@ -485,11 +486,6 @@ function setWidthR(rtn: rtnType): void {
   }
 }
 
-// function setToggle(id: number): void {
-//   asideList.value[id].display = 0;
-//   // alert(id);
-// }
-
 function setToggle(id: number, side: string): void {
   asideList.value[id].display = 0;
   if (side === 'left') {
@@ -506,11 +502,6 @@ function toggleAsideR(id: number): void {
   asideList.value[id].display = 2;
   dispRight.value.pop();
 }
-
-// function toggleAside(id: number): void {
-//   asideList.value[id].display = 2;
-// }
-
 // -------------------------------- resize处理 -------------------------------------------
 // type Auto = number | 'auto';
 // const headerHeight = ref<Auto>(0);
@@ -687,9 +678,9 @@ const footerHeight = ref<Auto>('auto');
 const resizeF = ref<HTMLElement | null>(null);
 useDraggable(resizeF, {
   onStart: (position: Position, event: PointerEvent) => {
-    isTransition.value = false;
     startY.value = event.pageY;
     tempHeight.value = footerHH.value;
+    isTransition.value = false;
   },
   onMove: (position: Position, event: PointerEvent) => {
     footerHeight.value = tempHeight.value + startY.value - event.pageY;
@@ -721,6 +712,7 @@ const layoutStyle = computed(() => {
 		height: ${layoutHei};
     position: relative;
 		background-color: #fff;
+		overflow-x: hidden;
   `;
 });
 
@@ -832,7 +824,20 @@ const asideStyle = computed(() => (it: asideItem) => {
 		z-index:  ${it.zIndex};
 		background-color: #f1f1f1;
 		transform: translateX(${xx});
+	`;
+});
 
+const toggleStyle = computed(() => {
+  // const { isRight, isLeft, togglePostion } = props;
+  // const ll = isLeft ? 'auto' : `${-6}px`;
+  // const rr = isRight ? 'auto' : `${-6 - ww}px`;
+  // const radiusL = isLeft ? '0px' : '15px';
+  // const radiusR = isRight ? '0px' : '15px';
+  return `
+		position: fixed;
+		top: ${togglePos.value}px;
+		width: 12px;
+		height: 40px;
 	`;
 });
 
@@ -855,34 +860,6 @@ const toggleStyleL = computed(() => {
 		height: 40px;
 	`;
 });
-
-const toggleStyle = computed(() => {
-  // const { isRight, isLeft, togglePostion } = props;
-  // const ll = isLeft ? 'auto' : `${-6}px`;
-  // const rr = isRight ? 'auto' : `${-6 - ww}px`;
-  // const radiusL = isLeft ? '0px' : '15px';
-  // const radiusR = isRight ? '0px' : '15px';
-  return `
-		position: fixed;
-		top: ${togglePos.value}px;
-		width: 12px;
-		height: 40px;
-	`;
-});
-
-const toggleStyle1 = computed(() => (it: asideItem) => {
-  const asideL = it.side === 'left' ? `0px` : 'auto';
-  const asideR = it.side === 'right' ? `0px` : 'auto';
-  return `
-		position: fixed;
-		top: ${togglePos.value}px;
-		left: ${asideL};
-		right: ${asideR};
-		width: 12px;
-		height: 40px;
-	`;
-});
-
 // const asideStyle1 = computed(() => (it: asideItem) => {
 //   const top = isString(it.slotTop) ? 0 : it.slotTop;
 //   return `
@@ -933,7 +910,7 @@ const transitionV = computed(() => {
 // ------------------------------------------ 页面样式 ------------------------------------------------
 </script>
 
-<style>
+<style scoped>
 .ll1 {
   background-color: rgb(0, 88, 0);
   border-top-right-radius: 5px;
@@ -1092,9 +1069,5 @@ const transitionV = computed(() => {
 .asideClass1 {
   opacity: 0;
   transition: v-bind('transitionV');
-}
-
-body {
-  overflow-x: hidden;
 }
 </style>
