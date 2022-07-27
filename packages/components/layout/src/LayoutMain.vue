@@ -127,10 +127,12 @@
 </template>
 
 <script setup lang="ts">
+import { truncate } from 'fs';
 import { ref, computed, onMounted, watch } from 'vue';
 import { isString, useDraggable, useWindowScroll, useWindowSize } from '@vueuse/core';
 import type { asideItem, barsType } from '@asialine/xia-ui/layout';
 import type { Position } from '@vueuse/core';
+import { stubTrue } from 'lodash-es';
 import { asideWidth, useAsideList } from './composables/useAsideList';
 import LayoutAside from './LayoutAside.vue';
 
@@ -203,7 +205,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
-const isTransition = ref(true);
+const isTransition = ref(false);
 
 const winSize = useWindowSize();
 
@@ -485,26 +487,33 @@ function setWidthR(rtn: rtnType): void {
   }
 }
 
-// function setToggle(id: number): void {
-//   asideList.value[id].display = 0;
-//   // alert(id);
-// }
-
 function setToggle(id: number, side: string): void {
+  isTransition.value = true;
   asideList.value[id].display = 0;
   if (side === 'left') {
     dispLeft.value.push(id);
   } else {
     dispRight.value.push(id);
   }
+  // setTimeout(() => {
+  //   isTransition.value = false;
+  // }, 1000);
 }
 function toggleAsideL(id: number): void {
+  isTransition.value = true;
   asideList.value[id].display = 2;
   dispLeft.value.pop();
+  // setTimeout(() => {
+  //   isTransition.value = false;
+  // }, 1000);
 }
 function toggleAsideR(id: number): void {
+  isTransition.value = true;
   asideList.value[id].display = 2;
   dispRight.value.pop();
+  // setTimeout(() => {
+  //   isTransition.value = false;
+  // }, 1000);
 }
 
 // function toggleAside(id: number): void {
