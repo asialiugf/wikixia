@@ -197,7 +197,7 @@ const hashiddenn = useTimeout(9000); // 设置一个定时器
 const hasfooterad = useTimeout(1115000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
-    slotPosition: 'absolute',
+    slotPosition: 'sticky',
     header: 'cover',
     footer: false,
     key: 'asidec',
@@ -207,7 +207,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'absolute',
+    slotPosition: 'sticky',
     header: 'hidden',
     footer: true,
     key: 'asided',
@@ -217,7 +217,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'absolute',
+    slotPosition: 'sticky',
     header: 'tab',
     footer: false,
     key: 'asidee',
@@ -227,7 +227,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'absolute',
+    slotPosition: 'sticky',
     header: 'none',
     footer: true,
     key: 'asidef',
@@ -237,7 +237,7 @@ const asideArray = ref<asideItem[]>([
     draggbale: true
   },
   {
-    slotPosition: 'absolute',
+    slotPosition: 'sticky',
     header: 'header',
     footer: true,
     key: 'asideg',

@@ -40,6 +40,7 @@
     <component
       :is="'aside'"
       v-for="(item, index) of asideList"
+      v-show="item.display === 2"
       :key="index"
       :style="asideStyle(item)"
       :class="{ asideClass: item.display === 2, asideClass1: item.display != 2 }"
@@ -319,7 +320,7 @@ const noneTop = computed(() => {
 });
 
 const togglePos = computed(() => {
-  return winSize.height.value / 2 - 40;
+  return winSize.height.value / 2;
 });
 // *************************************************************************
 
@@ -712,7 +713,6 @@ const layoutStyle = computed(() => {
 		height: ${layoutHei};
     position: relative;
 		background-color: #fff;
-		overflow-x: hidden;
   `;
 });
 
@@ -1068,6 +1068,7 @@ const transitionV = computed(() => {
 }
 .asideClass1 {
   opacity: 0;
+  /* transform: translateX(150px); */
   transition: v-bind('transitionV');
 }
 </style>

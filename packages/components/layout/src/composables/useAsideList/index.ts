@@ -12,6 +12,7 @@ export interface asideItem {
   footer: boolean; // 是否覆盖 footer
   side: 'left' | 'right'; // 停靠方式： 'left' 左对齐 'right' 右对齐 'mainl' 主区 左对齐 'mainr' 主区 右对齐 'isolated' 单独定位
   display?: number; // 2:显示， 1：不显示：屏幕宽度变窄，0：不显示：人为设定不显示。默认为2。
+  togshow?: number; // 2:显示， 1：不显示：屏幕宽度变窄，0：不显示：人为设定不显示。默认为2。
   draggbale?: boolean; // 是否可以移动
   /** 显示开关 */
   toggle?: boolean;
@@ -126,6 +127,7 @@ export const item0: asideItem = {
   start: 0,
   end: 0,
   display: 2,
+  togshow: 2,
   draggbale: true,
   toggle: true,
   top: 0,
@@ -145,8 +147,10 @@ export function asideDisplay(list: Ref<asideItem[]>, i: number) {
 
   if (list.value[i].display === 2) {
     list.value[i].display = 0;
+    list.value[i].togshow = 0;
   } else {
     list.value[i].display = 2;
+    list.value[i].togshow = 2;
   }
 }
 
@@ -183,8 +187,8 @@ export function asideSwitch({ list, m, n, sy }: { list: Ref<asideItem[]>; m: num
 }
 
 export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: Ref<barsType>) {
-  console.log('enter into  asideWidth() --00--00--00--00--', list.value);
-  console.log('enter into  asideWidth() --00--00--00--00--', bars.value);
+  // console.log('enter into  asideWidth() --00--00--00--00--', list.value);
+  // console.log('enter into  asideWidth() --00--00--00--00--', bars.value);
   let sumL = 0;
   let sumR = 0;
 
@@ -215,11 +219,13 @@ export function asideWidth(list: Ref<asideItem[]>, winWidth: Ref<number>, bars: 
       for (let j = i; j < list.value.length; j += 1) {
         if (list.value[j].display === 2) {
           list.value[j].display = 1;
+          list.value[j].togshow = 1;
         }
       }
       break;
     } else if (list.value[i].display === 1) {
       list.value[i].display = 2;
+      list.value[i].togshow = 2;
     }
   }
   // --------------------------------------------------------------
@@ -327,6 +333,7 @@ export function useAsideList(asideArray: asideItem[], pageScroll: boolean) {
     asideList.value[i].footer = asideArray[i].footer;
     asideList.value[i].width = asideArray[i].width;
     asideList.value[i].display = asideArray[i].display;
+    asideList.value[i].togshow = asideArray[i].display;
     asideList.value[i].toggle = asideArray[i].toggle;
     asideList.value[i].draggbale = asideArray[i].draggbale;
     asideList.value[i].slotPosition = asideArray[i].slotPosition;

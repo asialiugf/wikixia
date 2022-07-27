@@ -30,39 +30,37 @@
       <slot name="tab"> </slot>
     </div>
 
-    <main id="xia-layout-main" class="xia-layout-info asideClass" :style="mainStyle">
+    <main id="xia-layout-main" class="xia-layout-info fadeClass" :style="mainStyle">
       <slot name="main"></slot>
       <div v-if="fPos === 'fixed' && props.pageScroll" :style="mainLastStyle">
         <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
       </div>
     </main>
 
-    <component
-      :is="'aside'"
-      v-for="(item, index) of asideList"
-      :key="index"
-      :style="asideStyle(item)"
-      :class="{ asideClass: item.display === 2, asideClass1: item.display != 2 }"
-    >
-      <layout-aside
-        :id="index"
-        :aside-position="item.slotPosition"
-        :aside-top="item.slotTop"
-        :aside-height="item.slotHeight"
-        :aside-width="item.width"
-        :is-left="item.side === 'left'"
-        :is-right="item.side === 'right'"
-        :is-toggle="item.toggle"
-        :is-draggbale="item.draggbale"
-        :toggle-postion="togglePos"
-        @update:width-l="setWidthL"
-        @update:width-r="setWidthR"
-        @update:toggle="setToggle"
-      >
-        <template #aside>
-          <slot :name="`${item.key}`"> slot-name: {{ item.key }}无天 </slot>
-        </template>
-      </layout-aside>
+    <component :is="'aside'" v-for="(item, index) of asideList" :key="index">
+      <Transition name="slide-fade">
+        <div v-show="item.display === 2" :style="asideStyle(item)">
+          <layout-aside
+            :id="index"
+            :aside-position="item.slotPosition"
+            :aside-top="item.slotTop"
+            :aside-height="item.slotHeight"
+            :aside-width="item.width"
+            :is-left="item.side === 'left'"
+            :is-right="item.side === 'right'"
+            :is-toggle="item.toggle"
+            :is-draggbale="item.draggbale"
+            :toggle-postion="togglePos"
+            @update:width-l="setWidthL"
+            @update:width-r="setWidthR"
+            @update:toggle="setToggle"
+          >
+            <template #aside>
+              <slot :name="`${item.key}`"> slot-name: {{ item.key }}无天 </slot>
+            </template>
+          </layout-aside>
+        </div>
+      </Transition>
     </component>
 
     <footer v-show="props.hasFooter" id="xia-layout-footer" class="footer xia-layout-info" :style="footerStyle">
@@ -319,7 +317,7 @@ const noneTop = computed(() => {
 });
 
 const togglePos = computed(() => {
-  return winSize.height.value / 2 - 40;
+  return winSize.height.value / 2;
 });
 // *************************************************************************
 
@@ -487,12 +485,15 @@ function setWidthR(rtn: rtnType): void {
 }
 
 function setToggle(id: number, side: string): void {
-  asideList.value[id].display = 0;
+  // asideList.value[id].display = 0;
   if (side === 'left') {
     dispLeft.value.push(id);
   } else {
     dispRight.value.push(id);
   }
+	setTimeout(function() {
+		asideList.value[id].display = 0;
+	}, 1000);
 }
 function toggleAsideL(id: number): void {
   asideList.value[id].display = 2;
@@ -712,7 +713,6 @@ const layoutStyle = computed(() => {
 		height: ${layoutHei};
     position: relative;
 		background-color: #fff;
-		overflow-x: hidden;
   `;
 });
 
@@ -807,12 +807,6 @@ const mainLastStyle = computed(() => {
 const asideStyle = computed(() => (it: asideItem) => {
   const asideL = isString(it.left) ? 'auto' : `${it.left}px`;
   const asideR = isString(it.right) ? 'auto' : `${it.right}px`;
-  let xx: string;
-  if (it.display === 2) {
-    xx = 'none';
-  } else {
-    xx = it.side === 'left' ? `-${it.width}px` : `${it.width}px`;
-  }
   return `
 		position: absolute;
 		top: ${it.top}px;
@@ -823,7 +817,6 @@ const asideStyle = computed(() => (it: asideItem) => {
     height: ${it.height}px;
 		z-index:  ${it.zIndex};
 		background-color: #f1f1f1;
-		transform: translateX(${xx});
 	`;
 });
 
@@ -1019,6 +1012,27 @@ const transitionV = computed(() => {
   opacity: 0;
 }
 
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.slide-fade-enter-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+/*
+  Enter and leave animations can use different end
+*/
+
 .xia-layout-hidden-enter-active,
 .xia-layout-hidden-leave-active {
   transition: opacity 0.8s ease;
@@ -1062,12 +1076,7 @@ const transitionV = computed(() => {
   box-sizing: border-box;
 }
 
-.asideClass {
-  opacity: 1;
-  transition: v-bind('transitionV');
-}
-.asideClass1 {
-  opacity: 0;
-  transition: v-bind('transitionV');
+.fadeClass {
+  transition: all 0.5s;
 }
 </style>
