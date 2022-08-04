@@ -1,33 +1,38 @@
 <template>
   <div class="layout" :style="layoutStyle">
-    <Transition>
-      <div v-show="coverOut" id="xia-layout-cover" class="xia-layout-cover xia-layout-info" :style="coverStyle">
-        <slot name="cover"></slot>
-      </div>
-    </Transition>
+    <div v-show="coverOut" id="xia-layout-cover" class="xia-layout-cover xiaLayoutInfo" :style="coverStyle">
+      <slot name="cover"></slot>
+    </div>
+
     <Transition name="xia-layout-hidden">
       <div
         v-show="props.hasHidden"
         id="xia-layout-hidden"
-        class="xia-layout-hidden xia-layout-info"
+        class="xia-layout-hidden xiaLayoutInfo asideClass"
         :style="hiddenStyle"
       >
         <slot name="hidden">这里是广告区</slot>
       </div>
     </Transition>
+
     <header
       v-show="props.hasHeader"
       id="xia-layout-header"
-      class="xia-layout-header xia-layout-info"
+      class="xia-layout-header xiaLayoutInfo asideClass"
       :style="headerStyle"
     >
       <slot name="header"></slot>
     </header>
-    <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab xia-layout-info" :style="tabStyle">
+    <div v-show="props.hasTab" id="xia-layout-tab" class="xia-layout-tab xiaLayoutInfo asideClass" :style="tabStyle">
       <slot name="tab"> </slot>
     </div>
 
-    <main id="xia-layout-main" class="xia-layout-info asideClass" :style="mainStyle">
+    <main
+      id="xia-layout-main"
+      class="xiaLayoutInfo asideClass"
+      :style="mainStyle"
+      :class="{ footeradClass1: !props.hasFooterAd }"
+    >
       <slot name="main"></slot>
       <div v-if="fPos === 'fixed' && props.pageScroll" :style="mainLastStyle">
         <slot name="mainlast"> 还好吗,这里是主显示区的底部区域,感谢使用 {{}} -- {{ appWidth }} -- {{}}</slot>
@@ -63,25 +68,28 @@
       </layout-aside>
     </component>
 
-    <footer v-show="props.hasFooter" id="xia-layout-footer" class="footer xia-layout-info" :style="footerStyle">
+    <footer
+      v-show="props.hasFooter"
+      id="xia-layout-footer"
+      ref="footerRef"
+      class="footer xiaLayoutInfo"
+      :class="{ footeradClass1: !props.hasFooterAd }"
+      :style="footerStyle"
+    >
       <div v-show="fPos === 'fixed'" ref="resizeF" class="f-resize"></div>
       <slot name="footer"></slot>
       <div>$$$$$$$$$$: {{ appWidth }} {{ appHeight }} ==== {{ winSize.width }}</div>
     </footer>
 
-    <Transition name="xia-layout-hidden">
-      <div v-show="props.hasFooterAd" id="xia-layout-footer-ad" class="xia-layout-info" :style="footerAdStyle">
-        <slot name="footer-ad"></slot>
-      </div>
-    </Transition>
-
     <div
-      v-for="(item, index) of dispLeft"
-      :key="index"
-      :style="toggleStyleL"
-      style="z-index: 9999"
-      @click="toggleAsideL(item)"
+      id="xia-layout-footer-ad"
+      :class="{ footeradClass: !props.hasFooterAd, xiaLayoutInfo: true }"
+      :style="footerAdStyle"
     >
+      <slot name="footer-ad"></slot>
+    </div>
+
+    <div v-for="(item, index) of dispLeft" :key="index" :style="toggleStyleL" @click="toggleAsideL(item)">
       <div :style="toggleStyle" class="ll1"></div>
       <div :style="toggleStyle">
         <svg
@@ -100,13 +108,7 @@
       </div>
     </div>
 
-    <div
-      v-for="(item, index) of dispRight"
-      :key="index"
-      :style="toggleStyleR"
-      style="z-index: 9999"
-      @click="toggleAsideR(item)"
-    >
+    <div v-for="(item, index) of dispRight" :key="index" :style="toggleStyleR" @click="toggleAsideR(item)">
       <div :style="toggleStyle" class="rr1"></div>
       <div :style="toggleStyle">
         <svg
@@ -206,12 +208,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // ------------------------------ 变量定义 -----------------------------------------------------
+/** isTransition 侧边栏过渡动画，初始值是关闭的 */
 const isTransition = ref(false);
 
 /** Toggle 侧边栏显隐按钮被点击时，侧边栏会有一个动画过渡，过渡时，不显示这个按钮  */
 const onToggle = ref(true);
+
 /** 过渡动画时长（秒） */
-const onToggleTime = 1;
+const onToggleTime = 20;
 
 const winSize = useWindowSize();
 
@@ -221,7 +225,31 @@ const headerHH = ref(0);
 const tabHH = ref(0);
 const mainHH = ref(0);
 const footerHH = ref(0);
-const footerAdHH = ref(0);
+// const footerAdHH = ref(0);
+const footerAdHH0 = ref(0);
+const footerAdHH1 = ref(200);
+
+const footerAdHH = computed(() => {
+  return props.hasFooterAd ? footerAdHH0.value : 0;
+});
+
+watch(
+  () => [footerAdHH0],
+  () => {
+    footerAdHH1.value = footerAdHH0.value;
+  },
+  { immediate: true, deep: true }
+);
+
+watch(
+  () => [props.hasFooterAd],
+  () => {
+    setTimeout(() => {
+      footerAdHH1.value = footerAdHH.value;
+    }, onToggleTime * 1000);
+  },
+  { deep: true }
+);
 
 /**  appWidth  整个应用的宽度  charmi 滚动条宽度需要计算出来 */
 const appWidth = computed(() => {
@@ -483,17 +511,20 @@ function setWidthR(rtn: rtnType): void {
     const tt = tempWidth.value + bbb;
     asideList.value[rtn.id].width = tt < 50 ? 50 : tt;
   } else if (rtn.state === 'start') {
+    /** isTransition 侧边栏拖动之前，将侧边栏过渡动画关闭 */
     isTransition.value = false;
     startX.value = rtn.pageX;
     tempWidth.value = asideList.value[rtn.id].width;
     tempMain.value = bars.value.main.width;
   } else if (rtn.state === 'end') {
+    /** isTransition 侧边栏拖动之后，将侧边栏过渡动画打开 */
     isTransition.value = true;
     // need to save
   }
 }
 
 function setToggle(id: number, side: string): void {
+  /** onToggle 点击侧边栏显隐图标后，先让侧边栏显隐图标不显示 */
   onToggle.value = false;
   isTransition.value = true;
   asideList.value[id].display = 0;
@@ -503,8 +534,9 @@ function setToggle(id: number, side: string): void {
     dispRight.value.push(id);
   }
   setTimeout(() => {
+    /** onToggle 等待onToggleTime（秒）后，让侧边栏显隐图标显示出来 */
     onToggle.value = true;
-    // isTransition.value = false;
+    isTransition.value = false;
   }, onToggleTime * 1000);
 }
 function toggleAsideL(id: number): void {
@@ -514,7 +546,7 @@ function toggleAsideL(id: number): void {
   dispLeft.value.pop();
   setTimeout(() => {
     onToggle.value = true;
-    // isTransition.value = false;
+    isTransition.value = false;
   }, onToggleTime * 1000);
 }
 function toggleAsideR(id: number): void {
@@ -524,7 +556,7 @@ function toggleAsideR(id: number): void {
   dispRight.value.pop();
   setTimeout(() => {
     onToggle.value = true;
-    // isTransition.value = false;
+    isTransition.value = false;
   }, onToggleTime * 1000);
 }
 
@@ -537,7 +569,7 @@ function toggleAsideR(id: number): void {
 // const headerHeight = ref<Auto>(0);
 
 // ResizeObserver 可以监听元素的变化，比如元素的高度变化，宽度变化，位置变化等等。
-// ResizeObserver 监听所有 class 含有 .xia-layout-info的元素变化，并且记录其高度
+// ResizeObserver 监听所有 class 含有 .xiaLayoutInfo的元素变化，并且记录其高度
 // 包含：cover, hidden, header, tab, footer
 // 下面的case里的 cover，表示 侧栏会覆盖 cover
 // 下面的case里的 hidden，表示 侧栏会覆盖 hidden
@@ -584,7 +616,7 @@ onMounted(() => {
       } else if (entry.target.id === 'xia-layout-footer') {
         footerHH.value = entry.contentRect.height;
       } else if (entry.target.id === 'xia-layout-footer-ad') {
-        footerAdHH.value = entry.contentRect.height;
+        footerAdHH0.value = entry.contentRect.height;
       }
 
       // 计算 aside的高度 【在absolute的情况下的高度，属于外层高度】
@@ -657,11 +689,23 @@ onMounted(() => {
       }
     });
   });
-  const boxes = document.querySelectorAll('.xia-layout-info') as NodeListOf<Element>;
+  const boxes = document.querySelectorAll('.xiaLayoutInfo') as NodeListOf<Element>;
   boxes.forEach(box => {
     resizeObserver.observe(box);
   });
 });
+
+// watch(
+//   () => [props.hasFooterAd, footerAdHH1],
+//   () => {
+//     footerAdHH.value = props.hasFooterAd ? footerAdHH1.value : 0;
+//   },
+//   {
+//     immediate: true
+//     // deep: true
+//     // debounce: 300
+//   }
+// );
 
 // 测试代码 --------------------------------------------------------------------------
 // setTimeout(() => {
@@ -708,6 +752,7 @@ const footerHeight = ref<Auto>('auto');
 const resizeF = ref<HTMLElement | null>(null);
 useDraggable(resizeF, {
   onStart: (position: Position, event: PointerEvent) => {
+    /** isTransition 侧边栏拖动之前，将侧边栏过渡动画关闭 */
     isTransition.value = false;
     startY.value = event.pageY;
     tempHeight.value = footerHH.value;
@@ -717,6 +762,7 @@ useDraggable(resizeF, {
     footerHeight.value = footerHeight.value > containerHH.value ? containerHH.value : footerHeight.value;
   },
   onEnd: (position: Position, event: PointerEvent) => {
+    /** isTransition 侧边栏拖动完成后，将侧边栏过渡动画打开 */
     isTransition.value = true;
     // state: 'start', id: props.id, side: 'right', pos: position.x, pageX: event.pageX
     // mainHeight.value = 'auto'; // charmi 还可以修改成不跳动
@@ -753,7 +799,7 @@ const coverStyle = computed(() => {
 		left: ${bars.value.cover.left}px;
 		width: ${bars.value.cover.width}px;
 		z-index: 8000;
-    background-color: rgb(40, 181, 187);
+    background-color: rgb(190, 181, 187);
 	`;
 });
 
@@ -853,7 +899,6 @@ const asideStyle = computed(() => (it: asideItem) => {
 		z-index:  ${it.zIndex};
 		background-color: #f1f1f1;
 		transform: translateX(${xx});
-
 	`;
 });
 
@@ -864,6 +909,7 @@ const toggleStyleR = computed(() => {
 		right: 0px;
 		width: 12px;
 		height: 40px;
+		z-index: 9999;
 	`;
 });
 
@@ -874,6 +920,7 @@ const toggleStyleL = computed(() => {
 		left: 0px;
 		width: 12px;
 		height: 40px;
+		z-index: 9999;
 	`;
 });
 
@@ -886,19 +933,6 @@ const toggleStyle = computed(() => {
   return `
 		position: fixed;
 		top: ${togglePos.value}px;
-		width: 12px;
-		height: 40px;
-	`;
-});
-
-const toggleStyle1 = computed(() => (it: asideItem) => {
-  const asideL = it.side === 'left' ? `0px` : 'auto';
-  const asideR = it.side === 'right' ? `0px` : 'auto';
-  return `
-		position: fixed;
-		top: ${togglePos.value}px;
-		left: ${asideL};
-		right: ${asideR};
 		width: 12px;
 		height: 40px;
 	`;
@@ -926,7 +960,7 @@ const footerStyle = computed(() => {
 		left: ${bars.value.footer.left}px;
 		width: ${bars.value.footer.width}px;
 		right: 0px;
-		bottom: ${footerAdHH.value}px;
+		bottom: ${footerAdHH1.value}px;
 		z-index: 9000;
 		background-color: #ae4423;
 		height: ${footerHe};
@@ -937,10 +971,12 @@ const footerStyle = computed(() => {
 
 // width: ${appWidth.value}px;
 const footerAdStyle = computed(() => {
+  const FH = props.hasFooterAd ? 'auto' : `${footerAdHH1.value}px`;
   return `
 		position: fixed;
 		bottom: 0px;
 		width: 100%;
+		height: ${FH};
 		z-index: 9999;
 		background-color: #ae55ee;
 		overflow: hidden;
@@ -951,9 +987,30 @@ const transitionV = computed(() => {
   return isTransition.value ? `all ${onToggleTime}s ease-in-out` : 'none';
 });
 
+const coverTrans = computed(() => {
+  return `translateY(-${coverHH.value}px)`;
+});
+const footeradTrans = computed(() => {
+  return `translateY(${footerAdHH1.value}px)`;
+});
+
+const footerAdTime = computed(() => {
+  return `${onToggleTime}s`;
+});
+
+/** 变量 footerAd11 和 footerAd22，是用于footerAd消失时，与移动相关的位置 */
+const footerAd11 = computed(() => {
+  return `-${footerAdHH1.value}px`;
+});
+
+/** 变量 footerAd11 和 footerAd22，是用于footerAd消失时，与移动相关的位置 */
+const footerAd22 = computed(() => {
+  return `${footerAdHH1.value}px`;
+});
+
 // ------------------------------------------ 页面样式 ------------------------------------------------
 </script>
-
+t
 <style>
 .ll1 {
   background-color: rgb(0, 88, 0);
@@ -1045,7 +1102,7 @@ const transitionV = computed(() => {
     rgba(255, 255, 255, 0.2) 50%,
     rgba(255, 255, 255, 0.2) 75%,
     transparent 75%,
-    transparent
+    transparent 100%
   );
 }
 .asideL::-webkit-scrollbar-track {
@@ -1055,11 +1112,49 @@ const transitionV = computed(() => {
   border-radius: 10px;
 }
 
-.v-enter-active {
-  transition: opacity 0.8s ease;
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 1.5s ease;
 }
 
-.v-enter-from {
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  /* transform: translateY(120px); */
+}
+
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.slide-fade-enter-active {
+  transition: all 1s ease-in-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 1s ease-in-out;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  /* transform: translateY(-20px); */
+  transform: v-bind('coverTrans');
+  opacity: 0;
+}
+
+.footerad-enter-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.footerad-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.footerad-enter-from,
+.footerad-leave-to {
+  /* transform: translateY(20px); */
+  transform: v-bind('footeradTrans');
   opacity: 0;
 }
 
@@ -1072,21 +1167,10 @@ const transitionV = computed(() => {
 .xia-layout-hidden-leave-to {
   opacity: 0;
 }
-/*
+
 .xia-layout-hidden-leave-active {
   transition: opacity 0.8s ease;
 }
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.25);
-  }
-  100% {
-    transform: scale(1);
-  }
-} */
 
 .f-resize {
   position: absolute;
@@ -1114,6 +1198,59 @@ const transitionV = computed(() => {
   opacity: 0;
   transition: v-bind('transitionV');
 }
+
+/** footerad 消失动画 -------- begin --------------------------------- */
+.footeradClass {
+  animation: mymove v-bind('footerAdTime');
+  -webkit-animation: mymove v-bind('footerAdTime'); /* Safari and Chrome */
+  animation-fill-mode: forwards;
+  animation-delay: 0.03s;
+}
+@keyframes mymove {
+  from {
+    bottom: 0px;
+    /* opacity: 1; */
+  }
+  to {
+    bottom: v-bind('footerAd11');
+    /* opacity: 0; */
+    /* height: 0px; */
+  }
+}
+
+@-webkit-keyframes mymove {
+  from {
+    bottom: 0px;
+  }
+  to {
+    bottom: v-bind('footerAd11');
+  }
+}
+/** footerad 消失时 footer 需要跟着向下移动 --------- begin ----------- */
+.footeradClass1 {
+  animation: mymove1 v-bind('footerAdTime');
+  -webkit-animation: mymove1 v-bind('footerAdTime'); /* Safari and Chrome */
+  animation-fill-mode: forwards;
+}
+
+@keyframes mymove1 {
+  from {
+    bottom: v-bind('footerAd22');
+  }
+  to {
+    bottom: 0px;
+  }
+}
+
+@-webkit-keyframes mymove1 {
+  from {
+    bottom: v-bind('footerAd22');
+  }
+  to {
+    bottom: 0px;
+  }
+}
+/** footerad 消失时 footer 需要跟着向下移动 --------- end ----------- */
 
 body {
   overflow-x: hidden;

@@ -5,7 +5,7 @@
     :has-header="true"
     :has-tab="true"
     :has-footer="true"
-    :has-footer-ad="true"
+    :has-footer-ad="!hasfooterad"
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
@@ -118,7 +118,7 @@
       </ul>
     </template>
     <template #footer>
-      <div v-if="!tabTimeOut" class="zxx-scroll">
+      <div class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -139,7 +139,7 @@
     </template>
 
     <template #footer-ad>
-      <div v-if="!tabTimeOut" class="zxx-scroll">
+      <div class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -192,9 +192,9 @@ const onChange = ({ html, json }: ChangePayload) => {
 };
 
 const headerTimeOut = useTimeout(6000); // 设置一个定时器
-const tabTimeOut = useTimeout(13000); // 设置一个定时器
-const hashiddenn = useTimeout(9000); // 设置一个定时器
-const hasfooterad = useTimeout(1115000); // 设置一个定时器
+const tabTimeOut = useTimeout(3000); // 设置一个定时器
+const hashiddenn = useTimeout(5000); // 设置一个定时器
+const hasfooterad = useTimeout(3000); // 设置一个定时器
 const asideArray = ref<asideItem[]>([
   {
     slotPosition: 'absolute',

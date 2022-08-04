@@ -1,11 +1,11 @@
 <template>
   <admin-layout
-    :has-cover="false"
+    :has-cover="true"
     :has-hidden="!hashiddenn"
     :has-header="true"
     :has-tab="true"
     :hasFooter="true"
-    :has-footer-ad="true"
+    :has-footer-ad="!tabTimeOut"
     :hiddenPosition="'relative'"
     :hPosition="'relative'"
     :tPosition="'sticky'"
@@ -52,10 +52,11 @@
         </p>
       </div>
     </template>
+
     <template #main>
-      <li v-for="n in 100" :key="n">adfsafd {{ n }} <br /></li>
-      <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
+      <Editor ref="editor" v-model="content" @change="onChange" :styleOption="style"> </Editor>
     </template>
+
     <template #asidea>
       rrrrr跟绝大多数的小说不同，在这部小说里面，
       直接采用第一人称写法，会有一些挑战，但也会带来一些非常有趣的展现形式用月更方式， 利用碎片时间完成，每次更
@@ -104,7 +105,7 @@
       </ul>
     </template>
     <template #footer>
-      <div v-if="!footerTimeOut" class="zxx-scroll">
+      <div class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -125,7 +126,7 @@
     </template>
 
     <template #footer-ad>
-      <div v-if="!tabTimeOut" class="zxx-scroll">
+      <div class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"

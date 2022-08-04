@@ -5,7 +5,7 @@
     :has-header="true"
     :has-tab="true"
     :has-footer="true"
-    :has-footer-ad="true"
+    :has-footer-ad="!tabTimeOut"
     :hiddenPosition="'relative'"
     :hPosition="'sticky'"
     :tPosition="'relative'"
@@ -34,7 +34,7 @@
       <main-header></main-header>
     </template>
     <template #tab>
-      <div v-if="!tabTimeOut" class="zxx-scroll">
+      <div class="zxx-scroll">
         <p>
           最近在自己博客<a href="https://www.zhangxinxu.com/life/">“生活与创造”</a>栏目那里开始连载<a
             href="https://www.zhangxinxu.com/life/category/light-novel/"
@@ -54,6 +54,7 @@
       </div>
     </template>
     <template #main>
+      <Editor ref="editor" v-model="content" @change="onChange" :styleOption="style"> </Editor>
       <li v-for="n in 115" :key="n">adfsafd {{ n }} <br /></li>
       <li v-for="n in 0" :key="n">adfsafd {{ n }} <br /></li>
     </template>

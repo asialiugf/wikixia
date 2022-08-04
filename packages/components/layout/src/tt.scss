@@ -1,0 +1,32 @@
+
+$w3: var(--test);
+
+:export {				//暴露scss变量
+  newW3: $w3;
+}
+
+/** footerad 消失时 footer 需要跟着向下移动 --------- begin ----------- */
+.footeradClass1 {
+  animation: mymove1 1s;
+  -webkit-animation: mymove1 1s; /* Safari and Chrome */
+  animation-fill-mode: forwards;
+}
+
+@keyframes mymove1 {
+  from {
+    bottom: var($w3);
+  }
+  to {
+    bottom: 0px;
+  }
+}
+
+@-webkit-keyframes mymove1 {
+  from {
+    bottom: var($w3);
+  }
+  to {
+    bottom: 0px;
+  }
+}
+/** footerad 消失时 footer 需要跟着向下移动 --------- end ----------- */

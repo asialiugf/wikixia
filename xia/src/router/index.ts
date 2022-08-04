@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import MainScroll from '~/pages/MainScroll.vue';
+import DispNone from '~/pages/DispNone.vue';
 import HomePage from '../pages/HomePage.vue';
 import HomeView from '../pages/HomeView.vue';
 import LayoutFirst from '../pages/LayoutFirst.vue';
@@ -31,6 +32,11 @@ const router = createRouter({
       path: '/mainscroll',
       name: 'home',
       component: MainScroll
+    },
+    {
+      path: '/dispnone',
+      name: 'dispnone',
+      component: DispNone
     }
   ]
 });

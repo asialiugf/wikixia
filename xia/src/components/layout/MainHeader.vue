@@ -39,6 +39,12 @@ const headerTimeOut = useTimeout(6000); // 设置一个定时器
         class="py-2 px-3 shadow-md text-sm text-blue-gray-900 hover:text-warm-gray-200 hover:bg-orange-500"
         >滚动</RouterLink
       >
+      <RouterLink
+        class="py-2 px-4 font-semibold rounded-lg shadow-md text-gray-900 bg-gray-300 hover:bg-gray-500 border-none cursor-pointer"
+        to="/dispnone"
+      >
+        display none测试
+      </RouterLink>
     </nav>
   </div>
 </template>
